@@ -9,7 +9,7 @@
   <meta name="author" content="hnnWang">
 
   
-  <meta name="description" content="我是在ubuntu14.04下配置的octopress，第一次和第二次配置遇到了同样的问题。 首先，配置过程我是按照syx的这篇博客来的. 然后在rake generate 的时候出现了问题，仔细看了一下结果，是因为javascript没有安装，于是百度安装js，这个百度的大部分都是可以解决的。 &hellip;">
+  <meta name="description" content="我是在ubuntu14.04下配置的octopress，第一次和第二次配置遇到了同样的问题。 首先，配置过程可以去octopress的文档中看,虽然时全英文的，但是也不难看懂（推荐使用RVM安装）。 然后在rake generate 的时候出现了问题，仔细看了一下结果， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -95,7 +95,7 @@
 <!--more-->
 
 
-<p>首先，配置过程我是按照syx的这篇<a href="http://syncshinee.github.io/blog/2014/06/15/wo-de-octopressbo-ke/">博客</a>来的.</p>
+<p>首先，配置过程可以去octopress的<a href="http://octopress.org/docs/">文档</a>中看,虽然时全英文的，但是也不难看懂（推荐使用RVM安装）。</p>
 
 <p>然后在<strong>rake generate</strong> 的时候出现了问题，仔细看了一下结果，是因为javascript没有安装，于是百度安装js，这个百度的大部分都是可以解决的。</p>
 
@@ -117,7 +117,26 @@
 
 <p>这个问题，我是找到这篇<a href="http://allenyee.me/blog/2013/08/21/what-i-learned-from-hosting-octopress-on-github/">博客</a>解决的.</p>
 
-<p>如果有人遇到了跟我一样的问题，希望这些能够给你一些帮助！</p>
+<p>其实也就是两个命令：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd octopress/_deploy</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git pull origin master</span></code></pre></td></tr></table></div></figure>
+
+
+<p>执行完之后再进行</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake deplpy</span></code></pre></td></tr></table></div></figure>
+
+
+<p>就没有问题了。
+如果有人遇到了跟我一样的问题，希望这些能够给你一些帮助！</p>
 
 <p>之前的博客忘记了推送source，结果现在源文件找不到了，所以只能重开一个了2333333T_T!!</p>
 

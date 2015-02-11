@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 其他 | hnnWang's Blog]]></title>
   <link href="http://whn757397540.github.io/blog/categories/qi-ta/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-02-11T22:21:28+08:00</updated>
+  <updated>2015-02-11T22:37:48+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnWang]]></name>
@@ -23,7 +23,7 @@
 <!--more-->
 
 
-<p>首先，配置过程我是按照syx的这篇<a href="http://syncshinee.github.io/blog/2014/06/15/wo-de-octopressbo-ke/">博客</a>来的.</p>
+<p>首先，配置过程可以去octopress的<a href="http://octopress.org/docs/">文档</a>中看,虽然时全英文的，但是也不难看懂（推荐使用RVM安装）。</p>
 
 <p>然后在<strong>rake generate</strong> 的时候出现了问题，仔细看了一下结果，是因为javascript没有安装，于是百度安装js，这个百度的大部分都是可以解决的。</p>
 
@@ -39,7 +39,21 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 
 <p>这个问题，我是找到这篇<a href="http://allenyee.me/blog/2013/08/21/what-i-learned-from-hosting-octopress-on-github/">博客</a>解决的.</p>
 
-<p>如果有人遇到了跟我一样的问题，希望这些能够给你一些帮助！</p>
+<p>其实也就是两个命令：</p>
+
+<pre><code>cd octopress/_deploy
+</code></pre>
+
+<pre><code>git pull origin master
+</code></pre>
+
+<p>执行完之后再进行</p>
+
+<pre><code>rake deplpy
+</code></pre>
+
+<p>就没有问题了。
+如果有人遇到了跟我一样的问题，希望这些能够给你一些帮助！</p>
 
 <p>之前的博客忘记了推送source，结果现在源文件找不到了，所以只能重开一个了2333333T_T!!</p>
 
