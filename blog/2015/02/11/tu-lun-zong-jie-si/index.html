@@ -1823,6 +1823,8 @@
 <p>费用为负数的情况
 + 如果图中含有负权边，那么最初计算势的值就不能用Dijkstra算法，而需要改用SPFA算法。另外，如果图中还有负环，可以利用SPFA寻找负环，并在负环上尽量增广将其消去。
 + 此外，在有些情况下，适当的变形可以避免负权边。比如下面的，也是上面个那道题用到的方法，在流量F一定的情况下，也可以采取与最小流量限制中类似的变形将负权边出去。新增源点S和汇点T，从S向s连一条容量为F费用为0的边，从t向T连一条容量为F费用为0的边。对于负权边e = (u,v)，可以让它一开始就已经满流。再从S向v连一条容量为c[e]费用为0的边，从u向T连一条容量为c[e]费用为0的边。这样变形后，我们就除去了图中的负权边，而原图流量为F+sigma（c[e]<em>d[e]）(e为负权边)的最小费用就等于新图流量F的最小费用流加上sigma（c[e]</em>d[e]）(e为负权边)。</p></blockquote></blockquote>
+
+<p><a href="/blog/archives">&lt;&ndash;返回</a></p>
 </div>
 
 
@@ -1886,6 +1888,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/02/13/lian-tong-du-zong-jie/">连通度总结</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/02/13/er-fen-cha-zhao-ji-qi-ying-yong/">二分查找及其应用总结</a>
       </li>
     
@@ -1899,10 +1905,6 @@
     
       <li class="post">
         <a href="/blog/2015/02/11/tu-lun-zong-jie-wu/">图论总结(五)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/02/11/tu-lun-zong-jie-si/">图论总结(四)</a>
       </li>
     
   </ul>

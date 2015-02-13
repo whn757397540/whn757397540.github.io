@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>连通度总结 - hnnWang&#8217;s Blog</title>
+  <meta name="author" content="hnnWang">
+
+  
+  <meta name="description" content="做POJ 1966 Cable TV Network时遇到的问题，用到了一些网络流的知识 这个其实首先是一个概念问题，要想明白什么事图的连通度，我们需要先搞明白什么叫做连通图！ 在图论中，连通图基于连通的概念。在一个无向图 G 中，若从顶点vi到顶点vj有路径相连（当然从vj到vi也一定有路径）， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://whn757397540.github.io/blog/2015/02/13/lian-tong-du-zong-jie/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="hnnWang's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">hnnWang&#8217;s Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.baidu.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:whn757397540.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">连通度总结</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-13T16:17:38+08:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>做<a href="http://poj.org/problem?id=1966">POJ 1966 Cable TV Network</a>时遇到的问题，用到了一些网络流的知识</p>
+
+<!--more-->
+
+
+<p>这个其实首先是一个概念问题，要想明白什么事图的连通度，我们需要先搞明白什么叫做连通图！</p>
+
+<p>在图论中，连通图基于连通的概念。在一个无向图 G 中，若从顶点vi到顶点vj有路径相连（当然从vj到vi也一定有路径），则称vi和vj是连通的。如果 G 是有向图，那么连接vi和vj的路径中所有的边都必须同向。如果图中任意两点都是连通的，那么图被称作连通图。如果此图是有向图，则称为强连通图（注意：需要双向都有路径）</p>
+
+<p>严格的定义是这样的：</p>
+
+<p>对一个图 G=(V,E) 中的两点 x 和 y ，若存在交替的顶点和边的序列
+Γ=(x=v0-e1-v1-e2-&hellip;-ek-(vk+1)=y) (在有向图中要求有向边vi−( vi+1)属于E )，则两点 x 和 y 是连通的。Γ是一条x到y的连通路径，x和y分别是起点和终点。当 x = y 时，Γ 被称为回路。如果通路 Γ 中的边两两不同，则 Γ 是一条简单通路，否则为一条复杂通路。如果图 G 中每两点间皆连通，则 G 是连通图。</p>
+
+<p>(PS:以上内容摘自百度百科)</p>
+
+<p>那么，搞清楚连通图是什么以后，我们就能够知道什么是连通度了。首先，连通度分为边连通度和点联通度，对于这两个概念，是如下定义的：</p>
+
+<blockquote><p>设G = (V, E)是一个n阶图。如果G是完全图Kn，那么我们定义它的顶点连通度为 
+κ(Kn) = n – 1 
+否则，定义它的顶点连通度为 
+κ(G) = min{|U| : Gv-u是非连通的} 
+即最小的定点数，删除这些定点后能让这个图不连通（这里没提有向图应该是怎么样的一种不连通，不过根据我的理解，应该是指的不是强联通，也就是任意两点不连通就算是不连通了）</p>
+
+<p>图G的边连通度定义为从图G中删除边而使G非连通的最小边数，用λ(G)表示。 
+这里的图G=(V, E)代表无向图或有向图，且没有自环和重边。</p></blockquote>
+
+<p>那么对于边连通度和点连通度，应该怎么求呢？</p>
+
+<p>有向图的边连通度：如果是对于2个点来说的边连通度，那么其实就是这两点之间的最小割！根据最大流最小割定理，很容易用最大流求出来（建图边容量为1就行）。但是如果是对于整个图的边连通度，其实就是要对任意一对点的最小割里面的最小值了，而事实上，我们不需要遍历每一对点，只需要固定源点然后枚举汇点，再固定汇点枚举源点就行了（这个的证明就不说的，因为只要理解了最小割的概念，很容易就能想明白！）</p>
+
+<p>有向图的点连通度：这个相对麻烦一点点，不过其实也就是边容量无限了（因为求点连通度不需要断边），然后点有了容量为1，而之前在网络流的总结里提到了遇到点也有容量的时候该怎么解决，很简单，就是直接拆点，把一个点p拆成两个点v和v&#8217;，然后由v指向v&#8217;一条容量为1的边，然后所有指向原来的点p的边指向v，所有从原来的点p指出的边变成从v&#8217;指出即可！之后的算法跟求边连通度一样</p>
+
+<p>无向图的边连通度：在网络流中也说过，怎么把无向图转化成有向图，这里不再赘述！</p>
+
+<p>无向图的点连通度：一样，把无向图转换成有向图，然后按照有向图点连通度的建图方法来建图就好！</p>
+
+<p>下面来说题：</p>
+
+<p><a href="http://poj.org/problem?id=1966">POJ 1966 Cable TV Network</a></p>
+
+<p>这道题，就是直接的一道让你求点连通度的裸题，很简单，按照之前说的方法建图来求就行！<a href="/acm/poj/poj1966/">参考代码</a></p>
+
+<p><a href="/blog/archives">&lt;&ndash;返回</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">hnnWang</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-13T16:17:38+08:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/tu-lun/'>图论</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://whn757397540.github.io/blog/2015/02/13/lian-tong-du-zong-jie/" data-via="" data-counturl="http://whn757397540.github.io/blog/2015/02/13/lian-tong-du-zong-jie/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/02/13/er-fen-cha-zhao-ji-qi-ying-yong/" title="Previous Post: 二分查找及其应用总结">&laquo; 二分查找及其应用总结</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/02/13/lian-tong-du-zong-jie/">连通度总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/13/er-fen-cha-zhao-ji-qi-ying-yong/">二分查找及其应用总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/11/zui-xiao-ge/">最小割的介绍及应用</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/11/tu-lun-zong-jie-liu/">图论总结(六)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/11/tu-lun-zong-jie-wu/">图论总结(五)</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - hnnWang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Design by <a href="http://octopressthemes.com">Octopress Themes</a>. Background image by <a href="http://www.flickr.com/photos/89433098@N04/">Florian Kraft Fotografie</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

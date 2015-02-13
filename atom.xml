@@ -4,7 +4,7 @@
   <title><![CDATA[hnnWang's Blog]]></title>
   <link href="http://whn757397540.github.io/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-02-13T15:42:42+08:00</updated>
+  <updated>2015-02-13T17:05:28+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnWang]]></name>
@@ -14,11 +14,65 @@
 
   
   <entry>
+    <title type="html"><![CDATA[连通度总结]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/02/13/lian-tong-du-zong-jie/"/>
+    <updated>2015-02-13T16:17:38+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/02/13/lian-tong-du-zong-jie</id>
+    <content type="html"><![CDATA[<p>做<a href="http://poj.org/problem?id=1966">POJ 1966 Cable TV Network</a>时遇到的问题，用到了一些网络流的知识</p>
+
+<!--more-->
+
+
+<p>这个其实首先是一个概念问题，要想明白什么事图的连通度，我们需要先搞明白什么叫做连通图！</p>
+
+<p>在图论中，连通图基于连通的概念。在一个无向图 G 中，若从顶点vi到顶点vj有路径相连（当然从vj到vi也一定有路径），则称vi和vj是连通的。如果 G 是有向图，那么连接vi和vj的路径中所有的边都必须同向。如果图中任意两点都是连通的，那么图被称作连通图。如果此图是有向图，则称为强连通图（注意：需要双向都有路径）</p>
+
+<p>严格的定义是这样的：</p>
+
+<p>对一个图 G=(V,E) 中的两点 x 和 y ，若存在交替的顶点和边的序列
+Γ=(x=v0-e1-v1-e2-&hellip;-ek-(vk+1)=y) (在有向图中要求有向边vi−( vi+1)属于E )，则两点 x 和 y 是连通的。Γ是一条x到y的连通路径，x和y分别是起点和终点。当 x = y 时，Γ 被称为回路。如果通路 Γ 中的边两两不同，则 Γ 是一条简单通路，否则为一条复杂通路。如果图 G 中每两点间皆连通，则 G 是连通图。</p>
+
+<p>(PS:以上内容摘自百度百科)</p>
+
+<p>那么，搞清楚连通图是什么以后，我们就能够知道什么是连通度了。首先，连通度分为边连通度和点联通度，对于这两个概念，是如下定义的：</p>
+
+<blockquote><p>设G = (V, E)是一个n阶图。如果G是完全图Kn，那么我们定义它的顶点连通度为 
+κ(Kn) = n – 1 
+否则，定义它的顶点连通度为 
+κ(G) = min{|U| : Gv-u是非连通的} 
+即最小的定点数，删除这些定点后能让这个图不连通（这里没提有向图应该是怎么样的一种不连通，不过根据我的理解，应该是指的不是强联通，也就是任意两点不连通就算是不连通了）</p>
+
+<p>图G的边连通度定义为从图G中删除边而使G非连通的最小边数，用λ(G)表示。 
+这里的图G=(V, E)代表无向图或有向图，且没有自环和重边。</p></blockquote>
+
+<p>那么对于边连通度和点连通度，应该怎么求呢？</p>
+
+<p>有向图的边连通度：如果是对于2个点来说的边连通度，那么其实就是这两点之间的最小割！根据最大流最小割定理，很容易用最大流求出来（建图边容量为1就行）。但是如果是对于整个图的边连通度，其实就是要对任意一对点的最小割里面的最小值了，而事实上，我们不需要遍历每一对点，只需要固定源点然后枚举汇点，再固定汇点枚举源点就行了（这个的证明就不说的，因为只要理解了最小割的概念，很容易就能想明白！）</p>
+
+<p>有向图的点连通度：这个相对麻烦一点点，不过其实也就是边容量无限了（因为求点连通度不需要断边），然后点有了容量为1，而之前在网络流的总结里提到了遇到点也有容量的时候该怎么解决，很简单，就是直接拆点，把一个点p拆成两个点v和v&#8217;，然后由v指向v&#8217;一条容量为1的边，然后所有指向原来的点p的边指向v，所有从原来的点p指出的边变成从v&#8217;指出即可！之后的算法跟求边连通度一样</p>
+
+<p>无向图的边连通度：在网络流中也说过，怎么把无向图转化成有向图，这里不再赘述！</p>
+
+<p>无向图的点连通度：一样，把无向图转换成有向图，然后按照有向图点连通度的建图方法来建图就好！</p>
+
+<p>下面来说题：</p>
+
+<p><a href="http://poj.org/problem?id=1966">POJ 1966 Cable TV Network</a></p>
+
+<p>这道题，就是直接的一道让你求点连通度的裸题，很简单，按照之前说的方法建图来求就行！<a href="http://whn757397540.github.io/acm/poj/poj1966/">参考代码</a></p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[二分查找及其应用总结]]></title>
     <link href="http://whn757397540.github.io/blog/2015/02/13/er-fen-cha-zhao-ji-qi-ying-yong/"/>
     <updated>2015-02-13T14:26:37+08:00</updated>
     <id>http://whn757397540.github.io/blog/2015/02/13/er-fen-cha-zhao-ji-qi-ying-yong</id>
     <content type="html"><![CDATA[<p>二分搜索法，是通过不断缩小解可能存在的范围，从而求的问题最优解的方法。经常会出现的是二分搜索和其他算法结合的题目。</p>
+
+<p>(PS:有关二分姿势的选取，可以看看<a href="http://blog.csdn.net/u012139398/article/details/38637311">峰霸这短小精悍的博文</a>)</p>
 
 <!--more-->
 
@@ -110,7 +164,7 @@
 
 <p>通过上面的内容，我们会发现，不管怎么样，用到二分答案的时候，我们需要先找到一个判断条件，然后对答案进行二分。二分，更重要的是这种思想，它不仅仅是能够搜索数值，还能有更广阔的应用！</p>
 
-<p><a href="http://whn757397540.github.io/posts/">&lt;&ndash;返回</a></p>
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
 ]]></content>
   </entry>
   
@@ -367,6 +421,8 @@
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
 ]]></content>
   </entry>
   
@@ -997,6 +1053,8 @@
 <p>这里注意一点，Tarjan的拓扑序跟Kosaraju是相反的，之前所说的后面，对应Kosaraju里面的就是标号比较大，对应Tarjan里面的就是标号比较小。</p>
 
 <p>做这种题的关键是抽象出布尔代数来，然后用蕴含关系来连边，注意你要化简的布尔式子一定是 与 的关系，最后通过强连通分量来求出2-sat的结果。</p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
 ]]></content>
   </entry>
   
@@ -1745,6 +1803,8 @@
 
 
 <p>这里我还是要说一下，对比一下，这个Tarjan，我用vector加stack的时候，用的时间是550ms；把vector改成手写边之后，时间变成了94ms；再把stack改成手写栈之后，时间变成了63ms。所以说时间差距还是蛮大的，不过毕竟还是用stl会感觉更加方便快捷一些，所以如果给的时间充足的话，用stl也是可以的；如果时间比较紧张，就尽量用手写的吧！</p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
 ]]></content>
   </entry>
   
@@ -3486,6 +3546,8 @@
 <p>费用为负数的情况
 + 如果图中含有负权边，那么最初计算势的值就不能用Dijkstra算法，而需要改用SPFA算法。另外，如果图中还有负环，可以利用SPFA寻找负环，并在负环上尽量增广将其消去。
 + 此外，在有些情况下，适当的变形可以避免负权边。比如下面的，也是上面个那道题用到的方法，在流量F一定的情况下，也可以采取与最小流量限制中类似的变形将负权边出去。新增源点S和汇点T，从S向s连一条容量为F费用为0的边，从t向T连一条容量为F费用为0的边。对于负权边e = (u,v)，可以让它一开始就已经满流。再从S向v连一条容量为c[e]费用为0的边，从u向T连一条容量为c[e]费用为0的边。这样变形后，我们就除去了图中的负权边，而原图流量为F+sigma（c[e]<em>d[e]）(e为负权边)的最小费用就等于新图流量F的最小费用流加上sigma（c[e]</em>d[e]）(e为负权边)。</p></blockquote></blockquote>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
 ]]></content>
   </entry>
   
@@ -4779,6 +4841,8 @@
 <p>之所以用isap是因为我昨天是最后敲的isap，今天就没有毁直接用的。</p>
 
 <p>好了，题解大概就这样了，接下来该最小费用流了！</p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
 ]]></content>
   </entry>
   
@@ -5917,6 +5981,8 @@
 <blockquote><p>通常不会出现。出现了的话，目前没有有效的算法，但是在某些情况下可以采取适当的变形额避免出现负容量的边。</p></blockquote></blockquote>
 
 <p>好了，到此，最大流的总结算是真的完了，重点还是在于建图上，还需要多加练习！</p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
 ]]></content>
   </entry>
   
@@ -7102,6 +7168,8 @@
 <p>总结一下，一般情况下，就用Kruskal吧，除非是稠密图（点特别少，边特别多的时候），我确实Kruskal掌握地比PRIM好一些，但是今天敲了下PRIM，确实是PRIM敲起来更加简单，还是要知道怎么用的，必要的时候要能够会用！</p>
 
 <p>好了，今天一天干的事情大概都在上面了，真是，一个这个总结都写了2个多小时，╮(╯▽╰)╭，忧伤！</p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
 ]]></content>
   </entry>
   
@@ -7186,6 +7254,8 @@
 <p><a href="http://codeforces.com/problemset/problem/474/A">CF474A</a></p>
 
 <p>跟E题一样，十分简单的一个模拟题，没有什么需要思考的东西，相信大家都能写出来，所以题解也就不写了！</p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
 ]]></content>
   </entry>
   
