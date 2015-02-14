@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>开关问题 - hnnWang&#8217;s Blog</title>
+  <meta name="author" content="hnnWang">
+
+  
+  <meta name="description" content="反转问题，开关问题，关灯问题！这是一个什么样的问题呢？说实话，我也不清楚，那就不清楚地说一说呗！先来看两个题，再根据这两个题再来分析下这是一个什么样的问题！ POJ3276 Face The Right Way 简单说下题意，给你n头牛的朝向(B向后F向前)，给你一台机器，机器的作用是， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://whn757397540.github.io/blog/2015/02/15/kai-guan-wen-ti/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="hnnWang's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">hnnWang&#8217;s Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.baidu.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:whn757397540.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">开关问题</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-15T00:00:58+08:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>反转问题，开关问题，关灯问题！这是一个什么样的问题呢？说实话，我也不清楚，那就不清楚地说一说呗！先来看两个题，再根据这两个题再来分析下这是一个什么样的问题！</p>
+
+<!--more-->
+
+
+<p><a href="http://poj.org/problem?id=3276">POJ3276 Face The Right Way</a></p>
+
+<p>简单说下题意，给你n头牛的朝向(B向后F向前)，给你一台机器，机器的作用是，你先要指定一个k，然后机器每次操作反转严格的k头牛的方向（B变F，F变B）。问让所有的牛朝前最少需要反转几次，对应的K是多少（如果次数相同，输出最小的K）。</p>
+
+<p>首先，区间的反转顺序对于结果是没有影响的；其次，如果对同一个区间反转2次以上是多余的；有以上两点，问题就转变成了求需要被反转的空间的集合。</p>
+
+<p>那么我们就考虑最前面一头牛，如果这头牛需要反转，那么包含这头牛的区间只有1个，所以这个区间就必须要反转；在把这头牛反转之后，在剩下的牛里面再选取最前面的一头，依然是一样的。所以我们就可以通过首先考虑最左端的牛，然后不断重复最终求出结果了！</p>
+
+<p>以上便是这种方法的精髓。可是如果我们直接按照这种方法来模拟的话，我们来分析下复杂度，首先，需要对所有可能的K都求解一次（N）,然后，对于每个K，我们都要从最左端考虑N头牛的情况，最坏的情况下又需要进行N-K+1次反转操作，每次操作需要反转K头牛，所以总的复杂度是O（N<sup>3</sup>）,这个显然，对于5000的问题规模，现在是不能在规定的时间内解决的！所以，我们需要优化。（这个不属于这种方法的内容）</p>
+
+<p>这个，我们可以设一个f[i]代表区间[i,i+K-1]是否进行过反转，反转过就为1，否则为0.那么对于某头牛，我们只需要考虑在它之前的包括它的区间反转次数的和，而我们求的时候是按照顺序来的，所以这个和也可以用O（1）的时间求出来。举个例子，再这个和sum从i-1向i转移的过程中，很显然需要sum-f[i-k]（因为f[i-k]不包括牛i），根据这个sum求出f[i]来，再把f[i]加入到sum中就好，具体看看<a href="/acm/poj/poj3276/">代码</a>应该也挺容易懂的.</p>
+
+<p><a href="http://poj.org/problem?id=3279">POJ3279 Fliptile</a></p>
+
+<p>这个题意也好理解，给你一个m×n的格子，每个格子可能是黑色（1）或者白色（0）,然后你可以进行的操作是可以选择一个格子进行反转，那个格子反转会带动周围的4个格子（上下左右）也反转，问题是最少进行多少步能够把所有的格子反转成白色，如果没有可能，输出IMPOSSIBLE,否则输出字典序最小的反转方案。</p>
+
+<p>跟上一题一样的分析方法，首先，对同一个格子进行2次以上的反转是多余的；其次，反转的格子的顺序对结果是没有影响的！那么接下来，我们需要考虑找到一个可以确定反转方法的最靠前位置的格子（就像上一题最前面的那头牛一样）。但是，假如当前只考虑这些格子的左上角一个格子[i,j]的话，当前还没有确定反转方向的格子中，除了[i,j]之外，实际上还有[i+1,j],[i,j+1]两个个格子可能对他产生影响，所以我们不能非常容易地确定某个格子是不是必须要反转，所以我们要想办法把不确定因素减少。考虑下，假如我们把最上面一行的反转情况固定了，那么，能够影响到最左上角[i,j]的就只有[i+1,j]这一个位置（[i,j],[i,j+1]都被固定了），那么我们就可以根据[i,j]的状态判断[i+1,j]是不是需要反转了（因为这时能影响到[i,j]的只剩下[i+1,j]了）；事实上，我们只需要固定第一行的反转情况就好，因为如果第i行的反转情况固定了，那么根据[i,j]能确定[i+1,j]的反转情况，在跑完一行之后，第i+1行的也就固定了，以此类推就行了！至于怎么固定最上面一行？枚举就好了嘛，怎么枚举呢？记得状态压缩吗？n的范围只有15，所以，你知道了？</p>
+
+<p>我的<a href="/acm/poj/poj3279/">代码</a></p>
+
+<p>下面总结一下这种思想可能会在什么样的情况下用到，只是我自己对比这两道题的解法总结的，如果发现不全的话欢迎补充，发现不对的话欢迎指正：</p>
+
+<p>首先，需要确定两点，第一是顺序无关性，第二是状态有限且有序性（这两道题都是2种状态，而根据我的理解，感觉如果不止是2种状态但是状态的变换是有序的话，也能借鉴这种思想，只不过会很麻烦，可能有其他的方法）；第三就是你每次操作是把一个位置从一个状态转换成下一个状态；第四是对每个位置可以选择操作和不操作。</p>
+
+<p>在满足这以上条件的情况下，可以考虑下能不能用这种方法来解决，这时候我们需要考虑找到一个可以根据之前的操作状态确定来确定当前位置是不是操作的位置（比如第一道题里面的最前面一头牛就可以根据它之前的牛的操作情况来确定自己是不是要操作，而且是确定的，操作就是一定要操作，不操作就一定不操作，第二题里面也是一样，在确定首行之后，[i+1， j]这个位置的操作就能为唯一确定，<strong>必须是唯一确定！！</strong>），能找到这么一个位置的话，还要确定，对这个位置进行了对应的操作之后，依然能找到下一个这样的位置，这样就可以依次递推到最后了！</p>
+
+<p>不知道我说的是不是清楚,最后再说一句,记得14年多校有一题,貌似跟这种思想挺像的,忘了有没有做出来了!</p>
+
+<p><a href="/blog/archives">&lt;&ndash;返回</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">hnnWang</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-15T00:00:58+08:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ji-qiao-fang-fa/'>技巧方法</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style_32x32">
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_tqq"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2008932"></script>
+<!-- UY END -->
+
+
+
+ 
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/02/13/chi-qu-fa/" title="Previous Post: 尺取法">&laquo; 尺取法</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/02/15/kai-guan-wen-ti/">开关问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/13/chi-qu-fa/">尺取法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/13/lian-tong-du-zong-jie/">连通度总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/13/er-fen-cha-zhao-ji-qi-ying-yong/">二分查找及其应用总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/11/zui-xiao-ge/">最小割的介绍及应用</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - hnnWang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Design by <a href="http://octopressthemes.com">Octopress Themes</a>. Background image by <a href="http://www.flickr.com/photos/89433098@N04/">Florian Kraft Fotografie</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
