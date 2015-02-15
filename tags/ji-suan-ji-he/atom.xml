@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 计算几何 | hnnWang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/ji-suan-ji-he/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-02-15T15:07:12+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnWang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[2014北邮新生训练4div1题解]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/12/19/2014bei-you-xin-sheng-xun-lian-4/"/>
+    <updated>2014-12-19T18:43:37+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/12/19/2014bei-you-xin-sheng-xun-lian-4</id>
+    <content type="html"><![CDATA[<h1>Solution For BUPT winter training for 2014 round #4（div1）</h1>
+
+<h2>计算几何专场</h2>
+
+<!--more-->
+
+
+<p>A.Beauty Contest</p>
+
+<p><a href="http://poj.org/problem?id=2187">POJ2187</a></p>
+
+<p>这题其实挺简单，就是给你n个点（n&lt;=50000），让你求这些点中距离最远的两个点的平方和。</p>
+
+<p>其实这道题应该是一道旋转卡壳的题目，不过由于数据比较水，求出凸包之后暴力枚举凸包上的每一个点求平方和的最大值就行，套板子就可以。这道题应该是这些题目中除了附加题以外最难的题目了，不过会了凸包以后，敢于暴力水一发的话，就属于水题了。这道题的目的是让大家在感觉没有头绪的时候（对于这题来说，就是会凸包但是不会旋转卡壳的时候），尝试水一发，兴许就过了！！！B题也有这个目的，B题其实也是直接暴力水一发就好。至于不会凸包什么的，可以先不用着急，以后会讲的，这里就不做过多的叙述了，代码放在下面，仅供参考！</p>
+
+<p><a href="/acm/poj/poj2187/">参考代码</a></p>
+
+<p>B.Finding the Top RPS Player</p>
+
+<p><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2119">AOJ2119</a></p>
+
+<p>这是这次训练中题面最长的一道题目了，也是这场训练中唯一跟计算几何不沾边的题目，不过却是一道很简单的题目，是个模拟题大意如下：</p>
+
+<p>n个人进行猜拳比赛，刚开始所有人得分都是0，每赢一场得1分，输了的话分数清零，每轮所有分数相同的人进行比赛（比如分数如下：2 2 2 1 1 1 0 0 0 0， 那么进行一轮比赛后应该变为 3 0 2 2 0 1 1 1 0 0，也就是3 2 2 1 1 1 0 0 0 0），问经过多少轮比赛后，最高分能够达到m分。</p>
+
+<p>如果想多了，那么这题你就做不出来了，直接根据他说的规则模拟就好，因为数据很小，暴力写出来以后发现20 19 这样最复杂的数据 也是秒出。</p>
+
+<p>参考代码不要着急看，自己先敲，实在搞定不了再去看！</p>
+
+<p><a href="/acm/aoj/aizu2119/">参考代码</a></p>
+
+<p>C.Collision</p>
+
+<p><a href="http://acm.hdu.edu.cn/showproblem.php?pid=4793">HDU4793</a></p>
+
+<p>这道题，是13年长沙现场赛的C题，过的人不少，有兴趣的同学可以到<a href="http://board.acmicpc.info/icpc2013/hnu_onsite.php">这里</a>看一下榜，重点留意一下各个队伍过这一道题的时间。</p>
+
+<p>实际上，这是一道十分简单的计算几何题目，在我看来，应该属于跟签到题一样难度的，先来说下题意：一个圆环，圆心在原点，给你内圆和外圆半径，在圆环<strong>外部</strong>有一个小圆，给你圆心坐标和半径以及速度矢量（也就是向量），运动过程中可以穿过外圆而不能穿过内圆，运动遵循牛顿物理定律，求小圆在圆环内部（小圆的任何一部分在内部都算）的总时间。如下图所示</p>
+
+<p><img src="/picture/hdu4793/C1.png" alt="" /></p>
+
+<p>那么，我们其实很容易就能想到怎么做了，小球运动总共有以下4种情况</p>
+
+<p><img src="/picture/hdu4793/C2.png" alt="" /></p>
+
+<p>第1种，运动方向是远离圆环的方向，这种情况下，小球不可能进入圆环的内部，所以时间为0.（至于判断，判断 速度向量v 和 小球圆心指向圆环圆心的向量v1 的点积符号即可，小于等于0的话，就永远不可能进入）</p>
+
+<p>第2种，小球虽然是向靠近圆环的方向移动，但是距离最近的时候也没有进入圆环内部，这种情况下时间也肯定是0.</p>
+
+<p>第3种，小球进入了圆环的外圆内部，却不与内圆相撞，这种情况下，算出在内部运动的路程长短就好，路程出来，时间自然也就出来了。</p>
+
+<p>第4种，根据对称我们知道，弹射之后的小球在圆环内部运动的路程与之前运动的路程相等，所以只需要求出之前运动的路程，然后乘2就能得出结果。</p>
+
+<p>我简单说一下具体怎么求路程，先看下图<img src="/picture/hdu4793/C3.png" alt="" /></p>
+
+<p>d1 = R+r, 我们求路程s，只需要求出圆心到直线距离d，然后根据勾股定理即可算出。而d的求法呢，也很简单，一种是根据点与直线的距离公式，利用解析几何的知识来求（这个不知道的去翻高中课本）；另外一种是利用叉积，|a向量 × b向量| = 平行四边形面积，很容易求出d，进而求出s。</p>
+
+<p>同理，对于第四种情况，只需要用类似的方法求出大圆和小圆对应的s的一半，然后相减就是在内部运动的距离的一半，这里不画图了，应该很简单就能理解把！</p>
+
+<p>这道题其实还是特别简单的，甚至可以算是水题了，但是看榜上的队伍，好多都是在封榜之后过得这道题，为什么？实际上，这是一种对计算几何的恐惧症！或者说，大家都不太想去做计算几何这个东西，因为可能被卡精度啦什么的，最烦了！</p>
+
+<p><a href="/acm/hdu/hdu4793/">参考代码</a></p>
+
+<p>D Beavergnaw</p>
+
+<p><a href="http://poj.org/problem?id=2405">POJ2405</a></p>
+
+<p>这是一道十分简单的计算几何题目，就是按照这个图来说<img src="/picture/poj2405/1.jpg" alt="" /></p>
+
+<p>给你空出来的那一部分的体积以及D，让你求d，就是简单地推导一番就好了，不要告诉我你不知道圆锥台体积公式，高中学的，即便不会的话应该也会圆锥体积公式吧？按照圆锥体积公式推一下也就能推出来了，我就不写推导的过程了，大家好好推一下，推导的时候细心的（我第一遍就推错了，o(╯□╰)o））</p>
+
+<p>这个<a href="/acm/poj/poj2405/">参考代码</a>没什么价值，推出公式了之后，就是个a+b的问题。</p>
+
+<p>E.Rotate</p>
+
+<p><a href="http://acm.hdu.edu.cn/showproblem.php?pid=4998">HDU4998</a></p>
+
+<p>题意：把一个平面进行n次旋转，每次围绕着一个点o旋转rad弧度（o和rad都给出），旋转完之后，平面相对于原来相当于绕着某一个点旋转了一个弧度，目标是求这个点和弧度（[0&hellip;2*PI]）.</p>
+
+<p>这道题，稍微有一点点难度，如果用计算几何模拟的方法的话，需要用到旋转和直线交点，这个实际上有板子也是很好敲的（敲的时候才发现，我竟然把这些东西忘得差不多了T_T,已经不能快速地默出板子了）。这里就说一下模拟的思路。</p>
+
+<p>首先随意选取两个点p1,q1（离得不要太近，否则可能出现精度问题），然后按照他给的步骤进行旋转，旋转完后得到2各点p2,q2，然后求线段p1p2 和 线段q1q2 中垂线的交点s，就是那个圆心。然后看向量sp2 与 向量sp1(sq2 和 sq1 也行)之间的角度差是多少即可。</p>
+
+<p>有关这部分的模板，可以自行百度或者看书，这里提供我整理的一部分点线相关的模板，有兴趣的可以<a href="http://hnnwang.github.io/blog/2014/08/17/ping-mian-ji-suan-ji-he-dian-yu-xian-xiang-guan-zong-jie/">去看看</a>,还是那句话，不着急，这些以后都会讲。</p>
+
+<p>这里我说一点,求极角的atan2(y, x)函数，他所求的极角的范围是（-PI，PI）</p>
+
+<p>我的<a href="/acm/hdu/hdu4998/">参考代码</a>在这里,一样，最好自己做出来！</p>
+
+<p>峰霸还有有其他的解法：</p>
+
+<p>F.Connect Line Segment</p>
+
+<p><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2117">AOJ2117</a></p>
+
+<p>这道题是一个防AK的题目，反正如果我之前没有做过这题让我来打这场比赛，估计是没有时间把这道题写出来了。有一定基础的人再看这个题解吧！</p>
+
+<p>题意：给你n条线段（2 &lt;= n &lt;= 14），每条线段用2个点来表示，然后让你把这些线段首尾相连练成一条折线，问折线最短有多长。</p>
+
+<p>这道题，我们发现n的范围，很小，只有14，能想到什么？或许会有人说，暴力！可是你想一下，暴力的话，相当于求这几条线段的全排列，14！ = 87178291200，况且每条线段有2端，还需*2，显然，这是不可能在8s内完成的（实际上，AOJ上基本所有题目要求都是8s）。那么还能想到什么呢？如果知道状态压缩dp的人可能会想到状态压缩dp，没错，这题就是用状态压缩dp解决的（至少我是这么解决的）。这个题解如果不懂什么事状态压缩dp的就不要看了，以后讲了可以拿这个来练练手。</p>
+
+<p>设dp[i][state][p]来代表在state状态下，当前线段的最后一条线段为i，且对应的外部的端点为p所代表的端点的情况下，连接所用的线段的最短长度。</p>
+
+<p>可能上面的叙述不太好理解，我来解释一下，state代表的是当前有那些线段被用了，二进制1代表用了，0代表没有被用。p有2各取值，分别对应线段的2各端点，然后就状态转移方程
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">state</span><span class="o">|</span><span class="p">(</span><span class="mi">1</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">j</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">state</span><span class="o">|</span><span class="p">(</span><span class="mi">1</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">j</span><span class="p">)][</span><span class="mi">0</span><span class="p">],</span><span class="n">min</span><span class="p">(</span><span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">state</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">a</span><span class="o">-</span><span class="n">seg</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">b</span><span class="p">).</span><span class="n">length</span><span class="p">(),</span> <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">state</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">b</span> <span class="o">-</span> <span class="n">seg</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">b</span><span class="p">).</span><span class="n">length</span><span class="p">()));</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">state</span><span class="o">|</span><span class="p">(</span><span class="mi">1</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">j</span><span class="p">)][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">state</span><span class="o">|</span><span class="p">(</span><span class="mi">1</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">j</span><span class="p">)][</span><span class="mi">1</span><span class="p">],</span><span class="n">min</span><span class="p">(</span><span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">state</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">a</span><span class="o">-</span><span class="n">seg</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">a</span><span class="p">).</span><span class="n">length</span><span class="p">(),</span> <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">state</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">b</span> <span class="o">-</span> <span class="n">seg</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">a</span><span class="p">).</span><span class="n">length</span><span class="p">()));</span>
+</span></code></pre></td></tr></table></div></figure>
+就可以得出结果了，具体的大家可以去看我的<a href="/acm/aoj/aizu2117/">参考代码</a></p>
+
+<p>最后，我再说一下这次出题的目的，其实本来我出的比这个稍微简单一些的，但是应某人要求，就去掉了一道签到题，加了一个Rotate，不过这个不是重点。看看题解，其实你会发现，如果你稍微对计算几何了解一些的话，这些题都是很简单的。A题，敢于暴力一下的话，就是个水的不能再水的凸包；C题，就是一个简单的公式推导，只要你高中数学解析几何不要太差就好；D题，就是一个体积的加减，细心点就很快就能出来；E题，想想如果你知道旋转怎么写，知道一些高中解析几何的知识，然后了解atan2这个函数，那么这题也就是一道简单的模拟（旋转什么的，都是有模板的）。F题是一个披着计算几何外壳的状态压缩dp，这个题是有点难度的！</p>
+
+<p>好了，这里直接点出我的目的：提醒你们一下，不要忽视了计算几何，以后组了队之后，一个队伍至少要找出一个人来，搞上那么一段时间的计算几何（不用太久，1星期就差不多了！），然后这种简单的题目做起来就没什么难度了！为什么要这样说呢，因为经过几场多校训练和网络赛我发现，计算几何的题目，很多的水平不是很高的队伍都没有好好地搞一搞，如果我们对计算几何这方面稍微用点心的话（实际上，不用付出太多），那么，如果遇到计算几何的题目，对比其他队伍就很是沾光！我们的队伍在多校训练以及网络赛的时候，但凡是碰到有计算几何的场次，一般都会打得比较好，因为我弄了一段时间的计算几何！举几个例子，鞍山赛区网络赛，也就是你们做的这个Rotate的题目（E题），我们的队伍用了很短的时间1A，而有另外一个学长队伍13A，过得还很晚；再举个例子，北京区域赛，你们另外一个学长队伍，由于没有搞过计算几何，所以栽在了一个题目上，不是没有做出来，而是WA得太多，结果很遗憾地与铜奖失之交臂！（这道题目其实也很简单，反正我在下面做是1A的）。</p>
+
+<p>现在说这些其实还是有点早，不过就当是提个醒吧，要注意，我说的不是计算几何多么多么重要，而是提醒你们以后不要忽视计算几何，不过也不用着急，其实如果为了成绩的话，一个队伍有一个人搞得比较不错就行！</p>
+
+<p>大家以后继续加油！</p>
+
+<p><a href="/blog/archives">返回</a></p>
+]]></content>
+  </entry>
+  
+</feed>
+

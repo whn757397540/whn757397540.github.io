@@ -415,7 +415,29 @@
 
 <aside class="sidebar">
   
-    <section>
+    <section id="crum_tags_subtitle-2" class="widget-3 widget-last widget tags-widget">
+  <div class="widget-inner"><h3>文章标签</h3>
+  <li><a style="font-size: 70%" href="/tags/2-sat/">2-sat</a></li>
+<li><a style="font-size: 70%" href="/tags/er-fen/">二分</a></li>
+<li><a style="font-size: 70%" href="/tags/er-fen-tu-pi-pei/">二分图匹配</a></li>
+<li><a style="font-size: 70%" href="/tags/er-fen-da-an/">二分答案</a></li>
+<li><a style="font-size: 70%" href="/tags/bo-ke-pei-zhi/">博客配置</a></li>
+<li><a style="font-size: 70%" href="/tags/chi-qu-fa/">尺取法</a></li>
+<li><a style="font-size: 70%" href="/tags/kai-guan-wen-ti/">开关问题</a></li>
+<li><a style="font-size: 70%" href="/tags/qiang-lian-tong-fen-liang/">强联通分量</a></li>
+<li><a style="font-size: 70%" href="/tags/qiang-lian-tong-fen-liang/">强连通分量</a></li>
+<li><a style="font-size: 170%" href="/tags/zui-da-liu/">最大流</a></li>
+<li><a style="font-size: 70%" href="/tags/zui-xiao-ge/">最小割</a></li>
+<li><a style="font-size: 70%" href="/tags/zui-xiao-fei-yong-liu/">最小费用流</a></li>
+<li><a style="font-size: 70%" href="/tags/zui-duan-lu/">最短路</a></li>
+<li><a style="font-size: 70%" href="/tags/dian-lian-tong-du/">点连通度</a></li>
+<li><a style="font-size: 70%" href="/tags/xian-lian-tong-du/">线连通度</a></li>
+<li><a style="font-size: 70%" href="/tags/ji-suan-ji-he/">计算几何</a></li>
+<li><a style="font-size: 70%" href="/tags/lian-tong-du/">连通度</a></li>
+
+  </div>
+</section>
+<section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
     
@@ -442,8 +464,34 @@
   </ul>
 </section>
 
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/whn757397540">@whn757397540</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
 
-
+        github.showRepos({
+            user: 'whn757397540',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
 
 
   
