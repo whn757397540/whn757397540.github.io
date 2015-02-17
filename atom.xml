@@ -4,7 +4,7 @@
   <title><![CDATA[hnnWang's Blog]]></title>
   <link href="http://whn757397540.github.io/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-02-15T17:16:56+08:00</updated>
+  <updated>2015-02-17T23:20:53+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnWang]]></name>
@@ -12,6 +12,186 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[坐标离散化]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/02/17/zuo-biao-chi-san-hua/"/>
+    <updated>2015-02-17T20:28:19+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/02/17/zuo-biao-chi-san-hua</id>
+    <content type="html"><![CDATA[<p>简单提一下，以后碰到例题再补充进来</p>
+
+<!--more-->
+
+
+<p>这种方法适合坐标系非常大，线段比较稀疏的情况，原型就是给你坐标系和一些水平或者竖直的线段（可能有宽度是矩形，可能没宽度），然后问你这些把坐标系分成了几部分。</p>
+
+<p>方法就是把坐标离散化，再不影响区块的情况下尽可能地拉近线段之间的距离！具体的写法参考《挑战程序设计竞赛》P165，今天一次性写的有点多，我就不继续敲他给的代码了，回头碰到用到这种方法的题目的时候再说把！</p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[折半枚举]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/02/17/zhe-ban-mei-ju/"/>
+    <updated>2015-02-17T20:27:48+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/02/17/zhe-ban-mei-ju</id>
+    <content type="html"><![CDATA[<p>这个，也是一种优化技巧，其思想来源于传统的双向搜索！</p>
+
+<!--more-->
+
+
+<p>要点: 把要枚举的多个东西分成2部分分开来进行枚举，从而达到降低时间复杂度的目的，实际上是一种牺牲空间换取时间的方法，分成两部分来枚举的时候，就是先枚举一部分存起来，再根据存起来的这部分对剩下的一部分进行枚举。光说也看不出效果来，来看一道题。</p>
+
+<p><a href="http://poj.org/problem?id=2785">POJ 2785 4 Values whose Sum is 0</a></p>
+
+<p>就是给你4个序列，让你从每个序列中选一个数使得4个数和为0，问总共有几种方法（统一序列数值相同的数字区别看待）？</p>
+
+<p>这个如果按照正常的方法直接枚举的话，复杂度是O(n<sup>4</sup>)，但是如果我们先来枚举一半，看a+b+c+d = 0,则 c+d = -(a+b)，我们可以先枚举c和d的选取方法，总共是n<sup>2</sup>种，复杂的自然就是n<sup>2</sup>，然后再把这几个数字存起来进行排序，之后再枚举a+b,利用a+b是c+d的相反数这个性质，利用二分搜索，可以再每次用logn的时间找出对应的c+d，而枚举a+b复杂度是n<sup>2</sup>，综上，复杂度为O(n<sup>2</sup> logn).</p>
+
+<p>参考<a href="http://whn757397540.github.io/acm/poj/poj2785/">代码</a>理解一下就好。</p>
+
+<p>另外一个例子就是超大背包问题，就是背包问题，不过限制条件不适合用dp：1&lt;=n&lt;=40, 1&lt;= w[i],v[i] &lt;= 10<sup>15</sup>, 1&lt;W&lt;10<sup>15</sup>;</p>
+
+<p>n比较小，就考虑能不能枚举，但是直接枚举复杂度是2<sup>n</sup>, 2<sup>40</sup>铁定是不行的，所以，需要再优化。这时，就可以利用折半枚举，把所有的物品拆成2部分，先选一半，再选一半。实际上就是先枚举一半（2<sup>20</sup>），假设枚举的这一半是w2,v2。存起来后，我们可以排除掉所有的w2[i]&lt;=w2[j] &amp;&amp; v2[i] >= v2[j]的j,按照w,v的字典序排序后很容易做到这一点。之后声誉的元素都满足w2[i]&lt;w2[j]等价与v2[i]&lt;v2[j]，我们要计算的是max{v2| w2&lt;= W-w1},就只需要找到满足w2[i]&lt;= W-w1[i]的最大的i就行，这个可以用二分搜索完成。复杂度是O（2<sup>n/2</sup> * n）,是可以在时限内完成的！</p>
+
+<p>总结：对于枚举情况很多的时候，并且跟顺序有关的时候，可以折半，先枚举一半存起来，然后用二分查找的方法降低复杂度！</p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[弹性碰撞问题]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/02/17/dan-xing-peng-zhuang-wen-ti/"/>
+    <updated>2015-02-17T20:27:25+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/02/17/dan-xing-peng-zhuang-wen-ti</id>
+    <content type="html"><![CDATA[<p>有关弹性碰撞的问题,我们先来看一道非常简单的水题!</p>
+
+<!--more-->
+
+
+<p><a href="http://poj.org/problem?id=1852">POJ1852 Ants</a></p>
+
+<p>非常简单的一道题,简单分析下就很容易出来,由题意知道所有蚂蚁速度都是1,碰头后折返继续走.这个就可以看成没有折返而是碰头的蚂蚁穿过对方继续走,这样就可以看成每个蚂蚁都是从自己的位置一直走到掉下去为止,那么就很容易知道,所有蚂蚁都掉下去的最短时间就是蚂蚁到两个顶端比较短的距离中最大的那个;而最长时间按就是蚂蚁到两个顶端比较长的距离中最大的那个! <a href="http://whn757397540.github.io/acm/poj/poj1852/">参考代码</a>还是贴出来,虽然没什么必要</p>
+
+<p>我们由这道题引出弹性碰撞问题,大家都学过物理,知道弹性碰撞是个什么东东,如果物体的质量相同,那么在某个位置发生弹性碰撞后,物体会交换速度.比如上上面那道题,就可以看成以1速度运动的蚂蚁和另外一只以1速度运动(反向)的蚂蚁相撞,之后发生了速度交换,对于这种情况,都可以按照这个蚂蚁的处理方法,看做物体互相穿过继续运动即可,下面来看一道稍微复杂点的例题!</p>
+
+<p><a href="http://poj.org/problem?id=3684">POJ3684 Physics Experiment</a></p>
+
+<p>这个题,首先,我们先考虑加入没有半径,也就是说小球可以看成是质点的时候,先看如果只有一个小球的话,可以根据物理知识求出t时刻的小球位置,我们知道,不及阻力和摩擦的话,这是一个周期运动,<strong>半</strong>周期 T = sqrt(g×H/2),那么我们很容易知道，在前半个周期，小球做自由落体运动，那么t时刻的位置是（假设t在前半个周期且在第一个周期） pos = H - 1/2×g×t<sup>2</sup>， 同样，在下半个周期的话，小球做自由落体运动的逆向运动，容易求得 pos = H - 1/2×g×(2*T-t)<sup>2</sup>;</p>
+
+<p>上面的分析是针对一个小球的，如果是多个呢？那其实就是可以按照之前所说的处理，把弹性碰撞时发生的速度交换看成小球相互穿过后继续运动即可，那么我们可以求得所有小球的位置，之后对这个位置进行排序即可，因为先落下的小球一定在后落下的小球下面，这样就可以把小球的位置一一对应起来了！</p>
+
+<p>那么，如果加上半径r呢？实际上也不难，思考一下，小球运动的空间其实都是H那么高，因为每个小球都是无隙排列的。（仔细思考下应该能绕过这个弯儿来），那么我们就只需要按照之前没有算半径的时候的方法计算，再最终结果对应第i个小球加上一个小球的直径即可（因为在那个小球下面除了空的空间以外，还有i个小球！）</p>
+
+<p><a href="http://whn757397540.github.io/acm/poj/poj3684/">参考代码</a></p>
+
+<p>总结一下，其实这种题目的重点就是：<strong>把速度交换变成互相穿过而行，从而使复杂的问题简单化</strong></p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[集合的整数表示]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/02/17/ji-he-de-zheng-shu-biao-shi/"/>
+    <updated>2015-02-17T20:26:53+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/02/17/ji-he-de-zheng-shu-biao-shi</id>
+    <content type="html"><![CDATA[<p>我们都知道状态压缩是个什么东东，状态压缩就是把每个状态（集合）用一个二进制代码来编码表示，这里使用了集合的整数表现，下面就谈一谈这个东西！</p>
+
+<!--more-->
+
+
+<p>在程序中表示集合的方法有很多种，当元素数比较少的时候，像状态压缩这样用二进制码来表示比较方便。集合S{0,1,2,…………，n-1}的子集可以用如下的方式编码成整数:</p>
+
+<p>f(S) = sigma(2<sup>i</sup>)(i∈s)</p>
+
+<p>像这样表示之后，一些集合运算就可以对应地写成如下的方式：</p>
+
+<ul>
+<li>空集∅: ………………………………………………………………………………………………0</li>
+<li>只含有第i个元素的集合{i}………………………………………………………1/&lt;/&lt;i</li>
+<li>含有全部n个元素的集合{0,1,2,…………,n-1}:…………………(1&lt;&lt;n)-1</li>
+<li>判断第i个元素是否属于集合S:………………………………………………if (S>>i &amp; 1)</li>
+<li>向集合中加入第i个元素S∪{i}:………………………………………………S|(1&lt;&lt;i)</li>
+<li>从集合中除去第i个元素S\{i}:………………………………………………S|~(1&lt;&lt;i)</li>
+<li>集合S和T的并集S∪T: ……………………………………………………………………S|T</li>
+<li>集合S和T的交际S∩T: ………………………………………………………………………S&amp;T</li>
+</ul>
+
+
+<p>此外，想要将集合{0,1,2,……………，n-1}的所有子集枚举出来的话，可以像下面这样写</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">state</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">n</span><span class="p">);</span> <span class="n">state</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="c1">//对子集的处理</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的那些操作大家都应该非常熟悉了，不过我重点想要记录的是下面的东西:</p>
+
+<blockquote><p>如何枚举某个集合sup的子集?这里sup是一个二进制码，其本身也是某个集合的子集。枚举全集的所有子集是非常容易的，就是上面所说的方法，但是对于任何一个集合sup的子集呢？我们考虑下，假如sub是sup的子集，那么此时sub+1不一定是sup的子集。而(sub+1)&amp;sup虽然一定是sup的子集，但是很有可能依然是sup。</p></blockquote>
+
+<p>我们反过来想一下，从sup开始每次减1直到为0为止。由于sub-1并不一定是sup的子集，所以我们要把它与sup按位与&amp;。 这样的话就可以将sup的所有子集按照将序列举出来.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="kt">int</span> <span class="n">sub</span> <span class="o">=</span> <span class="n">sup</span><span class="p">;</span>
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="c1">//对子集的操作</span>
+</span><span class='line'>  <span class="n">sub</span> <span class="o">=</span> <span class="p">(</span><span class="n">sub</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">sup</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span><span class="k">while</span><span class="p">(</span><span class="n">sub</span> <span class="o">!=</span> <span class="n">sup</span><span class="p">);</span><span class="c1">//处理完0后，sub = -1, 这是 sub &amp; sup = sup;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>最后的，也是最难理解最不熟悉的，枚举{0,1,2,…………，n-1}所包含的所有大小为k的子集的方法： 通过使用位运算我们可以像如下代码所示简单的按照字典序升序地枚举出所有满足条件的二进制码。</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="kt">int</span> <span class="n">comb</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">k</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="k">while</span><span class="p">(</span><span class="n">comb</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">n</span><span class="p">))</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="c1">//针对组合的处理</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">comb</span> <span class="o">&amp;</span> <span class="o">-</span><span class="n">comb</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">comb</span> <span class="o">+</span> <span class="n">x</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">comb</span> <span class="o">=</span> <span class="p">((</span><span class="n">comb</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="n">y</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>按照字典序升序的话，最小的子集是(1&lt;&lt;k-1),所以用它作为初始值。现在我们求出comb其后的二进制码。例如0101110之后的是0110011,0111110之后的是1001111。下面是求出comb下一个二进制码的方法：</p>
+
+<p>(1) 求出最低位的1开始的连续的1的区间(010110->0001110);
+(2) 将这一个区间全部变为0，并将区间左侧的那个0变成1(0101110->0110000);
+(3) 将第(1)步里取出的区间右移，直到剩下的1的个数减少了1个(0001110->0000011);
+(4) 将第(2)步和第(3)步的结果按位取或(0110000|0000011 = 0110011)</p>
+
+<p>对于非0的整数， x&amp;(-x)的值就是将其最低位的1独立出来后的 值。这是由于计算机中负数采用二进制补码表示，-x实际上对应于(~x)+1.</p>
+
+<p>将最低位的1取出后，设它为x，那么通过计算y = comb+x, 就完成了第(1)(2)步了；我们来比较下~y和comb。再comb中加上x后没有变化的位，再~y中全部都取相反的值。而最低位1开始的连续区间再~y中依然是1，区间左侧的那个0再~y中也依然是0.于是通过计算z = comb &amp; ~y 就得到了最低位1开始的连续区间。自己举个例子体会下！</p>
+
+<p>那么首先将z不断右移，直到最低位为1，这通过计算z/x即可完成。这样再将z/x右移一位就得到了第（3）步要求的值。而y又是第二步求的值，这样我们就求得了comb之后的下一个二进制码,因为是从n个元素的集合中进行选择,所以comb的值不能大于等于1&lt;&lt;n。如此以来，就完成了所有打消为k的所有子集的枚举！</p>
+
+<p>除了以上所说的，还有好多好多其他好玩的东西，这些都是要玩转位运算后才能做到的，加油吧！</p>
+
+<p><a href="http://whn757397540.github.io/blog/archives">&lt;&ndash;返回</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[开关问题]]></title>
