@@ -1,0 +1,399 @@
+---
+layout: post
+title: "图论总结(五)"
+date: 2015-03-14 18:55:02 +0800
+comments: true
+categories: 图论
+---
+
+####有向图的强联通分量
+
+主要介绍求强联通分量的2种方法。
+
+<!--more-->
+
+1. Kosaraju算法
+
+这种算法就是数据结构上讲的那种算法，利用2次简单的dfs来实现。第一次dfs时，选取任意顶点作为起点，遍历所有未访问过的顶点，并在回溯前给顶点标号（后序遍历）。对剩余未访问过的顶点，不断重复上述过程；完成标号后，越接近图的尾部（搜索树的叶子），顶点标号越小。第二次dfs时，先将所有的边反向，然后以标号最大的顶点进行dfs。这样dfs所遍历的顶点几何就构成了一个强联通分量。之后，只要还有尚未访问的顶点，就从中选取标号最大的顶点不断重复上述过程。
+
+以上就是整个算法的过程，至于证明吧，自己画个图模拟一下吧。给出一个模板代码！算法的复杂度时O(V+E)
+
+```c++
+int V;
+struct Edge{
+    int from, to, next;
+    Edge(){}
+    Edge(int from, int to, int next):from(from), to(to), next(next){}
+};
+Edge E[maxe];//图的邻接表表示
+Edge rE[maxe];//把边反向后的图
+int head[maxv], rhead[maxv];
+int nume,rnume;
+int vs[maxv];//后续遍历顺序的顶点列表
+int cntvs;
+bool used[maxv];//访问标记
+int tporder[maxv];//所属强联通分量的拓扑序
+
+void init()
+{
+    nume = rnume = 0;
+    memset(head, -1, sizeof(head));
+    memset(rhead, -1, sizeof(rhead));
+    cntvs = 0;
+}
+void addEdge(int from, int to)
+{
+    E[nume] = Edge(from, to, head[from]);
+    head[from] = nume++;
+    rE[rnume] = Edge(to, from, rhead[to]);
+    rhead[to] = rnume++;
+}
+
+void dfs(int v)
+{
+    used[v] = true;
+    for (int i = head[v]; i != -1; i = E[i].next)
+        if (!used[E[i].to]) dfs(E[i].to);
+    vs[cntvs++] = v;
+}
+
+void rdfs(int v, int k)
+{
+    used[v] = true;
+    tporder[v] = k;
+    for (int i = rhead[v]; i != -1; i = rE[i].next)
+        if (!used[rE[i].to]) rdfs(rE[i].to, k);
+}
+
+int scc()
+{
+    memset(used, false, sizeof(used));
+
+    for (int v= 0 ; v < V; v++)
+        if (!used[v])   dfs(v);
+    memset(used, 0, sizeof(used));
+    int k = 0;
+    for (int i = cntvs-1; i >= 0; i--)
+        if (!used[vs[i]]) rdfs(vs[i], k++);
+    return k;
+}
+```
+
+2. Tarjan算法
+
+这个算法的思想是这样的：
+
+考虑强连通分量 C，设其中第一个被发现的点为 x，则 C 中其他点都是 x 的后代。我们希望在 x 访问完成时立刻输出 C。这样，就可以在同一棵 DFS 树中区分开所有 SCC 了。因此问题的关键，是判断一个点是否为一个 SCC中最先发现的点。
+
+假设我们正在判断 u 是否为某 SCC 的第一个被发现结点。如果我们发现从 u 的子结点出发可以到达 u 的祖先w，显然 u、v、w 在同一个 SCC 中，因此 u 不是该 SCC 中第一个被发现的结点；另一方面，如果从 v 发现最多只能到 u，那么 u 是该 SCC 中第一个被发现的结点。这样，问题转化为求一个点 u 最远能到达的祖先的 d 值。注意，这里的“到达”只能通过当前 SCC 中的点，而不能通过已经确定 SCC 编号的其他点。
+
+我们可以类似的定义 lowlink(u)为 u 及其后代能追溯到的最早（最先被发现）祖先点 v 的 pre(v)值，如此便可以在计算 lowlink 函数的同时完成 SCC 计算。这个算法的复杂度也是O(V+E)，但是常数比Kosaraju算法要小一些。参考代码如下：
+
+```c++
+struct Edge{
+    int from, to, next;
+    Edge(){}
+    Edge(int from, int to, int next):from(from), to(to), next(next){}
+};
+
+Edge E[maxm];
+int head[maxv];
+int nume;
+int pre[maxv],lowlink[maxv],sccno[maxv],dfs_clock,scc_cnt;
+int S[maxv];
+int tops;
+
+void init()
+{
+    nume = 0;
+    memset(head, -1, sizeof(head));
+    tops = 0;
+}
+
+void addEdge(int from, int to)
+{
+    E[nume] = Edge(from, to, head[from]);
+    head[from] = nume++;
+}
+
+void dfs(int u)
+{
+    pre[u] = lowlink[u] = ++dfs_clock;
+    S[tops++] = u;
+    for (int i = head[u]; i != -1; i = E[i].next)
+    {
+        int v = E[i].to;
+        if (!pre[v])
+        {
+            dfs(v);;
+            lowlink[u] = min(lowlink[u], lowlink[v]);
+        }
+        else if(!sccno[v])
+            lowlink[u] = min(lowlink[u], pre[v]);
+    }
+    if (lowlink[u] == pre[u])
+    {
+        scc_cnt++;
+        while(true)
+        {
+            int x = S[--tops];
+            sccno[x] = scc_cnt;
+            if(x == u)
+                break;
+        }
+    }
+}
+
+void find_scc(int n)
+{
+    dfs_clock = scc_cnt = 0;
+    memset(sccno, 0, sizeof(sccno));
+    memset(pre, 0, sizeof(pre));
+    for (int i = 0; i < n; i++)
+        if(!pre[i]) dfs(i);
+}
+```
+
+下面来说一道题
+
+[POJ 2186 Popular Cows](http://poj.org/problem?id=2186)
+
+这道题思路其实不难想，算是一道基础题了，就是为了练习强联通分量的吧！首先，我们要明确，如果一个牛被其他所有牛认为是红人，那么那头牛所在的强联通分量里的任何一头牛都是被所有牛认为是红人的牛。反之，任何一头其他的牛被所有牛认为是红人，那么这头牛也一定属于这个强联通分量。所以，如果存在被所有牛认为是红人的牛，那么这些牛肯定都属于同一个强联通分量，这个强联通分量里面的牛的数目就是答案了；当然，也有可能不存在。
+
+我们通过两种算法求出来的所有强联通分量，都是按照图的拓扑序排了序的，所以如果存在这样的牛的话，那么它一定属于拓扑序最后的强联通分量，所以一种方法就是，先找到拓扑序最后的强联通分量里面的一头牛，然后看他是不是所有顶点可达就能判断了。这种方法的代码，我是用Kosaraju算法写的（事实上是参考《挑战程序设计竞赛》中的代码写的），当然也可以用tarjan来写：
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+const int maxv = 22222;
+const int maxe = 55555;
+
+int V;
+struct Edge{
+    int from, to, next;
+    Edge(){}
+    Edge(int from, int to, int next):from(from), to(to), next(next){}
+};
+Edge E[maxe];//图的邻接表表示
+Edge rE[maxe];//把边反向后的图
+int head[maxv], rhead[maxv];
+int nume,rnume;
+int vs[maxv];//后续遍历顺序的顶点列表
+int cntvs;
+bool used[maxv];//访问标记
+int tporder[maxv];//所属强联通分量的拓扑序
+
+void init()
+{
+    nume = rnume = 0;
+    memset(head, -1, sizeof(head));
+    memset(rhead, -1, sizeof(rhead));
+    cntvs = 0;
+}
+void addEdge(int from, int to)
+{
+    E[nume] = Edge(from, to, head[from]);
+    head[from] = nume++;
+    rE[rnume] = Edge(to, from, rhead[to]);
+    rhead[to] = rnume++;
+}
+
+void dfs(int v)
+{
+    used[v] = true;
+    for (int i = head[v]; i != -1; i = E[i].next)
+        if (!used[E[i].to]) dfs(E[i].to);
+    vs[cntvs++] = v;
+}
+
+void rdfs(int v, int k)
+{
+    used[v] = true;
+    tporder[v] = k;
+    for (int i = rhead[v]; i != -1; i = rE[i].next)
+        if (!used[rE[i].to]) rdfs(rE[i].to, k);
+}
+
+int scc()
+{
+    memset(used, false, sizeof(used));
+
+    for (int v= 0 ; v < V; v++)
+        if (!used[v])   dfs(v);
+    memset(used, 0, sizeof(used));
+    int k = 0;
+    for (int i = cntvs-1; i >= 0; i--)
+        if (!used[vs[i]]) rdfs(vs[i], k++);
+    return k;
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d", &n, &m);
+    init();
+    for (int i = 0; i < m; i++)
+    {
+        int a,b;
+        scanf("%d%d", &a, &b);
+        addEdge(a-1,b-1);
+    }
+    V = n;
+    int K = scc();
+    int ans = 0, u;
+    for (int i = 0; i < V; i++)
+        if (tporder[i] == K-1)
+        {
+            ans++;
+            u = i;
+        }
+
+    memset(used, 0, sizeof(used));
+    rdfs(u, 0);
+    for (int i = 0; i < n; i++)
+        if (!used[i])
+        {
+            ans = 0;
+            break;
+        }
+    printf("%d\n", ans);
+
+    return 0;
+}
+```
+
+这里，书上用的是vector来表示的图，我刚开始也是跟着书上的写法来的，但是发现太慢了，344ms,然后改成了这样，手写的边，时间就变成了63ms，当然，后者写起来比较麻烦。
+
+还有一种方法，被前面所有牛都认为是红人的那个强联通分量肯定在最后，所以我们只需要看有几个“最后”就行（这里的最后是指，出度为0的强联通分量）。如果只有一个的话，那么答案就是这个强联通分量里面的人数；如果有不止一个的话，那么就没有牛被所有牛认为是红人（因为出度为0的牛，除了自己圈子里的牛，不认为其他的任何牛是红人。）
+
+这种方法我使用Tarjan写的。
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+#include <stack>
+
+using namespace std;
+const int maxv = 11111;
+const int maxm = 55555;
+struct Edge{
+    int from, to, next;
+    Edge(){}
+    Edge(int from, int to, int next):from(from), to(to), next(next){}
+};
+
+Edge E[maxm];
+int head[maxv];
+int nume;
+int pre[maxv],lowlink[maxv],sccno[maxv],dfs_clock,scc_cnt;
+int S[maxv];
+int tops;
+
+void init()
+{
+    nume = 0;
+    memset(head, -1, sizeof(head));
+    tops = 0;
+}
+
+void addEdge(int from, int to)
+{
+    E[nume] = Edge(from, to, head[from]);
+    head[from] = nume++;
+}
+
+void dfs(int u)
+{
+    pre[u] = lowlink[u] = ++dfs_clock;
+    S[tops++] = u;
+    for (int i = head[u]; i != -1; i = E[i].next)
+    {
+        int v = E[i].to;
+        if (!pre[v])
+        {
+            dfs(v);;
+            lowlink[u] = min(lowlink[u], lowlink[v]);
+        }
+        else if(!sccno[v])
+            lowlink[u] = min(lowlink[u], pre[v]);
+    }
+    if (lowlink[u] == pre[u])
+    {
+        scc_cnt++;
+        while(true)
+        {
+            int x = S[--tops];
+            sccno[x] = scc_cnt;
+            if(x == u)
+                break;
+        }
+    }
+}
+
+void find_scc(int n)
+{
+    dfs_clock = scc_cnt = 0;
+    memset(sccno, 0, sizeof(sccno));
+    memset(pre, 0, sizeof(pre));
+    for (int i = 0; i < n; i++)
+        if(!pre[i]) dfs(i);
+}
+
+int deg[maxv],cnt[maxv];
+int main()
+{
+    int n,m;
+    scanf("%d%d", &n, &m);
+    init();
+    for (int i = 0; i < m; i++)
+    {
+        int a,b;
+        scanf("%d%d", &a, &b);
+        addEdge(a-1,b-1);
+    }
+    find_scc(n);
+
+    int k = scc_cnt;
+
+    for (int i = 0; i < n; i++)
+    {
+        cnt[sccno[i]]++;
+        for (int j = head[i]; j != -1; j = E[j].next)
+            if (sccno[E[j].to] != sccno[i])
+                deg[sccno[i]]++;
+    }
+    int ans = 0;
+    //cout<<1<<endl;
+    for (int i = 1; i <= k; i++)
+        if(ans == 0 && deg[i] == 0)
+            ans = cnt[i];
+        else if (ans != 0 && deg[i] == 0)
+        {
+            ans = 0;
+            break;
+        }
+    printf("%d\n", ans);
+
+    return 0;
+}
+```
+
+这里我还是要说一下，对比一下，这个Tarjan，我用vector加stack的时候，用的时间是550ms；把vector改成手写边之后，时间变成了94ms；再把stack改成手写栈之后，时间变成了63ms。所以说时间差距还是蛮大的，不过毕竟还是用stl会感觉更加方便快捷一些，所以如果给的时间充足的话，用stl也是可以的；如果时间比较紧张，就尽量用手写的吧！

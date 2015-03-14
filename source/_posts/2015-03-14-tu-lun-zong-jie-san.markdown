@@ -1,0 +1,693 @@
+---
+layout: post
+title: "图论总结(三)"
+date: 2015-03-14 18:54:30 +0800
+comments: true
+categories: 
+---
+
+#####二分图匹配问题
+
+<!--more-->
+
+今天一整天就做了三道题，二分图匹配和网络流的问题，感觉一些建图方式还是非常巧妙的。这次的总结写在前面，题写在后面吧，因为有些题用到了总结中的东西。
+
+首先，解释一下什么叫做匹配，图G=（V,E）的匹配就是在G中两两没有公共端点的边的集合M（M属于E）。(匹配数就是|M|)。说得通俗一点，就是集合中的点两两配对，最大匹配数就是最多能配成多少对。当最大匹配数|M|manzu 2|M| = |V|(也就是所有的点都配对了)时，又称为完美匹配。
+
+然后我们思考一下，怎么去求匹配数？考虑一下，事实上我们可以通过最大流来求匹配数，怎么做呢？试想一下我们这样构图，把原图中所有的无向边改成有向边，方向从顶点集U->V，容量为1，那么这个二分图匹配问题是不是就转化成了多个源点（U里面的点，每个源点的最大流出量为1）到多个汇点（V里面的点，每个汇点的最大流入量为1）的问题了？这种问题，通过之前对最大流的总结我们知道怎么解决了，设立超级源点S和超级汇点T呀，这样从S流向T的最大流就是原图的最大匹配数了。U->V的流量为正的边的几何就是最大匹配。算法复杂度为（O(|V|||E)）。
+
+利用所有边的容量都是1以及二分图的性质，我们可以的到匈牙利求最大二分匹配的算法（这个一会给代码）。
+
+接下来，再来说几条可能用到的概念，**注意区分**，在图G = (V,E) 中： 
+
+*  匹配…………………………在G中两两没有公共端点的边的几何M（M属于E）。 
+*  边覆盖……………………G中的任意顶点都至少是F中某条边的端点的边的集合F（F属于E）。 
+*  独立集……………………在G中两两互不相连的顶点集合S（S属于V） 
+*  顶点覆盖…………………G中的任意边都有至少一个端点属于S的顶点集合S（S属于V）。
+
+单单是看不太容易记住，画个图理解一下就好，自行画图吧！
+
+针对匹配，有最大匹配；针对边覆盖，有最小边覆盖；针对独立集，有最大独立集；针对顶点覆盖，有最小顶点覆盖。（搞清楚这几个概念，是有用的）
+
+**以上几者之间存在如下的关系： 
+
+-  对于不存在孤立点的图，最大匹配数+最小边覆盖数 = |V|； 
+-  最大独立集数+最小顶点覆盖数 = |V|； 
+-  对于二分图来说，有最大匹配数 = 最小顶点覆盖数；**
+
+知道以上几个关系，我们就可以通过求二分图的最大匹配数来求出剩下的3项了，这在有些时候是用的到的
+
+看完了最小费用流，终于可以接着写了：
+
+>常见的二分图匹配（2种）
+
+>>针对无权图的，需要求出包含变数最多的匹配，而二分图最大基数匹配 + 这种问题上面个说的就是，不在赘述了。
+
+>>针对带权图的，需要求出边权之和的尽量大的匹配，有些题目要求这个匹配本身是完美匹配（即每个点都被匹配到），而有些题目并不对边的数量做出要求，只要权和最大就行，
+
+>>>最大权完美匹配 + 这种问题和最大基数匹配类似，图中所有边的费用取反，然后其他边费用为0。如果从s出发的所有弧并不是全部满载，则说明完美匹配不存在，问题无解；否则原图中所有流量为1的弧对应最大权完美匹配 + 用上面的方法也可以求解第二种情况，即匹配边数没有限制的最大权匹配，只需要在求解s-t最小费用流的过程中记录下流量为0,1,2,3…………时的最小费用流，然后加以比较。 +
+
+接下来我们看例题：
+
+[POJ3041 Asteroids](http://poj.org/problem?id=3041)
+
+题意：在N*N的网络中有K颗小行星。小行星i的位置在（R[i],C[i]）。有一台强力激光炮，一炮可以轰掉一整排或者一整列的小行星，问轰掉所有的小行星最少需要开几炮？
+
+这道题，如果以正常的思维去想，把小行星当成点的话，那不是非常好做，但是我们可以换个思维方式去想，假如我们把行和列当成点，把小行星当成边来构图，那么跟每个点相邻的边都会被那个点所代表的那一行或者列的激光小灭掉，所以我们只需要知道要包括所有的边，至少需要几个点就好，这不正好是最小顶点覆盖吗？而这个又恰好是一个二分图，所以，我们就只需要求出以行列为点，小行星为边（(r,c)位置的小行星从第r行指向第c列）的图的最大匹配数即可。代码很简单，我这里有一份ISAP的最大流代码，还有一份匈牙利求最大二分匹配的代码，都挂出来。
+
+ISAP求二分匹配
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include<vector>
+#include <cmath>
+
+using namespace std;
+
+const int maxv = 10000;
+const int maxe = 55555;
+const int INF = 0x3f3f3f3f;
+struct Edge{
+    int from, to, cap, flow;
+    Edge(int u, int v, int c, int f): from(u), to(v), cap(c),flow(f){}
+};
+
+vector<Edge> edges;
+vector<int> G[maxv];
+int a[maxv];//µ±Ç°½ÚµãÄóÁ÷Á¿
+int p[maxv];//¸¸Ç×½Úµã£¬»ØËÝÂ·¾¶ÓÃµ½
+int d[maxv];//µ½ÖÕµã¾àÀë
+int iter[maxv];//µ±Ç°»¡ÏÂ±ê
+int num[maxv];
+int nume;
+void init(int n)
+{
+    for (int i = 0; i < n; i++) G[i].clear();
+    edges.clear();
+}
+
+void addEdge(int from, int to, int cap)
+{
+    edges.push_back(Edge(from, to, cap, 0));
+    edges.push_back(Edge(to, from, 0, 0));
+    nume = edges.size();
+    G[from].push_back(nume-2);
+    G[to].push_back(nume-1);
+}
+
+
+void bfs(int t)
+{
+    memset(d, -1, sizeof(d));
+    d[t] = 0;
+    queue<int> que;
+    que.push(t);
+    while(!que.empty())
+    {
+        int u = que.front();que.pop();
+        for (int i = 0; i < G[u].size(); i++)
+        {
+            Edge &e = edges[G[u][i]^1];
+            if (e.cap > e.flow && d[e.from] < 0)
+            {
+                d[e.from] = d[u] + 1;
+                que.push(e.from);
+            }
+        }
+    }
+}
+
+int add(int s, int t)
+{
+    int u = t,df = INF;
+    //´Ó»ãµãµ½Ô´µãÍ¨¹ýp×·×ÙÔö¹ãÂ·¾¶£¬dfÎªÒ»Â·ÉÏ×îÐ¡µÄ²ÐÁ¿
+    while(u != s)
+    {
+        Edge &e = edges[p[u]];
+        df = min(df, e.cap - e.flow);
+        u = edges[p[u]].from;
+    }
+    u = t;
+    //´Ó»ãµãµ½Ô´µã¸üÐÂÁ÷Á¿
+    while(u != s)
+    {
+        edges[p[u]].flow += df;
+        edges[p[u]^1].flow -= df;
+        u = edges[p[u]].from;
+    }
+    return df;
+}
+
+
+int max_flow(int s, int t)
+{
+    int flow = 0;
+    bfs(t);
+    memset(num, 0, sizeof(num));
+    for (int i = 0; i <= t; i++)
+        num[d[i]]++;
+    int u = s;
+    memset(iter, 0, sizeof(iter));
+    while(d[s] <= t)
+    {
+        //cout<<d[s]<<endl;
+       // system("pause");
+        if (u == t)
+        {
+            flow += add(s, t);
+            u = s;
+        }
+        bool flag = false;
+        for (int i = iter[u]; i < G[u].size(); i++)
+        {
+            Edge &e = edges[G[u][i]];
+            if (e.cap > e.flow && d[u] == d[e.to] + 1)
+            {
+                flag = true;
+                p[e.to] = G[u][i];
+                iter[u] = i;
+                u = e.to;
+                break;
+            }
+        }
+        if (!flag) // restart
+        {
+           // cout<<1<<endl;
+            int m = t;
+            for (int i = 0; i < G[u].size(); i++)
+            {
+                Edge &e = edges[G[u][i]];
+                if (e.cap > e.flow)
+                    m = min(m, d[e.to]);
+            }
+            if (--num[d[u]] == 0)
+                break;//gapÓÅ»¯
+            num[d[u] = m+1] ++;
+            iter[u] = 0;
+            if (u != s)
+                u = edges[p[u]].from;
+        }
+    }
+    return flow;
+}
+
+int main()
+{
+    int n,k;
+    scanf("%d%d", &n, &k);
+    for (int i = 0; i < k; i++)
+    {
+        int r,c;
+        scanf("%d%d", &r, &c);
+        addEdge(r,c+n,1);
+    }
+    int s = 0, t = 2*n+1;
+    for (int i = 1; i <= n; i++)
+    {
+        addEdge(0,i,1);
+        addEdge(i+n,t,1);
+    }
+    printf("%d\n", max_flow(s,t));
+
+    return 0;
+}
+```
+
+匈牙利二分匹配
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+const int maxv = 10000;
+const int maxe = 55555;
+const int INF = 0x3f3f3f3f;
+int V;
+vector<int> G[maxv];
+int match[maxv];
+bool used[maxv];
+
+void addEdge(int u, int v)
+{
+    G[u].push_back(v);
+    G[v].push_back(u);
+}
+
+bool dfs(int v)
+{
+    used[v] = true;
+    for (int i = 0; i < G[v].size(); i++)
+    {
+        int u = G[v][i], w = match[u];
+        if (w < 0 || !used[w] && dfs(w))
+        {
+            match[v] = u;
+            match[u] = v;
+            return true;
+        }
+    }
+    return false;
+}
+
+int bipartite_matching()
+{
+    int res = 0;
+    memset(match, -1, sizeof(match));
+    for (int v = 1; v <= V; v++)
+    {
+        if (match[v] < 0)
+        {
+            memset(used, 0, sizeof(used));
+            if (dfs(v))
+                res++;
+        }
+    }
+    return res;
+}
+
+int main()
+{
+    int n,k;
+    scanf("%d%d", &n, &k);
+    V = 2*n;
+    for (int i = 0; i < k; i++)
+    {
+        int r,c;
+        scanf("%d%d", &r, &c);
+        addEdge(r,c+n);
+    }
+    printf("%d\n", bipartite_matching());
+
+    return 0;
+}
+```
+
+[POJ 3057 Evacuation](http://poj.org/problem?id=3057)
+
+唔~~，这题我做了6个小时，中途还看了题解的思路，哎，真是
+
+好了，来说题意：X*Y大的房子着火，给一个字符表格，‘X’代表墙,‘.’代表房子内空地，‘D’代表门。房子内所有的空地上都站着一个人，现在房子着火了，人要出来，每个房门1秒钟只能出一个人，人只能上下左右四个方向移动，每移动一个格子花费1秒钟，问：房间里所有人都出来，最少需要多长时间，如果有人出不来（四周都是墙），输出impossible。
+
+这个我是实在没有一点构图的思路，最后还是参考了下题解，题解先给出一种方法，二分答案法，这里简单说下思路，很简单，先确定一个答案的范围（0–X*Y可以吧），然后，对于每个门，通过BFS求得所有能到达这个门的空地与门之间的距离，记录下来。然后检查是否存在一个空地不能到达任意一个门，如果存在，肯定是impossible；不存在，那么就肯定能出来。接下来就是求出来的时间，我们先假定一种答案然后判断在答案这种时间内，是否可以逃出。二分答案法就不用多说了，关键在于判断能否逃出的过程。对于一个特定的时间T，我们构图就会感到比较容易了，因为每秒钟每个门只能出来一个人，所以我们应该把门d分成：1秒钟的门d，2秒钟的门d，3秒钟的门d…………T秒钟的门d几种门，然后就是一个最大匹配数问题了。我们怎么连边呢？对于一个门d，假设他距离空地v的距离为dis[d][v],加入是t秒钟的门，那么哪些点可以连到这个门上呢？自然是dis[d][v]<=t的点了。这样连了图以后，就求一下最大匹配数，看是否等于空地的总数即可。依次二分答案得到最终结果。代码就不挂了，根据这个思路自己写一写吧
+
+这种方法呢，确实是可以的，不过还有更好的方法，因为我们仔细想一想，对于每一个T都要构图，重新计算二分图，我们重复计算了好多次，造成了大量的时间浪费。事实上，更好的方法是，我们确定一个有可能是答案的最小的t，然后构图（构图方法跟上面相同），求最大匹配数，比较得到的最大匹配数是否跟空地总数相等，如果不等，就把时间加一，这样只是再多加门的个数那么多个点，按照同样的规则连边，然后继续求二分匹配，不过要注意，不是重新求，而是在原来的基础上求。如果你用最大流的话，就相当于加了几条边，在原来的残余网络的基础上进行增广就好；如果你用的是匈牙利二分匹配的话，就更简单了，观察一下他的代码。他是按照顺序从一侧的顶点开始寻找增广路增广的，所以我们只需要从新加的那些顶点开始寻找增广路就好了。我用的是后者。
+
+我在写的时候，犯了一些数组开小了,初始化不全面之类的错误，还有一些细节没有注意好，BFS刚开始写的有点问题，不过思路就是这个样子的，感觉想不到就是做的不够多练得不够多，不多讲了，上我自己的代码
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+const int maxv = 10000;
+const int maxe = 55555;
+const int INF = 0x3f3f3f3f;
+int V;
+vector<int> G[maxv];
+int match[maxv];
+bool used[maxv];
+
+void init(int n)
+{
+    for (int i = 1; i <= n; i++)
+        G[i].clear();
+
+}
+void addEdge(int u, int v)
+{
+    G[u].push_back(v);
+    G[v].push_back(u);
+}
+
+bool dfs(int v)
+{
+    used[v] = true;
+    for (int i = 0; i < G[v].size(); i++)
+    {
+        int u = G[v][i], w = match[u];
+        if (w < 0 || !used[w] && dfs(w))
+        {
+            match[v] = u;
+            match[u] = v;
+            return true;
+        }
+    }
+    return false;
+}
+
+int bipartite_matching(int bg, int ed)
+{
+    int res = 0;
+    for (int v = bg; v <= ed; v++)
+    {
+        if (match[v] < 0)
+        {
+            memset(used, 0, sizeof(used));
+            if (dfs(v))
+                res++;
+        }
+    }
+    return res;
+}
+
+const int dd[4][2] = { {0, -1}, {1, 0}, {0, 1}, {-1, 0} };
+char board[15][15];
+int cnt[15][15];
+int numd,nump;//分别指出口的数量和点的数量
+int dis[150][150];
+int X,Y;
+void BFS(int x, int y)
+{
+    queue<pair<int, int> > que;
+    int *tp = dis[cnt[x][y]];
+    dis[cnt[x][y]][0] = 0;
+    for (int i = 0; i < 4; i++)
+    {
+        int nx = x + dd[i][0], ny = y + dd[i][1];
+        if (nx >= 0 && nx < Y && ny >= 0 && ny < X && board[nx][ny] == '.' && tp[cnt[nx][ny]] < 0)
+        {
+            tp[cnt[nx][ny]] =  1;
+            que.push(make_pair(nx, ny));
+        }
+    }
+    while(!que.empty())
+    {
+        int xx = (que.front()).first, yy = (que.front()).second; que.pop();
+
+        for (int i = 0; i < 4; i++)
+        {
+            int nx = xx + dd[i][0], ny = yy + dd[i][1];
+            if (nx >= 0 && nx < Y && ny >= 0 && ny < X && board[nx][ny] == '.' && tp[cnt[nx][ny]] < 0)
+            {
+                tp[cnt[nx][ny]] = tp[cnt[xx][yy]] + 1;
+                que.push(make_pair(nx, ny));
+            }
+        }
+    }
+}
+
+
+int main()
+{
+    int kase;
+   /* freopen("in.txt", "r", stdin);
+    freopen("out.txt", "w", stdout);*/
+    cin>>kase;
+    while(kase--)
+    {
+        scanf("%d%d", &Y, &X);
+        for (int i = 0; i < Y; i++)
+            scanf("%s", board[i]);
+        memset(dis, -1, sizeof(dis));
+        numd = 0, nump = 0;
+        for (int i = 0; i < Y; i++)
+            for (int j = 0; j < X; j++)
+            {
+                if (board[i][j] == '.')
+                    cnt[i][j] = ++nump;
+                else if (board[i][j] == 'D')
+                    cnt[i][j] = ++numd;
+            }
+
+        for (int i = 0; i < Y; i++)
+            for (int j = 0; j < X; j++)
+                if (board[i][j] == 'D')
+                    BFS(i,j);
+       /*for (int i = 1; i <= numd; i++)
+        for (int j = 1; j <= nump; j++)
+                printf("%d%c", dis[i][j], j == nump ? '\n' : ' ');*/
+        int ans = 0;
+        for (int i = 1; i <= nump; i++)
+        {
+            int tmp = INF;
+            for (int j = 1; j <= numd; j++)
+            {
+                if (dis[j][i] != -1)
+                    tmp = min(tmp, dis[j][i]);
+            }
+            if (tmp < 0 || tmp == INF)
+            {
+                ans = -1;
+                break;
+            }
+            ans = max(ans,tmp);
+            //cout<<ans<<endl;
+        }
+        if (ans  == -1)
+            printf("impossible\n");
+        else
+        {
+            for (int T = 0; T < ans; T++)
+                for (int i = 1; i <= numd; i++)
+                {
+                    int pp = nump+T*numd+i;
+                    for (int j = 1; j <= nump; j++)
+                        if (dis[i][j] <= T+1 && dis[i][j] > 0)
+                            addEdge(j, pp);
+                }
+            int bg = 1;
+            int max_match = 0;
+            memset(match, -1, sizeof(match));
+            while(true)
+            {
+                V = nump+ans*numd;
+                max_match += bipartite_matching(bg, V);
+                if (max_match == nump)
+                    break;
+                ans++;
+                for (int i = 1; i <= numd; i++)
+                {
+                    int pp = nump+(ans-1)*numd+i;
+                    for (int j = 1; j < nump; j++)
+                        if (dis[i][j] <= ans && dis[i][j] > 0)
+                            addEdge(j, pp);
+                }
+                bg = V+1;
+                V += numd;
+              //  cout<<max_match<<endl;
+            }
+            printf("%d\n", ans);
+        }
+        init(nump+ans*numd);
+        memset(cnt, 0 ,sizeof(cnt));
+        memset(board, 0,sizeof(board));
+    }
+
+   // system("pause");
+
+    return 0;
+}
+```
+
+[POJ 3281 Dining](http://poj.org/problem?id=3281)
+
+题意，共有F种中食物和D种饮料，农场里每头牛都有自己喜欢的食物和饮料（不一定只有一个），但每种食物或饮料最多只能分配给一头牛，问最多有多少头牛可以同时得到自己喜欢的饮料和食物？
+
+这题的难点在于，他分的不只是一种东西，假如分的东西只有食物，那么我们就可以用二分匹配来做，但是，他分的东西还有饮料。那怎么办呢？自然是2个二分匹配啦！2个2分匹配怎么搞？唔~~，用网络流就很容易搞定了。我们这样建图。从源点指向食物（或者饮料，二者选其一），权值为1的边；从食物（或饮料）指向牛，权值为1的边；从牛指向牛，权值为1的边（因为这个相当于是牛这个顶点的容量是1，顶点有容量，就需要拆成2个点，所以是一头牛拆成2头牛），权值为1；从牛指向饮料（或者食物，跟前面相对），权值为1的边；从饮料（或者食物）指向汇点，权值为1的边。当然，食物饮料和牛之间的关系自然是题目中给出了。
+
+下面是代码
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include<vector>
+#include <cmath>
+
+using namespace std;
+
+const int maxv = 10000;
+const int maxe = 55555;
+const int INF = 0x3f3f3f3f;
+struct Edge{
+    int from, to, cap, flow;
+    Edge(int u, int v, int c, int f): from(u), to(v), cap(c),flow(f){}
+};
+
+vector<Edge> edges;
+vector<int> G[maxv];
+int a[maxv];//µ±Ç°½ÚµãÄóÁ÷Á¿
+int p[maxv];//¸¸Ç×½Úµã£¬»ØËÝÂ·¾¶ÓÃµ½
+int d[maxv];//µ½ÖÕµã¾àÀë
+int iter[maxv];//µ±Ç°»¡ÏÂ±ê
+int num[maxv];
+int nume;
+void init(int n)
+{
+    for (int i = 0; i < n; i++) G[i].clear();
+    edges.clear();
+}
+
+void addEdge(int from, int to, int cap)
+{
+    edges.push_back(Edge(from, to, cap, 0));
+    edges.push_back(Edge(to, from, 0, 0));
+    nume = edges.size();
+    G[from].push_back(nume-2);
+    G[to].push_back(nume-1);
+}
+
+
+void bfs(int t)
+{
+    memset(d, -1, sizeof(d));
+    d[t] = 0;
+    queue<int> que;
+    que.push(t);
+    while(!que.empty())
+    {
+        int u = que.front();que.pop();
+        for (int i = 0; i < G[u].size(); i++)
+        {
+            Edge &e = edges[G[u][i]^1];
+            if (e.cap > e.flow && d[e.from] < 0)
+            {
+                d[e.from] = d[u] + 1;
+                que.push(e.from);
+            }
+        }
+    }
+}
+
+int add(int s, int t)
+{
+    int u = t,df = INF;
+    //´Ó»ãµãµ½Ô´µãÍ¨¹ýp×·×ÙÔö¹ãÂ·¾¶£¬dfÎªÒ»Â·ÉÏ×îÐ¡µÄ²ÐÁ¿
+    while(u != s)
+    {
+        Edge &e = edges[p[u]];
+        df = min(df, e.cap - e.flow);
+        u = edges[p[u]].from;
+    }
+    u = t;
+    //´Ó»ãµãµ½Ô´µã¸üÐÂÁ÷Á¿
+    while(u != s)
+    {
+        edges[p[u]].flow += df;
+        edges[p[u]^1].flow -= df;
+        u = edges[p[u]].from;
+    }
+    return df;
+}
+
+
+int max_flow(int s, int t)
+{
+    int flow = 0;
+    bfs(t);
+    memset(num, 0, sizeof(num));
+    for (int i = 0; i <= t; i++)
+        num[d[i]]++;
+    int u = s;
+    memset(iter, 0, sizeof(iter));
+    while(d[s] <= t)
+    {
+        //cout<<d[s]<<endl;
+       // system("pause");
+        if (u == t)
+        {
+            flow += add(s, t);
+            u = s;
+        }
+        bool flag = false;
+        for (int i = iter[u]; i < G[u].size(); i++)
+        {
+            Edge &e = edges[G[u][i]];
+            if (e.cap > e.flow && d[u] == d[e.to] + 1)
+            {
+                flag = true;
+                p[e.to] = G[u][i];
+                iter[u] = i;
+                u = e.to;
+                break;
+            }
+        }
+        if (!flag) // restart
+        {
+           // cout<<1<<endl;
+            int m = t;
+            for (int i = 0; i < G[u].size(); i++)
+            {
+                Edge &e = edges[G[u][i]];
+                if (e.cap > e.flow)
+                    m = min(m, d[e.to]);
+            }
+            if (--num[d[u]] == 0)
+                break;//gapÓÅ»¯
+            num[d[u] = m+1] ++;
+            iter[u] = 0;
+            if (u != s)
+                u = edges[p[u]].from;
+        }
+    }
+    return flow;
+}
+
+int main()
+{
+    int n,f,d;
+    scanf("%d%d%d", &n, &f, &d);
+    for (int i = 1; i <= n; i++)
+    {
+        int a,b;
+        scanf("%d%d", &a, &b);
+        addEdge(i, i+n, 1);
+        for (int j = 0; j < a; j++)
+        {
+            int food;
+            scanf("%d", &food);
+            addEdge(2*n+food, i, 1);
+        }
+        for (int k = 0; k < b; k++)
+        {
+            int dish;
+            scanf("%d", &dish);
+            addEdge(i+n, 2*n+f+dish, 1);
+        }
+    }
+    int s = 0, t = 2*n+d+f+1;
+    for (int i = 1; i <= f; i++)
+        addEdge(0, 2*n+i, 1);
+    for (int i = 1; i <= d; i++)
+        addEdge(2*n+f+i,t,1);
+    printf("%d\n", max_flow(s,t));
+   // system("pause");
+
+    return 0;
+}
+```
+
+之所以用isap是因为我昨天是最后敲的isap，今天就没有毁直接用的。
+
+好了，题解大概就这样了，接下来该最小费用流了！

@@ -1,0 +1,929 @@
+---
+layout: post
+title: "图论总结(四)"
+date: 2015-03-14 18:54:50 +0800
+comments: true
+categories: 图论
+---
+
+###最小费用流
+
+<!--more-->
+
+被老爸坑了，耽搁了好久，然后回来后又卡一些题卡了好久，都是泪，不说了，继续总结图论，应该是倒数第二个总结了，马上就要接近尾声了（丫的半个假期都快过去了，这哪成？太慢了呀！）
+
+中途由于一些事情，这个最小费用流断断续续弄了好几天，不过也算是搞懂了，虽然用起来还不太熟练，但是总比之前嘛也不会的小白强，练一练总归是有效果的，废话少说，进入正题。
+
+先来说说最小费用流是个什么东东。在最大流问题的网络中，给每条边有多加上了一个费用，求的不再是流量的最大值，而是在一定流量F下时的费用的最小值，这就是最小费用流问题。（其中，求在最大流量下的最小费用流的问题又叫最小费用最大流，这也是常会碰到的）。
+
+那么，这种问题怎么解呢？考虑一下，我们在求解最大流的时候，是在残余网络上不断贪心的增广得到了最大流，现在边上多了费用，那么如果我们依然采用贪心的策略，在残余网络上总是沿着最短路增广又如何呢？此时，残余网络中反向边的费用应该是原边的相反数，以保证过程是可逆而正确的。
+
+先来证明一下这个算法的正确性：
+
+首先，我们需要证明一个**定理：f是最小费用流 <==> 残余网络中没有负环。**这个定理很重要，以后会用到。加入残余网络中有负环，那么我们就可以沿着这个负环进行增广，不会影响总的流量，但是会使费用更加小，所以，参与网络中有负环 => f不是最小费用流。 所以 f是最小费用流 => 残余网络中没有负环。（充分性证明）如果f不是最小费用流，也就是存在与f同流量但是费用比f更小的流f1。那么我们观察一下f1-f，在f中，除了s和t以外的所有顶点的流入量等于流出量，在流f1中亦然。并且，由流f和流f1的流量相同可知，流f1-f中所有顶点的流入量都等于流出量，即他们是由若干圈组成。因为刘f1-f的费用是负的，所以在这些圈中，至少存在一个负环。残余网络中没有负环=>f是最小费用流。（必要性证明）。综上，原命题得证。
+
+利用上面个那个定理，我们就可以通过归纳法证明，在该算法中流量为i的流fi是具有相同流量的流中费用最小的。首先，对于流量为0的流f0，其残余网络就是原图，只要原图不含负环，那么f0就是流量为0的最小费用流。假设流量为i的流fi是最小费用流，并且下一步我们求得了流量为i+1的流fi+1，那么此时，fi+1 - fi 就是 fi 对应的残余网络中 s 到 t 的最短路。（其实想一下，增加1流量，肯定按照残余网络中的最短路进行增广的费用是最小的）。
+
+不继续写下面的严格证明了，反正就是沿着最短路进行增广得到的费用一定是对应流量的中最小的。我们要做的就是每次求出当前网络中的最短路，然后还原最短路径，沿着这条路径进行增广，直到到达要求的流量。
+
+这类求最小费用流的算法也叫连续最短路算法，模板如下：
+
+```c++
+const int maxv = 22222;
+
+const int INF = 0x3f3f3f3f;
+
+struct Edge{
+    int  to, cap, cost, rev;
+    Edge(){}
+    Edge(int to, int cap, int cost, int rev):to(to), cap(cap), cost(cost), rev(rev){}
+};
+
+int V;//顶点数
+vector<Edge> G[maxv];//图的邻接表表示
+int dist[maxv];//最短距离
+int prevv[maxv], preve[maxv];//最短路中的前驱节点和对应的边
+queue<int> que;
+bool inq[maxv];
+
+//向途中增加一条从from到to容量为cap费用为cost的边
+void addEdge(int from, int  to, int cap, int cost)
+{
+    G[from].push_back(Edge(to, cap, cost, G[to].size()));
+    G[to].push_back(Edge(from, 0, -cost, G[from].size() - 1));
+}
+//求解从s到t流量为f的最小费用流
+//如果不再能增广则返回-1
+int min_cost_flow(int s, int  t, int f)
+{
+    int res = 0;
+    while (f > 0)
+    {
+        //利用Bellman-Ford算法求s到t的最短路
+        fill(dist, dist+V, INF);
+        memset(inq, 0 , sizeof(inq));
+        dist[s] = 0;
+        que.push(s);
+        inq[s] = true;
+        while(!que.empty())
+        {
+            int u = que.front(); que.pop();
+            inq[u] = false;
+            for (int i = 0; i < G[u].size(); i++)
+            {
+                Edge& e = G[u][i];
+                if (e.cap > 0 && dist[e.to] > dist[u] + e.cost)
+                {
+                    dist[e.to] = dist[u] + e.cost;
+                    prevv[e.to] = u;
+                    preve[e.to] = i;
+                    if (!inq[e.to])
+                    {
+                        que.push(e.to);
+                        inq[e.to] = true;
+                    }
+                }
+            }
+        }
+
+        if (dist[t] == INF)
+            return -1;
+        int d = f;
+        for (int v = t; v != s; v = prevv[v])
+            d = min(d, G[prevv[v]][preve[v]].cap);
+        f -= d;
+        res += d*dist[t];
+        for (int v = t; v!= s; v = prevv[v])
+        {
+            Edge &e = G[prevv[v]][preve[v]];
+            e.cap -= d;
+            G[v][e.rev].cap += d;
+        }
+    }
+    return res;
+}
+```
+
+由于图中含有负边，所以用的是SPFA算法求最短路，实际上，我们可以通过导入势的概念，改用Dijkstra算法来求最短路。
+
+这里势的概念，是指给每个顶点赋予的一个标号h[v]，在这个势的基础上，将边e = (u,v)的长度变为d’[e] = d[e] + h[u] - h[v].所以从d’中的s-t路径的长度中减去常熟h[s] - h[t]，就得到了d中对应路径的长度，因此d’中的最短路也是d中的最短路。所以，如果合理的选择势，使得对于所有的e都有d’[e]>=0的话，我们就可以在d’中用Dijkstra算法求最短路，从而得到d的最短路。对于任意不含负环的图，我们可以通过取h[v] = (s-t的最短距离)来做到这一点，因为对于任意一条边e=(u,v),有(s-v的距离) <= (s-u的距离) + d[e], 于是我们有d’[e] = d[e] + h[u] - h[v] >= 0.(注意，这里d[e]指的是边e的长度)
+
+接下来我们就考虑如何一次更新流量为i的最小费用流fi及其对应的势hi。定义如下变量
+
+fi[e]:流量为i的最小费用流中边e的流量
+
+hi[v]:fi的残余网络中s到v的最短距离
+
+di[e]:考虑事后e的长度。
+
+在图中不含有负环的情况下，可以初始化fi[e]为0,。如果图中没有负权边的话，还可以直接用Dijkstra算法计算h0.求的fi和hi之后，沿着fi的参与网络中s到t得最短路进行增广就得到了fi+1(这个之前说过).为了求hi+1，我们需要求fi+1残余网络上的最短路，这个我们可以利用hi通过Dijkstra办到。
+
+```c++
+using namespace std;
+
+const int maxv = 22222;
+
+const int INF = 0x3f3f3f3f;
+
+struct Edge{
+    int  to, cap, cost, rev;
+    Edge(){}
+    Edge(int to, int cap, int cost, int rev):to(to), cap(cap), cost(cost), rev(rev){}
+};
+
+typedef pair<int, int> P;
+int V;//顶点数
+vector<Edge> G[maxv];//图的邻接表表示
+int dist[maxv];//最短距离
+int prevv[maxv], preve[maxv];//最短路中的前驱节点和对应的边
+int h[maxv];//顶点的势
+// queue<int> que;
+
+
+//向途中增加一条从from到to容量为cap费用为cost的边
+void addEdge(int from, int  to, int cap, int cost)
+{
+    G[from].push_back(Edge(to, cap, cost, G[to].size()));
+    G[to].push_back(Edge(from, 0, -cost, G[from].size() - 1));
+}
+//求解从s到t流量为f的最小费用流
+//如果不再能增广则返回-1
+int min_cost_flow(int s, int  t, int f)
+{
+    int res = 0;
+    while (f > 0)
+    {
+        //利用Dijkstra算法求s到t的最短路
+        priority_queue<P, vector<P>, greater<P> > que;
+        fill(dist, dist+V, INF);
+        //memset(inq, 0 , sizeof(inq));
+        dist[s] = 0;
+        que.push(make_pair(0, s));
+        // inq[s] = true;
+        while(!que.empty())
+        {
+            P p = que.top(); que.pop();
+            int v = p.second;
+            if (dist[v] < p.first) continue;
+            for (int i = 0; i < G[v].size(); i++)
+            {
+                Edge& e = G[v][i];
+                if (e.cap > 0 && dist[e.to] > dist[v] + e.cost + h[v] - h[e.to])
+                {
+                    dist[e.to] = dist[v] + e.cost + h[v] - h[e.to];
+                    prevv[e.to] = v;
+                    preve[e.to] = i;
+                    que.push(make_pair(dist[e.to], e.to));
+                }
+            }
+        }
+
+        if (dist[t] == INF)
+            return -1;
+        int d = f;
+        for (int v = 0; v < V; v++)
+            h[v] += dist[v];
+
+        for (int v = t; v != s; v = prevv[v])
+            d = min(d, G[prevv[v]][preve[v]].cap);
+        f -= d;
+        res += d*h[t];
+        for (int v = t; v!= s; v = prevv[v])
+        {
+            Edge &e = G[prevv[v]][preve[v]];
+            e.cap -= d;
+            G[v][e.rev].cap += d;
+        }
+    }
+    return res;
+}
+```
+
+接下来看几道题。
+
+[POJ2175 Evacuation Plan](http://poj.org/problem?id=2175)
+
+先用这道题来说一下，像这样要确定两类物体之间的对应关系，并希望使总花费最小的问题称为指派问题。如果把两类物体当做顶点，并在顶点之间连接权重为对应花费的边，就转化为了最小权匹配问题。与二分图的最大匹配可以用最大流求解类似，这个二分图最小权匹配也可以用最小费用流来求解，建图的方法几乎和二分图最大匹配的情况一样。
+
+加设源点s和汇点t，需要连这样几类边：1.从s指向各个楼的边，流量为人数，花费为0；2.从各个楼指向各个防空洞的边，流量为无穷（只要有人在楼里切防空洞能撑得下就能过去），费用为题中给出公式计算出来的；3.从防空洞指向汇点的边，流量为防空洞的容量，花费为0.
+
+这样建好图之后，就成了一个最小费用最大流问题，在流量最大的情况下取花费最小的（这里的流量肯定是总人数F），我们只需要求出最小花费跟题目中所给的方案比较即可，这个方法很简单，建好图就行，但是，实践发现，结果是TLE。这里说这种方法只不过是想让掌握一种二分图最小权匹配的方法，这里把代码挂出来。
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+const int maxv = 555;
+
+const int INF = 0x3f3f3f3f;
+
+struct Edge{
+    int  to, cap, cost, rev;
+    Edge(){}
+    Edge(int to, int cap, int cost, int rev):to(to), cap(cap), cost(cost), rev(rev){}
+};
+
+int V;//顶点数
+vector<Edge> G[maxv];//图的邻接表表示
+int dist[maxv];//最短距离
+int prevv[maxv], preve[maxv];//最短路中的前驱节点和对应的边
+queue<int> que;
+bool inq[maxv];
+
+//向途中增加一条从from到to容量为cap费用为cost的边
+void addEdge(int from, int  to, int cap, int cost)
+{
+    G[from].push_back(Edge(to, cap, cost, G[to].size()));
+    G[to].push_back(Edge(from, 0, -cost, G[from].size() - 1));
+}
+//求解从s到t流量为f的最小费用流
+//如果不再能增广则返回-1
+int people_sum = 0;
+int min_cost_flow(int s, int  t, int f)
+{
+    int res = 0;
+    while (f > 0)
+    {
+        //利用Bellman-Ford算法求s到t的最短路
+        fill(dist, dist+V, INF);
+        memset(inq, 0 , sizeof(inq));
+        dist[s] = 0;
+        que.push(s);
+        inq[s] = true;
+        while(!que.empty())
+        {
+            int u = que.front(); que.pop();
+            inq[u] = false;
+            for (int i = 0; i < G[u].size(); i++)
+            {
+                Edge& e = G[u][i];
+                if (e.cap > 0 && dist[e.to] > dist[u] + e.cost)
+                {
+                    dist[e.to] = dist[u] + e.cost;
+                    prevv[e.to] = u;
+                    preve[e.to] = i;
+                    if (!inq[e.to])
+                    {
+                        que.push(e.to);
+                        inq[e.to] = true;
+                    }
+                }
+            }
+        }
+
+        if (dist[t] == INF)
+            return -1;
+        int d = f;
+        for (int v = t; v != s; v = prevv[v])
+            d = min(d, G[prevv[v]][preve[v]].cap);
+        f -= d;
+        res += d*dist[t];
+        for (int v = t; v!= s; v = prevv[v])
+        {
+            Edge &e = G[prevv[v]][preve[v]];
+            e.cap -= d;
+            G[v][e.rev].cap += d;
+        }
+    }
+    return res;
+}
+int N,M;
+int X[maxv],Y[maxv],B[maxv],P[maxv],Q[maxv],C[maxv];
+int E[maxv][maxv];
+int main()
+{
+    int N,M;
+    scanf("%d%d", &N, &M);
+    for(int i = 0; i < N; i++)
+        scanf("%d%d%d", &X[i], &Y[i], &B[i]);
+    for(int i = 0; i < M; i++)
+        scanf("%d%d%d", &P[i], &Q[i], &C[i]);
+    for(int i = 0; i < N; i++)
+        for(int j = 0; j < M; j++)
+            scanf("%d", &E[i][j]);
+    int s = 0, t = N+M+1;
+    V = t+1;
+    int ans = 0;
+
+    for (int i = 0; i < N; i++)
+    {
+        addEdge(s, i+1, B[i], 0);
+        people_sum += B[i];
+    }
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < M; j++)
+        {
+            int c = abs(X[i] - P[j]) + abs(Y[i] - Q[j]) + 1;
+            addEdge(i+1, 1+N+j, INF, c);
+            ans += c*E[i][j];
+        }
+    for (int i = 0; i < M; i++)
+        addEdge(N+1+i, t, C[i], 0);
+
+    if(min_cost_flow(s,t,people_sum) == ans)
+        cout<<"OPTIMAL"<<endl;
+    else
+    {
+        cout<<"SUBOPTIMAL"<<endl;
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < M; j++)
+                printf("%d%c", G[N+1+j][i].cap, j == M-1 ? '\n':' ');
+    }
+    system("pause");
+    return 0;
+}
+```
+
+另外一种算法，称为消负环算法，根据我们前面的定理可以知道，只要当前图的残余网络含有负环，那么就一定不是最小费用流；如果不含有，那么就是最小费用流。
+
+而这道题，只是让你判断给出的方案是不是最小费用流，如果不是的话还要求输出一个费用比给出的方案小（但不一定是最小费用流）的方案。那么我们就可以从负环这里入手，查找当前残余网络中是否含有负环，如果含有负环，就沿着负环（只是负环这一部分）对路径进行增广，费用就会减小且流量不变，由于只要求更优不要求最优，所以增广1即可。（事实上，这也是一种求最小费用流的方法，先任意给定一个合理的流，然后判断是否有负环，然后沿着负环增广，直到消除所有负环之后，就是最小费用流了，这种方法叫消负环法）
+
+《挑战程序设计竞赛》上给出一种用floyd算法求负环的方法的代码，这里我打了出来
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+const int maxv = 555;
+
+const int INF = 0x3f3f3f3f;
+
+struct Edge{
+    int  to, cap, cost, rev;
+    Edge(){}
+    Edge(int to, int cap, int cost, int rev):to(to), cap(cap), cost(cost), rev(rev){}
+};
+
+int N,M;
+int X[maxv],Y[maxv],B[maxv],P[maxv],Q[maxv],C[maxv];
+int E[maxv][maxv];
+int g[maxv][maxv];//距离矩阵
+int prev[maxv][maxv];//最短路中的前驱
+bool used[maxv];//找圈用的标记
+void solve()
+{
+    int V = N+M+1;
+    //计算距离矩阵
+    for(int i = 0; i < V; i++)
+        fill(g[i], g[i]+V, INF);
+    for (int j = 0; j < M; j++)
+    {
+        int sum = 0;
+        for (int i = 0; i < N; i++)
+        {
+            int c = abs(X[i] - P[j]) + abs(Y[i] - Q[j]) + 1;
+            g[i][N+j] = c;
+            if (E[i][j] > 0) g[N+j][i] = -c;
+            sum += E[i][j];
+        }
+        if (sum > 0) g[N+M][N+j] = 0;
+        if (sum < C[j]) g[N+j][N+M] = 0;
+    }
+    //用Floyd-Warshall算法查找负圈
+    for (int i = 0; i < V; i++)
+        for (int j = 0; j < V; j++)
+            prev[i][j] = i;
+    for (int k = 0; k < V; k++)
+        for (int i = 0; i < V; i++)
+            for (int j = 0; j < V; j++)
+            {
+                if (g[i][j] > g[i][k] + g[k][j])
+                {
+                    g[i][j] = g[i][k] + g[k][j];
+                    prev[i][j] = prev[k][j];
+                    if(i == j && g[i][i] < 0)
+                    {
+                        fill(used, used+V, false);
+                        //找到负圈
+                        for (int v = i; !used[v]; v = prev[i][v])
+                        {
+                            used[v] = true;
+                            if (v != N+M && prev[i][v] != N+M)
+                                if (v >= N)
+                                    E[prev[i][v]][v-N]++;
+                                else
+                                    E[v][prev[i][v] - N]--;
+                        }
+                        printf("SUBOPTIMAL\n");
+                        for (int x = 0; x < N; x++)
+                            for (int y = 0; y < M; y++)
+                                printf("%d%c", E[x][y], y == M-1?'\n':' ');
+                        return;
+                    }
+                }
+            }
+    printf("OPTIMAL\n");
+}
+int main()
+{
+    while(~scanf("%d%d", &N, &M))
+    {
+        memset(E, 0 , sizeof(E));
+        for(int i = 0; i < N; i++)
+            scanf("%d%d%d", &X[i], &Y[i], &B[i]);
+        for(int i = 0; i < M; i++)
+            scanf("%d%d%d", &P[i], &Q[i], &C[i]);
+        for(int i = 0; i < N; i++)
+            for(int j = 0; j < M; j++)
+                scanf("%d", &E[i][j]);
+       solve();
+      // system("pause");
+    }
+    return 0;
+}
+```
+
+我自己写了个SPFA消负环，不过现在还在WA着o(╯□╰)o，目前我已经暂时找不到错在哪里了T_T！
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+const int maxv = 555;
+
+const int INF = 0x3f3f3f3f;
+
+struct Edge{
+    int  to, cap, cost, rev;
+    Edge(){}
+    Edge(int to, int cap, int cost, int rev):to(to), cap(cap), cost(cost), rev(rev){}
+};
+
+int V;//顶点数
+vector<Edge> G[maxv];//图的邻接表表示
+int dist[maxv];//最短距离
+int prevv[maxv], preve[maxv];//最短路中的前驱节点和对应的边
+queue<int> que;
+bool inq[maxv];
+int cnt[maxv];
+bool vis[maxv];
+int N,M;
+
+//向途中增加一条从from到to容量为cap费用为cost的边
+void addEdge(int from, int  to, int cap, int cost)
+{
+    G[from].push_back(Edge(to, cap, cost, G[to].size()));
+    G[to].push_back(Edge(from, 0, -cost, G[from].size() - 1));
+}
+//求解从s到t流量为f的最小费用流
+//如果不再能增广则返回-1
+bool SPFA(int s, int t)
+{
+    fill(dist,dist+V,INF);
+    fill(inq, inq+V, 0);
+    fill(cnt, cnt+V, 0);
+    while(!que.empty())
+        que.pop();
+    dist[s] = 0;
+    que.push(s);
+    inq[s] = 1;
+
+    while(!que.empty())
+    {
+        int u = que.front(); que.pop();
+        inq[u] = false;
+       // cout<<u<<" "<<dist[u]<<endl;
+        //system("pause");
+        for (int i = 0; i < G[u].size(); i++)
+        {
+            Edge& e = G[u][i];
+           // cout<<u<<" "<<e.to<<" "<<e.cap<<endl;
+            if ((u == s || e.cap > 0) && dist[e.to] > dist[u] + e.cost && e.to != 0)
+            {
+                // cout<<u<<" "<<e.to<<" "<<e.cap<<endl;
+                //system("pause");
+                dist[e.to] = dist[u] + e.cost;
+                prevv[e.to] = u;
+                preve[e.to] = i;
+                if (!inq[e.to])
+                {
+                    que.push(e.to);
+                    inq[e.to] = true;
+                    if (++cnt[e.to] > V)
+                    {
+                        memset(vis, 0, sizeof(vis));
+                        for (int v = e.to; !vis[v]; v = prevv[v])
+                        {
+                            vis[v] = true;
+                            if (v != s && prevv[v] != s)
+                            {
+                                Edge& ee = G[prevv[v]][preve[v]];
+                                ee.cap--;
+                                G[v][ee.rev].cap++;
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
+int X[maxv],Y[maxv],B[maxv],P[maxv],Q[maxv],C[maxv];
+int E[maxv][maxv];
+int main()
+{
+    int N,M;
+    while(~scanf("%d%d", &N, &M))
+    {
+        memset(E, 0 , sizeof(E));
+        for (int i = 0; i < V; i++)
+            G[i].clear();
+        for(int i = 0; i < N; i++)
+            scanf("%d%d%d", &X[i], &Y[i], &B[i]);
+        for(int i = 0; i < M; i++)
+            scanf("%d%d%d", &P[i], &Q[i], &C[i]);
+        for(int i = 0; i < N; i++)
+            for(int j = 0; j < M; j++)
+                scanf("%d", &E[i][j]);
+        int s = 0, t = N+M+1;
+        V = t+1;
+        for (int i = 0; i < N; i++)
+            addEdge(s, i+1, B[i], 0);
+        for (int i = 0; i < M; i++)
+            addEdge(N+1+i, t, C[i], 0);
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < M; j++)
+            {
+                int c = abs(X[i] - P[j]) + abs(Y[i] - Q[j]) + 1;
+                addEdge(i+1, j+N+1, INF, c);
+                if (E[i][j] > 0)
+                {
+                    G[s][i].cap -= E[i][j];
+                    G[i+1][0].cap += E[i][j];
+                    G[j+N+1][0].cap -= E[i][j];
+                    G[t][j].cap += E[i][j];
+                    G[j+N+1][i+1].cap += E[i][j];
+                }
+            }
+        //如果通过SPFA没有找到负环，说明是最小费用，否则，输出一个沿着找到的负环增广1流量的结果
+        /*for (int i = 0; i < V; i++)
+        {
+            cout<<i<<":";
+            for (int j = 0; j < G[i].size(); j++)
+                cout<<G[i][j].to<<"---"<<G[i][j].cap<<" "<<G[i][j].cost<<"\t";
+            cout<<endl;
+        }*/
+        if (SPFA(s,t))
+            cout<<"OPTIMAL"<<endl;
+        else
+        {
+            cout<<"SUBOPTIMAL"<<endl;
+            for (int i = 0; i < N; i++)
+                for (int j = 0; j < M; j++)
+                    printf("%d%c",G[N+1+j][1+i].cap, j == M-1 ? '\n':' ');
+
+        }
+      // system("pause");
+    }
+    return 0;
+}
+```
+
+[POJ3686 The Windy’s](http://poj.org/problem?id=3686)
+
+这个题更当初那个火场逃生的题的构图挺像的，也是把一个东西分成了若干个，每个代表不同的东西。简单说下思路。
+
+其实书中所给的这个题的思考方向我也感觉挺好的，大多数题都应该这么想，由简及繁。最小化平均时间，就相当于最小化总时间；首先，我们想，如果每个工厂只能加工一个玩具的话（一对一），那么问题就是很简单的普通的指派问题了，但是他不是这样的。那我们就想办法把他变成这样。
+
+多个玩具多个工厂，我们先考虑一个工厂，在只有一个工厂的情况下，假设在这个工厂加工i号玩具的加工时间是ti，总时间是T，那么,如果按照a1,a2,a3,…………,an的顺序加工，那么T = ta1 + (ta1+ta2) + (ta1+ta2+ta3) + ………… + (ta1+ta2+…………+tan) = nta1 + (n-1)ta2 + (n-2)ta3 + ………… + tan。 这样我们就可以看成多个职能制作一个玩具的工厂，各自需要花费1倍到n倍的时间。然后对于每一个工厂都这样来分，这样建图的话，这道题也就不过是一个普通的指派问题了，很容易用最小费用流解决，代码给出来。
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+const int maxv = 22222;
+
+const int INF = 0x3f3f3f3f;
+
+struct Edge{
+    int  to, cap, cost, rev;
+    Edge(){}
+    Edge(int to, int cap, int cost, int rev):to(to), cap(cap), cost(cost), rev(rev){}
+};
+
+int V;//顶点数
+vector<Edge> G[maxv];//图的邻接表表示
+int dist[maxv];//最短距离
+int prevv[maxv], preve[maxv];//最短路中的前驱节点和对应的边
+queue<int> que;
+bool inq[maxv];
+void init()
+{
+    for (int i = 0; i < V; i++)
+        G[i].clear();
+}
+//向途中增加一条从from到to容量为cap费用为cost的边
+void addEdge(int from, int  to, int cap, int cost)
+{
+    G[from].push_back(Edge(to, cap, cost, G[to].size()));
+    G[to].push_back(Edge(from, 0, -cost, G[from].size() - 1));
+}
+//求解从s到t流量为f的最小费用流
+//如果不再能增广则返回-1
+int min_cost_flow(int s, int  t, int f)
+{
+    int res = 0;
+    while (f > 0)
+    {
+        //利用Bellman-Ford算法求s到t的最短路
+        fill(dist, dist+V, INF);
+        memset(inq, 0 , sizeof(inq));
+        dist[s] = 0;
+        que.push(s);
+        inq[s] = true;
+        while(!que.empty())
+        {
+            int u = que.front(); que.pop();
+            inq[u] = false;
+            for (int i = 0; i < G[u].size(); i++)
+            {
+                Edge& e = G[u][i];
+                if (e.cap > 0 && dist[e.to] > dist[u] + e.cost)
+                {
+                    dist[e.to] = dist[u] + e.cost;
+                    prevv[e.to] = u;
+                    preve[e.to] = i;
+                    if (!inq[e.to])
+                    {
+                        que.push(e.to);
+                        inq[e.to] = true;
+                    }
+                }
+            }
+        }
+
+        if (dist[t] == INF)
+            return -1;
+        int d = f;
+        for (int v = t; v != s; v = prevv[v])
+            d = min(d, G[prevv[v]][preve[v]].cap);
+        f -= d;
+        res += d*dist[t];
+        for (int v = t; v!= s; v = prevv[v])
+        {
+            Edge &e = G[prevv[v]][preve[v]];
+            e.cap -= d;
+            G[v][e.rev].cap += d;
+        }
+    }
+    return res;
+}
+
+int main()
+{
+    int T;
+    cin>>T;
+    while(T--)
+    {
+        //0 起点s
+        //1-n 玩具
+        //n+(k-1)*m+i i号工厂(1 =< i <= m)，k倍率。
+        int n,m;
+        scanf("%d%d", &n, &m);
+        int s = 0,t = n*(m+1)+1;
+        for (int i = 1; i <= n; i++)
+            addEdge(s, i, 1, 0);
+        for (int j = 0; j < m; j++)
+            for (int k = 1; k <= n; k++)
+                addEdge(n+(k-1)*m+1+j, t, 1, 0);
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= m; j++)
+            {
+                int p;
+                scanf("%d", &p);
+                for (int k = 1; k <= n; k++)
+                    addEdge(i, n+(k-1)*m+j, 1, k*p);
+            }
+        V = t+1;
+        printf("%.6f\n", (double)min_cost_flow(s,t,n)/n );
+        init();
+    }
+    return 0;
+}
+```
+
+[POJ 3680 Intervals](http://poj.org/problem?id=3680)
+
+这道题，对于现在的我来说，还是比较有难度的，构思也是比较巧妙。想不到的话，应该是因为太年轻了。
+
+同样的解题步骤，由简及繁。先考虑K=1的情况，这时问题等价于从这N个区域中选取一个元素互不相交的子集，目标是最大化子集元素的权重和。这种问题又被称为区间图的最大权独立集问题，可以用如下的DP算法求解。
+
+首先，对所有区间的端点排序得到一个x[]数组，另
+
+dp[i] = 只考虑 b[k] <= x[i] 的区间所能得到的最大总权重
+
+则有
+
+dp[i] = max(dp[i-1],max{dp[j] + w[k] | a[k] = x[j] 且 b[k] = x[i]})
+
+以上这个式子，说实话，好好想一想是能够想到的，但是关键是你会不会先去想K=1的情况。了解了这种情况之后，我们在参考它看一下K>1时的解法。看一下上面的那个DP递推式，仔细观察，它可以看做是在求解如下所建的图中的最短路问题：
+
+给m个端点x[i]建立对应的顶点v[i]；
+从v[i-1]向v[i]连一条费用为0的边
+对于区间k，如果a[k] = x[i] 且 b[k] = x[i]，则从v[j]想v[i]连一条费用为-w[k]的边
+K=1时DP所得到的最大总权重，就是该图中从v[0]到v[m-1]的最短路的费用的相反数。
+
+在该图中沿着权重为-w[i]的边增广就对应于选中区间w[i]，因为每个区间只能被选中1次，所以这类变的容量为1；其余边的容量为INF。那么一个流量为K的v[0]-v[m-1]流对应原题中所要求的K割子集。利用最小费用流即可，不过这里有一点需要注意，本题的图中含有负边权，我们可以本文末尾的专栏中提到的技术，先令所有负权边初始都满流来处理。先给代码了
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+#include <queue>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+const int maxv = 22222;
+const int maxn = 555;
+const int INF = 0x3f3f3f3f;
+
+struct Edge{
+    int  to, cap, cost, rev;
+    Edge(){}
+    Edge(int to, int cap, int cost, int rev):to(to), cap(cap), cost(cost), rev(rev){}
+};
+
+int V;//顶点数
+vector<Edge> G[maxv];//图的邻接表表示
+int dist[maxv];//最短距离
+int prevv[maxv], preve[maxv];//最短路中的前驱节点和对应的边
+queue<int> que;
+bool inq[maxv];
+void init()
+{
+    for (int i = 0; i < V; i++)
+        G[i].clear();
+}
+//向途中增加一条从from到to容量为cap费用为cost的边
+void addEdge(int from, int  to, int cap, int cost)
+{
+    G[from].push_back(Edge(to, cap, cost, G[to].size()));
+    G[to].push_back(Edge(from, 0, -cost, G[from].size() - 1));
+}
+//求解从s到t流量为f的最小费用流
+//如果不再能增广则返回-1
+int min_cost_flow(int s, int  t, int f)
+{
+    int res = 0;
+    while (f > 0)
+    {
+        //利用Bellman-Ford算法求s到t的最短路
+        fill(dist, dist+V, INF);
+        memset(inq, 0 , sizeof(inq));
+        dist[s] = 0;
+        que.push(s);
+        inq[s] = true;
+        while(!que.empty())
+        {
+            int u = que.front(); que.pop();
+            inq[u] = false;
+            for (int i = 0; i < G[u].size(); i++)
+            {
+                Edge& e = G[u][i];
+                if (e.cap > 0 && dist[e.to] > dist[u] + e.cost)
+                {
+                    dist[e.to] = dist[u] + e.cost;
+                    prevv[e.to] = u;
+                    preve[e.to] = i;
+                    if (!inq[e.to])
+                    {
+                        que.push(e.to);
+                        inq[e.to] = true;
+                    }
+                }
+            }
+        }
+
+        if (dist[t] == INF)
+            return -1;
+        int d = f;
+        for (int v = t; v != s; v = prevv[v])
+            d = min(d, G[prevv[v]][preve[v]].cap);
+        f -= d;
+        res += d*dist[t];
+        for (int v = t; v!= s; v = prevv[v])
+        {
+            Edge &e = G[prevv[v]][preve[v]];
+            e.cap -= d;
+            G[v][e.rev].cap += d;
+        }
+    }
+    return res;
+}
+
+int n,k;
+int a[maxn],b[maxn],w[maxn];
+int x[maxn],tmp[maxn];
+int cnttmp,cntx;
+
+int main()
+{
+    int T;
+    cin>>T;
+    while(T--)
+    {
+        scanf("%d%d", &n, &k);
+        cnttmp = 0;
+        int ans = 0;
+        for (int i = 0; i < n; i++)
+        {
+            scanf("%d%d%d", &a[i], &b[i], &w[i]);
+            tmp[cnttmp++] = a[i];
+            tmp[cnttmp++] = b[i];
+        }
+        sort(tmp, tmp+cnttmp);
+        x[0] = tmp[0];
+        cntx = 1;
+        for (int i = 1; i < cnttmp; i++)
+            if (tmp[i] != tmp[i-1])
+            {
+                x[cntx++] = tmp[i];
+                addEdge(cntx-2, cntx-1, INF, 0);
+            }
+       /* for (int i = 0; i < cntx; i++)
+            cout<<x[i]<<" ";
+        cout<<endl;*/
+      //  cout<<1<<endl;
+        int s = cntx, t = cntx+1;
+        V = t+1;
+        addEdge(s, 0, k, 0);
+        addEdge(cntx-1, t, k, 0);
+        for (int i = 0; i < n; i++)
+        {
+            int u = lower_bound(x, x+cntx, a[i]) - x;
+            int v = lower_bound(x, x+cntx, b[i]) - x;
+            //连一条从u到v的满流的边，流量为1，费用为-w[i]；
+            /*cout<<u<<" "<<v<<endl;*/
+            addEdge(v, u, 1, w[i]);
+            addEdge(s, v, 1, 0);
+            addEdge(u, t, 1, 0);
+            ans -= w[i];
+        }
+
+        ans += min_cost_flow(s, t, k+n);
+        cout<<-ans<<endl;
+        init();
+    }
+    return 0;
+}
+```
+
+PS:下面专栏中我还有一部分没有理解透彻
+
+>专栏：最小费用流的各种变体
+
+>>与最大流相同的变体 + 都采用与最大流相同的处理方法是可以的，这里不赘述了。要说的一点是，对于边上有最小流量限制的情况，还有更简单的方法，对于e = (u,v)， 新加一天边e’ = (u,v)，再另c’[e] = c[e] - b[e], c’[e’] = b[e], d’[e] = d[e], d’[e’] = d[e] - M(一个足够大常数)，对变形后的新图求解最小费用流，再在结果上加上M*(sigma(b[e]))就好。这样就把问题转为了没有最小流量限制的情况
+
+>>流量任意的情况 + 有些题目中，需要计算包含负权边的图中流量任意但费用最小的流。这种情况下，根据最小费用流算法中hi+1[v] >= hi[v]的性质，我们只要在hi[t]<0是不断增广就好了。
+
+>>费用为负数的情况 + 如果图中含有负权边，那么最初计算势的值就不能用Dijkstra算法，而需要改用SPFA算法。另外，如果图中还有负环，可以利用SPFA寻找负环，并在负环上尽量增广将其消去。 + 此外，在有些情况下，适当的变形可以避免负权边。比如下面的，也是上面个那道题用到的方法，在流量F一定的情况下，也可以采取与最小流量限制中类似的变形将负权边出去。新增源点S和汇点T，从S向s连一条容量为F费用为0的边，从t向T连一条容量为F费用为0的边。对于负权边e = (u,v)，可以让它一开始就已经满流。再从S向v连一条容量为c[e]费用为0的边，从u向T连一条容量为c[e]费用为0的边。这样变形后，我们就除去了图中的负权边，而原图流量为F+sigma（c[e]d[e]）(e为负权边)的最小费用就等于新图流量F的最小费用流加上sigma（c[e]d[e]）(e为负权边)。
+
+
