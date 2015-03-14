@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>弹性碰撞问题 - hnnwang&#8217;s Blog</title>
+  <meta name="author" content="hnnwang">
+
+  
+  <meta name="description" content="有关弹性碰撞的问题,我们先来看一道非常简单的水题! POJ1852 Ants 非常简单的一道题,简单分析下就很容易出来,由题意知道所有蚂蚁速度都是1,碰头后折返继续走.这个就可以看成没有折返而是碰头的蚂蚁穿过对方继续走,这样就可以看成每个蚂蚁都是从自己的位置一直走到掉下去为止,那么就很容易知道, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://whn757397540.github.io/blog/2015/02/17/dan-xing-peng-zhuang-wen-ti/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="hnnwang's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">hnnwang&#8217;s Blog</a></h1>
+  
+    <h2>Just for ACM-ICPC.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:whn757397540.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">弹性碰撞问题</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-17T18:56:45+08:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>有关弹性碰撞的问题,我们先来看一道非常简单的水题!</h2>
+
+<!--more-->
+
+
+<p><a href="http://poj.org/problem?id=1852">POJ1852 Ants</a></p>
+
+<p>非常简单的一道题,简单分析下就很容易出来,由题意知道所有蚂蚁速度都是1,碰头后折返继续走.这个就可以看成没有折返而是碰头的蚂蚁穿过对方继续走,这样就可以看成每个蚂蚁都是从自己的位置一直走到掉下去为止,那么就很容易知道,所有蚂蚁都掉下去的最短时间就是蚂蚁到两个顶端比较短的距离中最大的那个;而最长时间按就是蚂蚁到两个顶端比较长的距离中最大的那个! <a href="/acm/poj/poj1852/">参考代码</a>还是贴出来,虽然没什么必要</p>
+
+<p>我们由这道题引出弹性碰撞问题,大家都学过物理,知道弹性碰撞是个什么东东,如果物体的质量相同,那么在某个位置发生弹性碰撞后,物体会交换速度.比如上上面那道题,就可以看成以1速度运动的蚂蚁和另外一只以1速度运动(反向)的蚂蚁相撞,之后发生了速度交换,对于这种情况,都可以按照这个蚂蚁的处理方法,看做物体互相穿过继续运动即可,下面来看一道稍微复杂点的例题!</p>
+
+<p><a href="http://poj.org/problem?id=3684">POJ3684 Physics Experiment</a></p>
+
+<p>这个题,首先,我们先考虑加入没有半径,也就是说小球可以看成是质点的时候,先看如果只有一个小球的话,可以根据物理知识求出t时刻的小球位置,我们知道,不及阻力和摩擦的话,这是一个周期运动,半周期 T = sqrt(g×H/2),那么我们很容易知道，在前半个周期，小球做自由落体运动，那么t时刻的位置是（假设t在前半个周期且在第一个周期） pos = H - 1/2×g×t2， 同样，在下半个周期的话，小球做自由落体运动的逆向运动，容易求得 pos = H - 1/2×g×(2*T-t)2;</p>
+
+<p>上面的分析是针对一个小球的，如果是多个呢？那其实就是可以按照之前所说的处理，把弹性碰撞时发生的速度交换看成小球相互穿过后继续运动即可，那么我们可以求得所有小球的位置，之后对这个位置进行排序即可，因为先落下的小球一定在后落下的小球下面，这样就可以把小球的位置一一对应起来了！</p>
+
+<p>那么，如果加上半径r呢？实际上也不难，思考一下，小球运动的空间其实都是H那么高，因为每个小球都是无隙排列的。（仔细思考下应该能绕过这个弯儿来），那么我们就只需要按照之前没有算半径的时候的方法计算，再最终结果对应第i个小球加上一个小球的直径即可（因为在那个小球下面除了空的空间以外，还有i个小球！）</p>
+
+<p><a href="/acm/poj/poj1852/">参考代码</a></p>
+
+<p>总结一下，其实这种题目的重点就是：把速度交换变成互相穿过而行，从而使复杂的问题简单化</p>
+
+<p><a href="/blog/archives">&lt;–返回</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">hnnwang</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-17T18:56:45+08:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ji-qiao-fang-fa/'>技巧方法</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://whn757397540.github.io/blog/2015/02/17/dan-xing-peng-zhuang-wen-ti/" data-via="" data-counturl="http://whn757397540.github.io/blog/2015/02/17/dan-xing-peng-zhuang-wen-ti/" >Tweet</a>
+  
+  
+  
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_share_slide jiathis_share_24x24" id="jiathis_share_slide">
+<div class="jiathis_share_slide_top" id="jiathis_share_title"></div>
+<div class="jiathis_share_slide_inner">
+<div class="jiathis_style_24x24">
+<a class="jiathis_button_qzone"></a>
+<a class="jiathis_button_tsina"></a>
+<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+<script type="text/javascript">
+var jiathis_config = {
+	slide:{
+		divid:'jiathis_main',
+		pos:'right'
+	}
+};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>	
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_slide.js" charset="utf-8"></script>
+</div></div></div>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2008932"></script>
+<!-- UY END -->
+
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/02/17/ji-he-de-zheng-shu-biao-shi/" title="Previous Post: 集合的整数表示">&laquo; 集合的整数表示</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/03/14/tu-lun-zong-jie-%5B%3F%5D/" title="Next Post: 图论总结(一)">图论总结(一) &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/shu-zhuang-shu-zu-yi-ji-xian-duan-shu-zong-jie/">树状数组以及线段树总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/zuo-biao-chi-san-hua/">坐标离散化</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/zhe-ban-mei-ju/">折半枚举</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/kai-guan-wen-ti/">开关问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/lian-tong-du-zong-jie/">连通度总结</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"></script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+<p>
+  Copyright &copy; 2015 - hnnwang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Design by <a href="http://octopressthemes.com">Octopress Themes</a>. Background image by <a href="http://www.flickr.com/photos/rhysasplundh/">Rhys Asplundh</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

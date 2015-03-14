@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>二分查找及其应用总结 - hnnwang&#8217;s Blog</title>
+  <meta name="author" content="hnnwang">
+
+  
+  <meta name="description" content="二分查找及其应用总结
+二分搜索法，是通过不断缩小解可能存在的范围，从而求的问题最优解的方法。经常会出现的是二分搜索和其他算法结合的题目。 (PS:有关二分姿势的选取，可以看看峰霸这短小精悍的博文 首先，最基本的，从有序数组中查找某个值。 这个问题，再stl中有lower_bound() &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://whn757397540.github.io/blog/2015/03/14/er-fen-cha-zhao-ji-qi-ying-yong-zong-jie/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="hnnwang's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">hnnwang&#8217;s Blog</a></h1>
+  
+    <h2>Just for ACM-ICPC.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:whn757397540.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">二分查找及其应用总结</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-14T18:55:45+08:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>二分查找及其应用总结
+二分搜索法，是通过不断缩小解可能存在的范围，从而求的问题最优解的方法。经常会出现的是二分搜索和其他算法结合的题目。</p>
+
+<!--more-->
+
+
+<p>(PS:有关二分姿势的选取，可以看看<a href="http://blog.csdn.net/u012139398/article/details/38637311">峰霸这短小精悍的博文</a></p>
+
+<ol>
+<li>首先，最基本的，从有序数组中查找某个值。</li>
+</ol>
+
+
+<p>这个问题，再stl中有lower_bound()和upper_bound()来解决，这里给出一个内部算法结构，再简单说说STL的用法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="kt">int</span> <span class="nf">lowerBound</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">aim</span><span class="p">)</span><span class="c1">//返回值是&gt;=aim的第一个位置，如果不存在，返回最后一个元素之后的一个位置（也就是n）</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span><span class="c1">//初始化解的存在范围，这里求lower_bound的时候采取的是左闭右开的</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">while</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">l</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span><span class="c1">//重复循环，一知道解的范围足够小</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">aim</span><span class="p">)</span><span class="c1">//如果mid满足条件</span>
+</span><span class='line'>            <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span><span class="p">;</span><span class="c1">//解的存在范围变为(l, mid]</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>            <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span><span class="p">;</span><span class="c1">//解的存在范围变为(mid, r]</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">r</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当然，这只是针对整数的情况，而根据实际情况，还会有可能是其他的元素，或者其他的要求，要视情况而定。不再多说，提一下STL库里的两个函数的用法:</p>
+
+<p>首先，lower_bound(a, a+n, d)返回的是数组a里面（a可以是任何有序的数组）,元素值>=d的第一个元素的位置，如果不存在，则返回的是最后一个元素之后的第一个位置，注意，他的返回值是指针！</p>
+
+<p>然后，upper_bound(a, a+n, d)，与lower_bound（）类似，不过这里找的是>d的第一个元素的位置，不包括等于，不存在的情况与lowerbound相同，返回值也是指针</p>
+
+<ol>
+<li>假定一个解并判断是否可行（二分答案法）</li>
+</ol>
+
+
+<p>这种解题方法并不是第一次用了，什么情况下用这种方法呢？如果在求解最大化或最小化的问题中，能够比较简单的判断条件是否满足，那么使用二分搜索法就可以很好得解决问题。</p>
+
+<p>举个简单的例子：</p>
+
+<p><a href="http://poj.org/problem?id=1064">POJ 1064 Cable master</a></p>
+
+<p>我们如果假定答案是x的话，那么每条绳子最多可以切成floor(L[i] / x)段，那么我们只需要判断所有的绳子最多可以切成多少段，如果能切得比K段更多（或者相等），那么就能知道有可能切得更长，这个判断就对应了之前代码的a[mid] >= aim的条件了；同样，反之就说明切得太长了，需要往短了切。所以呢，参考下之前的代码，很容易能写出这一题的代码！我的<a href="/acm/poj/poj1064/">代码</a>仅供参考。</p>
+
+<p>这种类型的题目还很多，记住两个要点：最大化或者最小化问题中;能够比较简单地判断条件是否满足；在满足以上两个条件的情况下，二分搜索法是一个很好的办法，复杂度是O（判断的复杂度×log(maxans)）.</p>
+
+<ol>
+<li>最大化最小值问题</li>
+</ol>
+
+
+<p>类似最大化最小值或者最小化最大值的问题，通常用二分搜索法就可以很好的解决（实际上，跟2的二分答案法是差不多的）。不多说，挂个例题和解法就过了。</p>
+
+<p><a href="http://poj.org/problem?id=2456">POJ 2456 Aggressive cows</a></p>
+
+<p>定义一个canMake(int d)函数,代表可以安排牛的位置使离得最近的互相仇恨的牛的距离不小于d。这个问题只用贪心法就很容易判断了（具体过程不说了）。之后进行二分答案就好！</p>
+
+<p>参考<a href="/acm/poj/poj2456/">代码</a></p>
+
+<ol>
+<li>最大化平均值</li>
+</ol>
+
+
+<p>这种题呢，说实话，还没有太多印象遇到过，不过既然书上提到了，这里就来讲一讲罗！先来看问题：</p>
+
+<p>有n个物品的重量和价值分别为wi和vi，要从中选出k个物品是的单位重量的价值最大。</p>
+
+<p>这个问题，我刚开始看到的想法就是直接贪心按照单价排序不就好了嘛，可是后来发现这种贪心是错误的（给的样例就能证明）。那么我们可以这样来假设，定义:</p>
+
+<p>C(x) = 可以选择使得单位重量的价值不小于x。</p>
+
+<p>那么原问题就等于是求满足C(x)的最大的x。那么解决了判断问题，就又可以二分答案了。关键我们是怎么判断C(x)呢？假设我们选了某个物品的集合S那么它们的单位重量的价值就是 sigma(vi)/sigma(wi)。</p>
+
+<p>因此就变成了判断是否存在S满足下面的条件</p>
+
+<p>sigma(vi)/sigma(wi) >= x;</p>
+
+<p>把这个不等式变形就得到</p>
+
+<p>sigma(vi - x*wi) >= 0.</p>
+
+<p>因此，我们只需要对vi-x*wi的值进行排序贪心的选取，判断从大到小前k个的和不小于0就行了。每次判断的复杂度是O（nlogn）.</p>
+
+<p>通过上面的内容，我们会发现，不管怎么样，用到二分答案的时候，我们需要先找到一个判断条件，然后对答案进行二分。二分，更重要的是这种思想，它不仅仅是能够搜索数值，还能有更广阔的应用！</p>
+
+<p><a href="/blog/archives">&lt;–返回</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">hnnwang</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-14T18:55:45+08:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ji-qiao-fang-fa/'>技巧方法</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://whn757397540.github.io/blog/2015/03/14/er-fen-cha-zhao-ji-qi-ying-yong-zong-jie/" data-via="" data-counturl="http://whn757397540.github.io/blog/2015/03/14/er-fen-cha-zhao-ji-qi-ying-yong-zong-jie/" >Tweet</a>
+  
+  
+  
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_share_slide jiathis_share_24x24" id="jiathis_share_slide">
+<div class="jiathis_share_slide_top" id="jiathis_share_title"></div>
+<div class="jiathis_share_slide_inner">
+<div class="jiathis_style_24x24">
+<a class="jiathis_button_qzone"></a>
+<a class="jiathis_button_tsina"></a>
+<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+<script type="text/javascript">
+var jiathis_config = {
+	slide:{
+		divid:'jiathis_main',
+		pos:'right'
+	}
+};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>	
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_slide.js" charset="utf-8"></script>
+</div></div></div>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2008932"></script>
+<!-- UY END -->
+
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/03/14/zui-xiao-ge-de-jie-shao-ji-ying-yong/" title="Previous Post: 最小割的介绍及应用">&laquo; 最小割的介绍及应用</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/03/14/lian-tong-du-zong-jie/" title="Next Post: 连通度总结">连通度总结 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/shu-zhuang-shu-zu-yi-ji-xian-duan-shu-zong-jie/">树状数组以及线段树总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/zuo-biao-chi-san-hua/">坐标离散化</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/zhe-ban-mei-ju/">折半枚举</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/kai-guan-wen-ti/">开关问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/lian-tong-du-zong-jie/">连通度总结</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"></script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+<p>
+  Copyright &copy; 2015 - hnnwang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Design by <a href="http://octopressthemes.com">Octopress Themes</a>. Background image by <a href="http://www.flickr.com/photos/rhysasplundh/">Rhys Asplundh</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
