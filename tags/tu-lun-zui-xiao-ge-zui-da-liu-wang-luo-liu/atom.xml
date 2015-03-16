@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 图论 最小割 最大流 网络流 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/tu-lun-zui-xiao-ge-zui-da-liu-wang-luo-liu/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-03-16T17:16:22+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[最小割的介绍及应用]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/03/14/zui-xiao-ge-de-jie-shao-ji-ying-yong/"/>
+    <updated>2015-03-14T18:55:31+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/03/14/zui-xiao-ge-de-jie-shao-ji-ying-yong</id>
+    <content type="html"><![CDATA[<p><a href="http://poj.org/problem?id=3469">POJ 3469 Dual Core CPU</a></p>
+
+<p>这是一个典型的最小割问题，不再陈述题意。</p>
+
+<!--more-->
+
+
+<p>这里先介绍一下割的概念。所谓图的割，就是指对于某个定点几何S（属于V），从S出发指向S外部的那些边的几何，记作割（S, V/S）。这些边的容量之和被称为割的容量。如果有s∈S，t∈V/S，那么此时的割又可以称为s-t割。</p>
+
+<p>好好理解下割的概念，然后，记住一个定理：一个图从s到t的最大流，等于s-t的最小割。这个被称为最大流最小割定理。</p>
+
+<p>像这道题这种<strong>用最小的费用将对象划分成两个集合的问题，常常可以转换成最小割问题后顺利解决</strong>，本题就是一个非常典型的例子。（要不本来我还不知道最小割怎么来用呢，算是第一次遇到用最小割的题目吧！）</p>
+
+<p>这道题，就可以记在A上执行的模块的几何为S，在B上执行的模块的几何为T，并加一个虚拟的源点s在S中和一个虚拟的汇点t在T中。我们很容易知道，花费的总和是</p>
+
+<p>sigma(A[i],i∈S) + sigmasigma(B[i],i∈T) + sigma（wi,ai属于S，bi属于T） + sigma（wi,ai属于s，bi属于t）.</p>
+
+<p>我们需要构建一个图，使得花费的综合等价于图的割的容量，那么我们就可以通过求最小割来求最小花费了。关键是图怎么构？这是一个问题。</p>
+
+<p>我们要明确一个方向，我们要做的是让图的割等于花费，也就是让从S到T的各个边的权值和等于上面的式子，那么实际上还是蛮简单的，一个一个来考虑就好了，对于式子的第一项sigma(A[i],i∈S),首先，我们确定i∈S，我们只需要从S指向T就好，所以只需要从每个模块向t连一条容量为A[i]的边就好；同样，对于第二项，i属于T，所以只要有一个从S中指出来的边指向i就好，所以就从s指向每个模块一条容量为B[i]的边；最后，第三项，ai∈S，bi∈T，记住目的是连从S到T的边，所以连的应该是从ai到bi的边，容量为wi，同理，第四项只是把第三项的边反过来就好。</p>
+
+<p>这样我们构完图，这个图的割就代表着花费，那么最小割自然就代表着最小花费了！而通过最大流最小割定理我们又知道，最小割等于最大流，所以我们只需要求从s到t的最大流即可。 代码如下</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;string&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#include &lt;cmath&gt;
+
+using namespace std;
+
+const int maxv = 22222;
+
+const int INF = 0x3f3f3f3f;
+struct Edge{
+    int to,cap, rev;
+    Edge(int to, int cap, int rev):to(to), cap(cap), rev(rev){}
+};
+
+vector&lt;Edge&gt; G[maxv];
+int level[maxv];//¶¥µãµ½Ô´µãµÄ¾àÀë±êºÅ
+int iter[maxv];//µ±Ç°»¡£¬ÔÚÆäÖ®Ç°µÄ±ßÒÑ¾­Ã»ÓÐÓÃÁË
+
+void addEdge(int from, int to, int cap)
+{
+    G[from].push_back(Edge(to, cap, G[to].size()));
+    G[to].push_back(Edge(from, 0, G[from].size()-1));
+}
+
+void bfs(int s)
+{
+    memset(level, -1, sizeof(level));
+    queue&lt;int&gt; que;
+    level[s] = 0;
+    que.push(s);
+    while(!que.empty())
+    {
+        int v = que.front(); que.pop();
+        for (int i = 0; i &lt; G[v].size(); i++)
+        {
+            Edge &amp;e = G[v][i];
+            if (e.cap&gt;0 &amp;&amp; level[e.to] &lt; 0)
+            {
+                level[e.to] = level[v] + 1;
+                que.push(e.to);
+            }
+        }
+    }
+}
+
+int dfs(int v, int t, int f)
+{
+    if(v == t)
+        return f;
+    for (int &amp;i = iter[v]; i &lt; G[v].size(); i++)
+    {
+        Edge &amp;e = G[v][i];
+        if (e.cap &gt; 0 &amp;&amp; level[v] &lt; level[e.to])
+        {
+            int d = dfs(e.to, t, min(f, e.cap));
+            if (d &gt; 0)
+            {
+                e.cap -= d;
+                G[e.to][e.rev].cap += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+int max_flow(int s, int t)
+{
+    int flow = 0;
+    while(true)
+    {
+        bfs(s);
+        if (level[t] &lt; 0) return flow;
+        memset(iter, 0, sizeof(iter));
+        int f;
+        while ((f = dfs(s, t, INF)) &gt; 0)
+            flow += f;
+    }
+}
+
+vector&lt;int&gt; rec[maxv];
+int main()
+{
+    int n,m;
+    scanf("%d%d", &amp;n, &amp;m);
+    int s = 0, t = n+1;
+    for (int i = 1; i &lt;= n; i++)
+    {
+        int a,b;
+        scanf("%d%d", &amp;a, &amp;b);
+        addEdge(s, i, b);
+        addEdge(i, t, a);
+    }
+    for (int i = 1; i &lt;= m; i++)
+    {
+        int a,b,w;
+        scanf("%d%d%d", &amp;a, &amp;b, &amp;w);
+        addEdge(a,b,w);
+        addEdge(b,a,w);
+    }
+
+    printf("%d\n", max_flow(s,t));
+    return 0;
+}
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

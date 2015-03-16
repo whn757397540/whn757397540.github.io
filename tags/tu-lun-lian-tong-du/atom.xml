@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 图论 连通度 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/tu-lun-lian-tong-du/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-03-16T17:16:22+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[连通度总结]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/03/14/lian-tong-du-zong-jie/"/>
+    <updated>2015-03-14T18:56:00+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/03/14/lian-tong-du-zong-jie</id>
+    <content type="html"><![CDATA[<p>做<a href="http://poj.org/problem?id=1966">POJ 1966 Cable TV Network</a>时遇到的问题，用到了一些网络流的知识</p>
+
+<p>这个其实首先是一个概念问题，要想明白什么事图的连通度，我们需要先搞明白什么叫做连通图！</p>
+
+<!--more-->
+
+
+<p>在图论中，连通图基于连通的概念。在一个无向图 G 中，若从顶点vi到顶点vj有路径相连（当然从vj到vi也一定有路径），则称vi和vj是连通的。如果 G 是有向图，那么连接vi和vj的路径中所有的边都必须同向。如果图中任意两点都是连通的，那么图被称作连通图。如果此图是有向图，则称为强连通图（注意：需要双向都有路径）</p>
+
+<p>严格的定义是这样的：</p>
+
+<p>对一个图 G=(V,E) 中的两点 x 和 y ，若存在交替的顶点和边的序列 Γ=(x=v0-e1-v1-e2-…-ek-(vk+1)=y) (在有向图中要求有向边vi−( vi+1)属于E )，则两点 x 和 y 是连通的。Γ是一条x到y的连通路径，x和y分别是起点和终点。当 x = y 时，Γ 被称为回路。如果通路 Γ 中的边两两不同，则 Γ 是一条简单通路，否则为一条复杂通路。如果图 G 中每两点间皆连通，则 G 是连通图。</p>
+
+<p>(PS:以上内容摘自百度百科)</p>
+
+<p>那么，搞清楚连通图是什么以后，我们就能够知道什么是连通度了。首先，连通度分为边连通度和点联通度，对于这两个概念，是如下定义的：</p>
+
+<p>设G = (V, E)是一个n阶图。如果G是完全图Kn，那么我们定义它的顶点连通度为  κ(Kn) = n – 1  否则，定义它的顶点连通度为  κ(G) = min{|U| : Gv-u是非连通的}  即最小的定点数，删除这些定点后能让这个图不连通（这里没提有向图应该是怎么样的一种不连通，不过根据我的理解，应该是指的不是强联通，也就是任意两点不连通就算是不连通了）</p>
+
+<p>图G的边连通度定义为从图G中删除边而使G非连通的最小边数，用λ(G)表示。  这里的图G=(V, E)代表无向图或有向图，且没有自环和重边。</p>
+
+<p>那么对于边连通度和点连通度，应该怎么求呢？</p>
+
+<p>有向图的边连通度：如果是对于2个点来说的边连通度，那么其实就是这两点之间的最小割！根据最大流最小割定理，很容易用最大流求出来（建图边容量为1就行）。但是如果是对于整个图的边连通度，其实就是要对任意一对点的最小割里面的最小值了，而事实上，我们不需要遍历每一对点，只需要固定源点然后枚举汇点，再固定汇点枚举源点就行了（这个的证明就不说的，因为只要理解了最小割的概念，很容易就能想明白！）</p>
+
+<p>有向图的点连通度：这个相对麻烦一点点，不过其实也就是边容量无限了（因为求点连通度不需要断边），然后点有了容量为1，而之前在网络流的总结里提到了遇到点也有容量的时候该怎么解决，很简单，就是直接拆点，把一个点p拆成两个点v和v’，然后由v指向v’一条容量为1的边，然后所有指向原来的点p的边指向v，所有从原来的点p指出的边变成从v’指出即可！之后的算法跟求边连通度一样</p>
+
+<p>无向图的边连通度：在网络流中也说过，怎么把无向图转化成有向图，这里不再赘述！</p>
+
+<p>无向图的点连通度：一样，把无向图转换成有向图，然后按照有向图点连通度的建图方法来建图就好！</p>
+
+<p>下面来说题：</p>
+
+<p><a href="http://poj.org/problem?id=1966">POJ 1966 Cable TV Network</a></p>
+
+<p>这道题，就是直接的一道让你求点连通度的裸题，很简单，按照之前说的方法建图来求就行！</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;string&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#include &lt;cmath&gt;
+
+using namespace std;
+
+const int maxv = 11111;
+const int INF = 0x3f3f3f3f;
+struct Edge{
+    int to, cap, rev;
+    Edge(int to, int cap, int rev):to(to), cap(cap), rev(rev){}
+};
+
+int u[maxv],v[maxv];
+vector&lt;Edge&gt; G[maxv];
+int level[maxv];//¶¥µãµ½Ô´µãµÄ¾àÀë±êºÅ
+int iter[maxv];//µ±Ç°»¡£¬ÔÚÆäÖ®Ç°µÄ±ßÒÑ¾­Ã»ÓÐÓÃÁË
+
+void init(int n)
+{
+    for (int i = 0; i &lt; n; i++)
+        G[i].clear();
+}
+void addEdge(int from, int to, int cap)
+{
+    G[from].push_back(Edge(to, cap, G[to].size()));
+    G[to].push_back(Edge(from, 0, G[from].size()-1));
+}
+
+void bfs(int s)
+{
+    memset(level, -1, sizeof(level));
+    queue&lt;int&gt; que;
+    level[s] = 0;
+    que.push(s);
+    while(!que.empty())
+    {
+        int v = que.front(); que.pop();
+        for (int i = 0; i &lt; G[v].size(); i++)
+        {
+            Edge &amp;e = G[v][i];
+            if (e.cap&gt;0 &amp;&amp; level[e.to] &lt; 0)
+            {
+                level[e.to] = level[v] + 1;
+                que.push(e.to);
+            }
+        }
+    }
+}
+
+int dfs(int v, int t, int f)
+{
+    if(v == t)
+        return f;
+    for (int &amp;i = iter[v]; i &lt; G[v].size(); i++)
+    {
+        Edge &amp;e = G[v][i];
+        if (e.cap &gt; 0 &amp;&amp; level[v] &lt; level[e.to])
+        {
+            int d = dfs(e.to, t, min(f, e.cap));
+            if (d &gt; 0)
+            {
+                e.cap -= d;
+                G[e.to][e.rev].cap += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+int max_flow(int s, int t)
+{
+    int flow = 0;
+    while(true)
+    {
+        bfs(s);
+        if (level[t] &lt; 0) return flow;
+        memset(iter, 0, sizeof(iter));
+        int f;
+        while ((f = dfs(s, t, INF)) &gt; 0)
+            flow += f;
+    }
+}
+
+void reset(int n, int m)
+{
+    init(2*n);
+    for (int i = 0; i &lt; n; i++)
+        addEdge(i, i+n, 1);
+    for(int i = 0; i &lt; m; i++)
+    {
+        addEdge(u[i]+n, v[i], INF);
+        addEdge(v[i]+n, u[i], INF);
+    }
+
+}
+int main()
+{
+    int n,m;
+    while(~scanf("%d%d", &amp;n, &amp;m))
+    {
+        for (int i = 0; i &lt; n; i++)
+            addEdge(i, i+n, 1);
+        for (int i = 0; i &lt; m; i++)
+            scanf(" (%d,%d)", &amp;u[i], &amp;v[i]);
+        //int s = n, ans = INF;
+        int ans = INF;
+        int s = n;
+        int t;
+        for (t = 1; t &lt; n; t++)
+        {
+            reset(n,m);
+            ans = min(ans, max_flow(s,t));
+        }
+        t = 0;
+        for (s = n+1; s &lt; 2*n; s++)
+        {
+            reset(n,m);
+            ans = min(ans, max_flow(s,t));
+        }
+        printf("%d\n", ans &lt; INF ? ans : n);
+    }
+    return 0;
+}
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

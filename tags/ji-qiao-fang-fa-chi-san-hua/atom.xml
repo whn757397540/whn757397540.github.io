@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 技巧方法 离散化 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/ji-qiao-fang-fa-chi-san-hua/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-03-16T17:16:22+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[坐标离散化]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/03/14/zuo-biao-chi-san-hua/"/>
+    <updated>2015-03-14T18:57:05+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/03/14/zuo-biao-chi-san-hua</id>
+    <content type="html"><![CDATA[<h4>坐标离散化</h4>
+
+<!--more-->
+
+
+<p>简单提一下，以后碰到例题再补充进来</p>
+
+<p>这种方法适合坐标系非常大，线段比较稀疏的情况，原型就是给你坐标系和一些水平或者竖直的线段（可能有宽度是矩形，可能没宽度），然后问你这些把坐标系分成了几部分。</p>
+
+<p>方法就是把坐标离散化，再不影响区块的情况下尽可能地拉近线段之间的距离！具体的写法参考《挑战程序设计竞赛》P165，今天一次性写的有点多，我就不继续敲他给的代码了，先占楼,回头碰到用到这种方法的题目的时候再说吧!</p>
+]]></content>
+  </entry>
+  
+</feed>

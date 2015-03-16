@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 图论 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/blog/categories/tu-lun/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-03-16T17:06:28+08:00</updated>
+  <updated>2015-03-16T17:16:22+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -12,6 +12,184 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[连通度总结]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/03/14/lian-tong-du-zong-jie/"/>
+    <updated>2015-03-14T18:56:00+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/03/14/lian-tong-du-zong-jie</id>
+    <content type="html"><![CDATA[<p>做<a href="http://poj.org/problem?id=1966">POJ 1966 Cable TV Network</a>时遇到的问题，用到了一些网络流的知识</p>
+
+<p>这个其实首先是一个概念问题，要想明白什么事图的连通度，我们需要先搞明白什么叫做连通图！</p>
+
+<!--more-->
+
+
+<p>在图论中，连通图基于连通的概念。在一个无向图 G 中，若从顶点vi到顶点vj有路径相连（当然从vj到vi也一定有路径），则称vi和vj是连通的。如果 G 是有向图，那么连接vi和vj的路径中所有的边都必须同向。如果图中任意两点都是连通的，那么图被称作连通图。如果此图是有向图，则称为强连通图（注意：需要双向都有路径）</p>
+
+<p>严格的定义是这样的：</p>
+
+<p>对一个图 G=(V,E) 中的两点 x 和 y ，若存在交替的顶点和边的序列 Γ=(x=v0-e1-v1-e2-…-ek-(vk+1)=y) (在有向图中要求有向边vi−( vi+1)属于E )，则两点 x 和 y 是连通的。Γ是一条x到y的连通路径，x和y分别是起点和终点。当 x = y 时，Γ 被称为回路。如果通路 Γ 中的边两两不同，则 Γ 是一条简单通路，否则为一条复杂通路。如果图 G 中每两点间皆连通，则 G 是连通图。</p>
+
+<p>(PS:以上内容摘自百度百科)</p>
+
+<p>那么，搞清楚连通图是什么以后，我们就能够知道什么是连通度了。首先，连通度分为边连通度和点联通度，对于这两个概念，是如下定义的：</p>
+
+<p>设G = (V, E)是一个n阶图。如果G是完全图Kn，那么我们定义它的顶点连通度为  κ(Kn) = n – 1  否则，定义它的顶点连通度为  κ(G) = min{|U| : Gv-u是非连通的}  即最小的定点数，删除这些定点后能让这个图不连通（这里没提有向图应该是怎么样的一种不连通，不过根据我的理解，应该是指的不是强联通，也就是任意两点不连通就算是不连通了）</p>
+
+<p>图G的边连通度定义为从图G中删除边而使G非连通的最小边数，用λ(G)表示。  这里的图G=(V, E)代表无向图或有向图，且没有自环和重边。</p>
+
+<p>那么对于边连通度和点连通度，应该怎么求呢？</p>
+
+<p>有向图的边连通度：如果是对于2个点来说的边连通度，那么其实就是这两点之间的最小割！根据最大流最小割定理，很容易用最大流求出来（建图边容量为1就行）。但是如果是对于整个图的边连通度，其实就是要对任意一对点的最小割里面的最小值了，而事实上，我们不需要遍历每一对点，只需要固定源点然后枚举汇点，再固定汇点枚举源点就行了（这个的证明就不说的，因为只要理解了最小割的概念，很容易就能想明白！）</p>
+
+<p>有向图的点连通度：这个相对麻烦一点点，不过其实也就是边容量无限了（因为求点连通度不需要断边），然后点有了容量为1，而之前在网络流的总结里提到了遇到点也有容量的时候该怎么解决，很简单，就是直接拆点，把一个点p拆成两个点v和v’，然后由v指向v’一条容量为1的边，然后所有指向原来的点p的边指向v，所有从原来的点p指出的边变成从v’指出即可！之后的算法跟求边连通度一样</p>
+
+<p>无向图的边连通度：在网络流中也说过，怎么把无向图转化成有向图，这里不再赘述！</p>
+
+<p>无向图的点连通度：一样，把无向图转换成有向图，然后按照有向图点连通度的建图方法来建图就好！</p>
+
+<p>下面来说题：</p>
+
+<p><a href="http://poj.org/problem?id=1966">POJ 1966 Cable TV Network</a></p>
+
+<p>这道题，就是直接的一道让你求点连通度的裸题，很简单，按照之前说的方法建图来求就行！</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;string&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#include &lt;cmath&gt;
+
+using namespace std;
+
+const int maxv = 11111;
+const int INF = 0x3f3f3f3f;
+struct Edge{
+    int to, cap, rev;
+    Edge(int to, int cap, int rev):to(to), cap(cap), rev(rev){}
+};
+
+int u[maxv],v[maxv];
+vector&lt;Edge&gt; G[maxv];
+int level[maxv];//¶¥µãµ½Ô´µãµÄ¾àÀë±êºÅ
+int iter[maxv];//µ±Ç°»¡£¬ÔÚÆäÖ®Ç°µÄ±ßÒÑ¾­Ã»ÓÐÓÃÁË
+
+void init(int n)
+{
+    for (int i = 0; i &lt; n; i++)
+        G[i].clear();
+}
+void addEdge(int from, int to, int cap)
+{
+    G[from].push_back(Edge(to, cap, G[to].size()));
+    G[to].push_back(Edge(from, 0, G[from].size()-1));
+}
+
+void bfs(int s)
+{
+    memset(level, -1, sizeof(level));
+    queue&lt;int&gt; que;
+    level[s] = 0;
+    que.push(s);
+    while(!que.empty())
+    {
+        int v = que.front(); que.pop();
+        for (int i = 0; i &lt; G[v].size(); i++)
+        {
+            Edge &amp;e = G[v][i];
+            if (e.cap&gt;0 &amp;&amp; level[e.to] &lt; 0)
+            {
+                level[e.to] = level[v] + 1;
+                que.push(e.to);
+            }
+        }
+    }
+}
+
+int dfs(int v, int t, int f)
+{
+    if(v == t)
+        return f;
+    for (int &amp;i = iter[v]; i &lt; G[v].size(); i++)
+    {
+        Edge &amp;e = G[v][i];
+        if (e.cap &gt; 0 &amp;&amp; level[v] &lt; level[e.to])
+        {
+            int d = dfs(e.to, t, min(f, e.cap));
+            if (d &gt; 0)
+            {
+                e.cap -= d;
+                G[e.to][e.rev].cap += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+int max_flow(int s, int t)
+{
+    int flow = 0;
+    while(true)
+    {
+        bfs(s);
+        if (level[t] &lt; 0) return flow;
+        memset(iter, 0, sizeof(iter));
+        int f;
+        while ((f = dfs(s, t, INF)) &gt; 0)
+            flow += f;
+    }
+}
+
+void reset(int n, int m)
+{
+    init(2*n);
+    for (int i = 0; i &lt; n; i++)
+        addEdge(i, i+n, 1);
+    for(int i = 0; i &lt; m; i++)
+    {
+        addEdge(u[i]+n, v[i], INF);
+        addEdge(v[i]+n, u[i], INF);
+    }
+
+}
+int main()
+{
+    int n,m;
+    while(~scanf("%d%d", &amp;n, &amp;m))
+    {
+        for (int i = 0; i &lt; n; i++)
+            addEdge(i, i+n, 1);
+        for (int i = 0; i &lt; m; i++)
+            scanf(" (%d,%d)", &amp;u[i], &amp;v[i]);
+        //int s = n, ans = INF;
+        int ans = INF;
+        int s = n;
+        int t;
+        for (t = 1; t &lt; n; t++)
+        {
+            reset(n,m);
+            ans = min(ans, max_flow(s,t));
+        }
+        t = 0;
+        for (s = n+1; s &lt; 2*n; s++)
+        {
+            reset(n,m);
+            ans = min(ans, max_flow(s,t));
+        }
+        printf("%d\n", ans &lt; INF ? ans : n);
+    }
+    return 0;
+}
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[最小割的介绍及应用]]></title>
@@ -1814,618 +1992,6 @@ int main()
 <p>流量任意的情况 + 有些题目中，需要计算包含负权边的图中流量任意但费用最小的流。这种情况下，根据最小费用流算法中hi+1[v] >= hi[v]的性质，我们只要在hi[t]&lt;0是不断增广就好了。</p>
 
 <p>费用为负数的情况 + 如果图中含有负权边，那么最初计算势的值就不能用Dijkstra算法，而需要改用SPFA算法。另外，如果图中还有负环，可以利用SPFA寻找负环，并在负环上尽量增广将其消去。 + 此外，在有些情况下，适当的变形可以避免负权边。比如下面的，也是上面个那道题用到的方法，在流量F一定的情况下，也可以采取与最小流量限制中类似的变形将负权边出去。新增源点S和汇点T，从S向s连一条容量为F费用为0的边，从t向T连一条容量为F费用为0的边。对于负权边e = (u,v)，可以让它一开始就已经满流。再从S向v连一条容量为c[e]费用为0的边，从u向T连一条容量为c[e]费用为0的边。这样变形后，我们就除去了图中的负权边，而原图流量为F+sigma（c[e]d[e]）(e为负权边)的最小费用就等于新图流量F的最小费用流加上sigma（c[e]d[e]）(e为负权边)。</p></blockquote></blockquote>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[图论总结(二)]]></title>
-    <link href="http://whn757397540.github.io/blog/2015/03/14/tu-lun-zong-jie-er/"/>
-    <updated>2015-03-14T18:54:17+08:00</updated>
-    <id>http://whn757397540.github.io/blog/2015/03/14/tu-lun-zong-jie-er</id>
-    <content type="html"><![CDATA[<h5>最大流的几种方法总结</h5>
-
-<!--more-->
-
-
-<p>这里总结一下最大流的几种算法的区别，以及最大流的一些使用技巧。</p>
-
-<p>这里以一道例题来比较一下这几种方法。先放题</p>
-
-<p><a href="http://poj.org/problem?id=1149">POJ1149 PIGS</a></p>
-
-<p>先来说下题意和构图。</p>
-
-<p>题意： 有人买猪，买主带着钥匙，卖猪的人没有钥匙。有以下几张限制条件：1.只有买猪的人能开门，且买猪的人可能带有多把钥匙；2.买猪的人每天只来一个；3.卖猪的人可以在买猪的人带来钥匙的那一天在打开的猪圈之间任意调动猪（也就是说，买猪的人走后猪圈重新关上）；4.猪圈的容量无上限；5.给出每个猪圈初始有的猪的个数；6.卖猪的人可以决定是否卖给买猪的人；7.给出每个人要买的猪的个数（可以少不可以多）。</p>
-
-<p>首先，我们应该解决怎么构图的问题。分析下题意，容易看出是一个最大流问题，流体是猪，流向是从猪圈流向人。那么我们建图肯定是从猪圈指向人了。我们可以这样来建图。首先，虚拟一个源点s，s指向所有的猪圈，边的权值就是猪圈初始的猪的数量；然后，虚拟一个汇点t，所有的人最终指向t（因为他问的是最多能卖多少只猪，跟是谁买的没有关系），边的权值就是那个人想要的猪的数量。最后，也是最关键的，中间的图怎么建。关于这点，分析一下，我们知道，对于一个人来说，他有那个猪圈的钥匙，就可以从哪个猪圈里面选猪，猪是从猪圈流向人的，而且人选猪的数量也是没有限制的（多选了可以放回去，重点在于这个边是没有限制的），所以这个边应该是从猪圈指向持有猪圈钥匙的人，权值是INF；最后要解决的一点就是，卖猪的人可以在猪圈打开的时候任意调整猪的位置这个条件怎么用，很容易知道，假如两个人拥有同一个猪圈的钥匙，那么后来的那个人就可以从先来的那个人那里得到猪（先来的那个人手头的猪放到那个公共猪圈中，再流向后来的那个人），所以，还应该有这样一条边，对于拥有同一个猪圈钥匙的人，有一条从先来的指向后来的的边，权值是INF（因为猪圈的容量是无上限的）。</p>
-
-<p>有了上面的分析，图就建好了，接下来就是求从s到t的最大流了。我用了4种方法来敲，其中Full-Fulkerson算法和Dinic是借鉴《挑战程序设计竞赛》书上的写法，Edmonds-Karp算法和ISAP算法是借鉴的刘汝佳《算法竞赛入门经典》上的写法。接下来挂出四种方法的代码。</p>
-
-<p>Full-Fulkerson</p>
-
-<pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-#include &lt;string&gt;
-#include &lt;set&gt;
-#include &lt;algorithm&gt;
-#include &lt;map&gt;
-#include &lt;queue&gt;
-#include&lt;vector&gt;
-#include &lt;cmath&gt;
-
-using namespace std;
-
-const int maxv = 10000;
-const int maxe = 55555;
-const int INF = 0x3f3f3f3f;
-struct Edge{
-    int to,cap,rev;
-
-    Edge(){}
-    Edge(int to, int cap, int rev):to(to),cap(cap),rev(rev){}
-};
-
-vector&lt;Edge&gt; G[maxv];
-bool used[maxv];
-
-void addEdge(int from, int to, int cap)
-{
-    G[from].push_back(Edge(to,cap,G[to].size()));
-    G[to].push_back(Edge(from,0,G[from].size()-1));
-}
-
-int dfs(int v, int t, int f)
-{
-    if (v == t) return f;
-    used[v] = true;
-    for (int i = 0; i &lt; G[v].size(); i++)
-    {
-        Edge &amp;e = G[v][i];
-        if (!used[e.to] &amp;&amp; e.cap &gt; 0)
-        {
-            int d = dfs(e.to, t, min(f, e.cap));
-            if (d&gt;0)
-            {
-                e.cap -= d;
-                G[e.to][e.rev].cap += d;
-                return d;
-            }
-        }
-    }
-    return 0;
-}
-
-int max_flow(int s, int t)
-{
-    int flow = 0;
-    while(true)
-    {
-        memset(used, 0 ,sizeof(used));
-        int f = dfs(s,t,INF);
-        if (f == 0) return flow;
-        flow += f;
-    }
-}
-
-vector&lt;int&gt; rec[maxv];
-int main()
-{
-    int m,n;
-    scanf("%d%d", &amp;m, &amp;n);
-    int t = m+n+1, s = 0;
-    for (int i = 1; i &lt;= m; i++)
-    {
-        int x;
-        scanf("%d", &amp;x);
-        addEdge(s,i,x);
-    }
-    for (int i = m+1; i &lt;= m+n; i++)
-    {
-        int nn;
-        scanf("%d", &amp;nn);
-        for (int j = 0; j &lt; nn; j++)
-        {
-            int mm;
-            scanf("%d", &amp;mm);
-            rec[mm].push_back(i);
-            addEdge(mm, i, INF);
-        }
-        int tt;
-        scanf("%d", &amp;tt);
-        addEdge(i,t,tt);
-    }
-  for (int i = 1; i &lt;= m; i++)
-        for (int j = 1; j &lt; rec[i].size(); j++)
-                addEdge(rec[i][j-1], rec[i][j], INF);
-    printf("%d\n", max_flow(s,t));
-    return 0;
-}
-</code></pre>
-
-<p>EK</p>
-
-<pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-#include &lt;string&gt;
-#include &lt;set&gt;
-#include &lt;algorithm&gt;
-#include &lt;map&gt;
-#include &lt;queue&gt;
-#include&lt;vector&gt;
-#include &lt;cmath&gt;
-
-using namespace std;
-
-const int maxv = 10000;
-const int maxe = 55555;
-const int INF = 0x3f3f3f3f;
-struct Edge{
-    int from, to, cap, flow;
-    Edge(int u, int v, int c, int f): from(u), to(v), cap(c),flow(f){}
-};
-
-vector&lt;Edge&gt; edges;
-vector&lt;int&gt; G[maxv];
-int a[maxv];
-int p[maxv];
-int nume;
-void init(int n)
-{
-    for (int i = 0; i &lt; n; i++) G[i].clear();
-    edges.clear();
-}
-
-void addEdge(int from, int to, int cap)
-{
-    edges.push_back(Edge(from, to, cap, 0));
-    edges.push_back(Edge(to, from, 0, 0));
-    nume = edges.size();
-    G[from].push_back(nume-2);
-    G[to].push_back(nume-1);
-}
-
-int max_flow(int s, int t)
-{
-    int flow = 0;
-    while(true)
-    {
-        memset(a, 0 , sizeof(a));
-        queue&lt;int&gt; Q;
-        Q.push(s);
-        a[s] = INF;
-        while(!Q.empty())
-        {
-            int x = Q.front();Q.pop();
-            for (int i = 0; i &lt; G[x].size(); i++)
-            {
-                Edge&amp; e = edges[G[x][i]];
-                if(!a[e.to] &amp;&amp; e.cap &gt; e.flow)
-                {
-                    p[e.to] = G[x][i];
-                    a[e.to] = min(a[x], e.cap - e.flow);
-                    Q.push(e.to);
-                }
-            }
-            if (a[t])
-                break;
-        }
-        if(!a[t]) break;
-        for (int u = t; u != s; u = edges[p[u]].from)
-        {
-            edges[p[u]].flow += a[t];
-            edges[p[u]^1].flow -= a[t];
-        }
-        flow += a[t];
-    }
-    return flow;
-}
-
-vector&lt;int&gt; rec[maxv];
-int main()
-{
-    int m,n;
-    scanf("%d%d", &amp;m, &amp;n);
-    int t = m+n+1, s = 0;
-    for (int i = 1; i &lt;= m; i++)
-    {
-        int x;
-        scanf("%d", &amp;x);
-        addEdge(s,i,x);
-    }
-    for (int i = m+1; i &lt;= m+n; i++)
-    {
-        int nn;
-        scanf("%d", &amp;nn);
-        for (int j = 0; j &lt; nn; j++)
-        {
-            int mm;
-            scanf("%d", &amp;mm);
-            rec[mm].push_back(i);
-            addEdge(mm, i, INF);
-        }
-        int tt;
-        scanf("%d", &amp;tt);
-        addEdge(i,t,tt);
-    }
-   /* for (int i = 0; i &lt;= n+m+1; i++)
-    {
-        printf("%d:\n", i);
-        for (int j = 0; j &lt; G[i].size(); j++)
-            printf("\t%d %d\n",G[i][j].to, G[i][j].cap);
-        cout&lt;&lt;endl;
-    }*/
-  for (int i = 1; i &lt;= m; i++)
-        for (int j = 1; j &lt; rec[i].size(); j++)
-                addEdge(rec[i][j-1], rec[i][j], INF);
-    printf("%d\n", max_flow(s,t));
-    return 0;
-}
-</code></pre>
-
-<p>Dinic</p>
-
-<pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-#include &lt;string&gt;
-#include &lt;set&gt;
-#include &lt;algorithm&gt;
-#include &lt;map&gt;
-#include &lt;queue&gt;
-#include&lt;vector&gt;
-#include &lt;cmath&gt;
-
-using namespace std;
-
-const int maxv = 10000;
-const int maxe = 55555;
-const int INF = 0x3f3f3f3f;
-struct Edge{
-    int to,cap, rev;
-    Edge(int to, int cap, int rev):to(to), cap(cap), rev(rev){}
-};
-
-vector&lt;Edge&gt; G[maxv];
-int level[maxv];//顶点到源点的距离标号
-int iter[maxv];//当前弧，在其之前的边已经没有用了
-
-void addEdge(int from, int to, int cap)
-{
-    G[from].push_back(Edge(to, cap, G[to].size()));
-    G[to].push_back(Edge(from, 0, G[from].size()-1));
-}
-
-void bfs(int s)
-{
-    memset(level, -1, sizeof(level));
-    queue&lt;int&gt; que;
-    level[s] = 0;
-    que.push(s);
-    while(!que.empty())
-    {
-        int v = que.front(); que.pop();
-        for (int i = 0; i &lt; G[v].size(); i++)
-        {
-            Edge &amp;e = G[v][i];
-            if (e.cap&gt;0 &amp;&amp; level[e.to] &lt; 0)
-            {
-                level[e.to] = level[v] + 1;
-                que.push(e.to);
-            }
-        }
-    }
-}
-
-int dfs(int v, int t, int f)
-{
-    if(v == t)
-        return f;
-    for (int &amp;i = iter[v]; i &lt; G[v].size(); i++)
-    {
-        Edge &amp;e = G[v][i];
-        if (e.cap &gt; 0 &amp;&amp; level[v] &lt; level[e.to])
-        {
-            int d = dfs(e.to, t, min(f, e.cap));
-            if (d &gt; 0)
-            {
-                e.cap -= d;
-                G[e.to][e.rev].cap += d;
-                return d;
-            }
-        }
-    }
-    return 0;
-}
-
-int max_flow(int s, int t)
-{
-    int flow = 0;
-    while(true)
-    {
-        bfs(s);
-        if (level[t] &lt; 0) return flow;
-        memset(iter, 0, sizeof(iter));
-        int f;
-        while ((f = dfs(s, t, INF)) &gt; 0)
-            flow += f;
-    }
-}
-
-vector&lt;int&gt; rec[maxv];
-int main()
-{
-    int m,n;
-    scanf("%d%d", &amp;m, &amp;n);
-    int t = m+n+1, s = 0;
-    for (int i = 1; i &lt;= m; i++)
-    {
-        int x;
-        scanf("%d", &amp;x);
-        addEdge(s,i,x);
-    }
-    for (int i = m+1; i &lt;= m+n; i++)
-    {
-        int nn;
-        scanf("%d", &amp;nn);
-        for (int j = 0; j &lt; nn; j++)
-        {
-            int mm;
-            scanf("%d", &amp;mm);
-            rec[mm].push_back(i);
-            addEdge(mm, i, INF);
-        }
-        int tt;
-        scanf("%d", &amp;tt);
-        addEdge(i,t,tt);
-    }
-   /* for (int i = 0; i &lt;= n+m+1; i++)
-    {
-        printf("%d:\n", i);
-        for (int j = 0; j &lt; G[i].size(); j++)
-            printf("\t%d %d\n",G[i][j].to, G[i][j].cap);
-        cout&lt;&lt;endl;
-    }*/
-  for (int i = 1; i &lt;= m; i++)
-        for (int j = 1; j &lt; rec[i].size(); j++)
-                addEdge(rec[i][j-1], rec[i][j], INF);
-    printf("%d\n", max_flow(s,t));
-    return 0;
-}
-</code></pre>
-
-<p>ISAP</p>
-
-<pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-#include &lt;string&gt;
-#include &lt;set&gt;
-#include &lt;algorithm&gt;
-#include &lt;map&gt;
-#include &lt;queue&gt;
-#include&lt;vector&gt;
-#include &lt;cmath&gt;
-
-using namespace std;
-
-const int maxv = 10000;
-const int maxe = 55555;
-const int INF = 0x3f3f3f3f;
-struct Edge{
-    int from, to, cap, flow;
-    Edge(int u, int v, int c, int f): from(u), to(v), cap(c),flow(f){}
-};
-
-vector&lt;Edge&gt; edges;
-vector&lt;int&gt; G[maxv];
-int a[maxv];//当前节点捏流量
-int p[maxv];//父亲节点，回溯路径用到
-int d[maxv];//到终点距离
-int iter[maxv];//当前弧下标
-int num[maxv];
-int nume;
-void init(int n)
-{
-    for (int i = 0; i &lt; n; i++) G[i].clear();
-    edges.clear();
-}
-
-void addEdge(int from, int to, int cap)
-{
-    edges.push_back(Edge(from, to, cap, 0));
-    edges.push_back(Edge(to, from, 0, 0));
-    nume = edges.size();
-    G[from].push_back(nume-2);
-    G[to].push_back(nume-1);
-}
-
-
-void bfs(int t)
-{
-    memset(d, -1, sizeof(d));
-    d[t] = 0;
-    queue&lt;int&gt; que;
-    que.push(t);
-    while(!que.empty())
-    {
-        int u = que.front();que.pop();
-        for (int i = 0; i &lt; G[u].size(); i++)
-        {
-            Edge &amp;e = edges[G[u][i]^1];
-            if (e.cap &gt; e.flow &amp;&amp; d[e.from] &lt; 0)
-            {
-                d[e.from] = d[u] + 1;
-                que.push(e.from);
-            }
-        }
-    }
-}
-
-int add(int s, int t)
-{
-    int u = t,df = INF;
-    //从汇点到源点通过p追踪增广路径，df为一路上最小的残量
-    while(u != s)
-    {
-        Edge &amp;e = edges[p[u]];
-        df = min(df, e.cap - e.flow);
-        u = edges[p[u]].from;
-    }
-    u = t;
-    //从汇点到源点更新流量
-    while(u != s)
-    {
-        edges[p[u]].flow += df;
-        edges[p[u]^1].flow -= df;
-        u = edges[p[u]].from;
-    }
-    return df;
-}
-
-
-int max_flow(int s, int t)
-{
-    int flow = 0;
-    bfs(t);
-    memset(num, 0, sizeof(num));
-    for (int i = 0; i &lt;= t; i++)
-        num[d[i]]++;
-    int u = s;
-    memset(iter, 0, sizeof(iter));
-    while(d[s] &lt;= t)
-    {
-        //cout&lt;&lt;d[s]&lt;&lt;endl;
-       // system("pause");
-        if (u == t)
-        {
-            flow += add(s, t);
-            u = s;
-        }
-        bool flag = false;
-        for (int i = iter[u]; i &lt; G[u].size(); i++)
-        {
-            Edge &amp;e = edges[G[u][i]];
-            if (e.cap &gt; e.flow &amp;&amp; d[u] == d[e.to] + 1)
-            {
-                flag = true;
-                p[e.to] = G[u][i];
-                iter[u] = i;
-                u = e.to;
-                break;
-            }
-        }
-        if (!flag) // restart
-        {
-           // cout&lt;&lt;1&lt;&lt;endl;
-            int m = t;
-            for (int i = 0; i &lt; G[u].size(); i++)
-            {
-                Edge &amp;e = edges[G[u][i]];
-                if (e.cap &gt; e.flow)
-                    m = min(m, d[e.to]);
-            }
-            if (--num[d[u]] == 0)
-                break;//gap优化
-            num[d[u] = m+1] ++;
-            iter[u] = 0;
-            if (u != s)
-                u = edges[p[u]].from;
-        }
-    }
-    return flow;
-}
-
-vector&lt;int&gt; rec[maxv];
-int main()
-{
-    int m,n;
-    scanf("%d%d", &amp;m, &amp;n);
-    int t = m+n+1, s = 0;
-    for (int i = 1; i &lt;= m; i++)
-    {
-        int x;
-        scanf("%d", &amp;x);
-        addEdge(s,i,x);
-    }
-    for (int i = m+1; i &lt;= m+n; i++)
-    {
-        int nn;
-        scanf("%d", &amp;nn);
-        for (int j = 0; j &lt; nn; j++)
-        {
-            int mm;
-            scanf("%d", &amp;mm);
-            rec[mm].push_back(i);
-            addEdge(mm, i, INF);
-        }
-        int tt;
-        scanf("%d", &amp;tt);
-        addEdge(i,t,tt);
-    }
-   /* for (int i = 0; i &lt;= n+m+1; i++)
-    {
-        printf("%d:\n", i);
-        for (int j = 0; j &lt; G[i].size(); j++)
-            printf("\t%d %d\n",G[i][j].to, G[i][j].cap);
-        cout&lt;&lt;endl;
-    }*/
-  for (int i = 1; i &lt;= m; i++)
-        for (int j = 1; j &lt; rec[i].size(); j++)
-                addEdge(rec[i][j-1], rec[i][j], INF);
-    printf("%d\n", max_flow(s,t));
-    return 0;
-}
-</code></pre>
-
-<p>简单总结一下几种方法的区别，如果有说得不好不对的地方，还请指正。</p>
-
-<p>首先，Full-Fulkerson算法，就是运用dfs随意找一条可以达到的路径，然后求增广路一直到没有增广路为止。复杂度（O(V<sup>2</sup> E)），这道题的运行时间200多ms;</p>
-
-<p>然后，Edmonds-Karp算法（我看百度百科上说就是SAP算法，搞得我很混乱），其实就是把原来的深搜换成了广搜,记录下路径来更新当前选择的路径的流量就行，能保证每次选的都是最短路，相比如Full-Fulkerson算法，比较不容易被卡，复杂度（O（VE<sup>2</sup>））这道题的运行时间150ms左右;</p>
-
-<p>再之后，Dinic算法，是对Full-Fulkerson算法的一种改进，先把图进行分层（用bfs给每个节点标明深度），然后用dfs找最短路的路径流，更新。完了之后重新bfs分层，dfs，一直到源点和汇点分离为止。这个就优化了好多了，还有一个当前弧优化，事实上就是对于一次dfs来说，用过一次的弧就不要再用了，能省好多时间的！复杂度与Full-Fulkerson相同，但是要快很多很多，这道题加上当前弧优化不到20ms，不加90ms左右。</p>
-
-<p>最后，ISAP算法，说实话，还不是非常清楚，原理大概明白了，这个<a href="http://blog.csdn.net/pi9nc/article/details/11848245">博客</a>说得不错感觉说得挺清楚的。时间复杂度桶EK算法，但是要快好多，这道题的时间50ms左右。</p>
-
-<p>总之，理解算法的内涵，然后找到一些好的板子就好，这些算法事实上不需要多熟悉，能够会用板子就行，关键是要能够构出图来，这个就需要多练了。</p>
-
-<p>今天的完成度跟我计划出入有点大，还有一些应用以及变形没写。</p>
-
-<p>好，继续补完网络流的这一部分，下面这部分很重要！（当然，也是来自于书本）</p>
-
-<blockquote><p>专栏：最大流的各种变体</p>
-
-<blockquote><p>多个源点和汇点的情况：</p>
-
-<blockquote><p>上面那道题实际上就可以看成是这样的情况，就是有多个源点和汇点，不用细说了吧 。因为我们只知道单个源点和单个汇点的最大流的算法，所以对于这种情况，我们采取的办法就是增加一个超级源点S和一个超级汇点T，从S向每个源点连一条容量为对应在那个点的最大流出容量的边，从每个汇点向T连一条熔炼为定影那个点的最大流入容量的那个边。不过，如果有特殊要求（比如从某个源点流出的必须流入某些指定的汇点）时，是不能这样求解的，（PS:这种情况被称为多物网络流问题，目前尚未有已知的高效算法，竞赛中也几乎不会出现）。</p></blockquote>
-
-<p>无向图的情况：</p>
-
-<blockquote><p>我们常用到的是求有向图的的最大流，对于无向图怎么来求呢？记住一点，一个无向的边，跟两个流量相同方向相反的有向边是等效的，把一个无向边拆成两个有向边建图就好。</p></blockquote>
-
-<p>顶点上也有容量限制的情况：</p>
-
-<blockquote><p>这种情况下，我们只需要把一个点拆成2个点即可，例如原图中有一个点p，顶点限制为lim，我们只需要把他拆成p1和p2两个点，然后把本来指向p的边指向p1，把从p指出的边改为从p2指出，然后再连一条从p1指向p2的权威lim的边即可！应该比较容易想明白.</p></blockquote>
-
-<p>有最小流量限制的情况：</p>
-
-<blockquote><p>这个比较复杂，不太好说，参考周源《有上下界的网络流》吧（虽然我还没看），那上面也有2到例题，就在群里。</p></blockquote>
-
-<p>图发生部分变化的情况</p>
-
-<blockquote><p>这个指的是，在有些时候，我们求完某个图的最大流之后，需要对原图中的一部分做一些变化，再对新图求最大流。这种情况下，有些时候我们不需要重新计算最大流，而是可以重复利用前一步的结果，高效地求出新的最大流。主要考虑两种情况</p>
-
-<p>首先，我们考虑边e(u,v)的容量增加的情况，我们只需要在原图最大流f的基础上，不断寻求增广路增广，就可以求得新图的最大流。当有多条边的容量同时增加的情况也是一样的，可以在原图的流的基础上进行求解。（我感觉，再多加一条边也是一样的）</p>
-
-<p>然后，我们再来考虑一下变e(u,v)的容量减少1的情况。如果原图的最大六中，有f(e)&lt;=c(e)-1的话，那么它也是新图的最大流。否则，如果f(e)=c(e)，为了让新图满足流量限制，需要将多出的部分流退回去。加入f的残余网络中存在从u到v的路径，那么就可以沿着这条路径增广1并把f(e)减小1之后，而保持最大流流量不变。否则，需要找t->v和u->s的路径，沿他们增广1并把f（e）减小1之后，最大流流量也减小1.当有多条边的流量同时减小或者减小量不止1时，也可以做同样处理。（删边也可以吧！）这一般在求字典序最小的最大流之类的问题中会用到着这种技巧。</p></blockquote>
-
-<p>容量为负数的情况</p>
-
-<blockquote><p>通常不会出现。出现了的话，目前没有有效的算法，但是在某些情况下可以采取适当的变形额避免出现负容量的边。</p></blockquote></blockquote></blockquote>
-
-<p>好了，到此，最大流的总结算是真的完了，重点还是在于建图上，还需要多加练习！</p>
 ]]></content>
   </entry>
   

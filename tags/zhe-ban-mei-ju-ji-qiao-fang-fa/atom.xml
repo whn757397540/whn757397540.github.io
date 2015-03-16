@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 折半枚举 技巧方法 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/zhe-ban-mei-ju-ji-qiao-fang-fa/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-03-16T17:16:22+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[折半枚举]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/03/14/zhe-ban-mei-ju/"/>
+    <updated>2015-03-14T18:56:56+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/03/14/zhe-ban-mei-ju</id>
+    <content type="html"><![CDATA[<p>这个，也是一种优化技巧，其思想来源于传统的双向搜索！</p>
+
+<p>要点: 把要枚举的多个东西分成2部分分开来进行枚举，从而达到降低时间复杂度的目的，实际上是一种牺牲空间换取时间的方法，分成两部分来枚举的时候，就是先枚举一部分存起来，再根据存起来的这部分对剩下的一部分进行枚举。光说也看不出效果来，来看一道题。</p>
+
+<!--more-->
+
+
+<p><a href="http://poj.org/problem?id=2785">POJ 2785 4 Values whose Sum is 0</a></p>
+
+<p>就是给你4个序列，让你从每个序列中选一个数使得4个数和为0，问总共有几种方法（统一序列数值相同的数字区别看待）？</p>
+
+<p>这个如果按照正常的方法直接枚举的话，复杂度是O(n<sup>4</sup>)，但是如果我们先来枚举一半，看a+b+c+d = 0,则 c+d = -(a+b)，我们可以先枚举c和d的选取方法，总共是n<sup>2</sup>种，复杂的自然就是n2，然后再把这几个数字存起来进行排序，之后再枚举a+b,利用a+b是c+d的相反数这个性质，利用二分搜索，可以再每次用logn的时间找出对应的c+d，而枚举a+b复杂度是n<sup>2</sup>，综上，复杂度为O(n<sup>2</sup> logn).</p>
+
+<p>参考代码理解一下就好。</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;string&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#include &lt;cmath&gt;
+
+using namespace std;
+const int INF = 0x3f3f3f3f;
+const int maxn = 4010;
+
+int a[maxn],b[maxn],c[maxn],d[maxn];
+int cd[maxn*maxn];
+
+int main()
+{
+    int n;
+    scanf("%d", &amp;n);
+    for (int i = 0; i &lt; n; i++)
+        scanf("%d%d%d%d", &amp;a[i], &amp;b[i], &amp;c[i], &amp;d[i]);
+    for (int i = 0; i &lt; n; i++)
+        for (int j = 0; j &lt; n; j++)
+            cd[i*n+j] = c[i]+d[j];
+    sort(cd, cd+n*n);
+    long long ans = 0;
+    for (int i = 0; i &lt; n; i++)
+        for (int j = 0; j &lt; n; j++)
+        {
+            int ab = a[i] + b[j];
+            ans += upper_bound(cd, cd+n*n, -ab) - lower_bound(cd, cd+n*n, -ab);
+           /* if (ans != 0)
+                cout&lt;&lt;a[i]&lt;&lt;" "&lt;&lt;b[i]&lt;&lt;" "&lt;&lt;ans&lt;&lt;endl;
+            system("pause");*/
+        }
+    printf("%I64d\n", ans);
+    return 0;
+}
+</code></pre>
+
+<p>另外一个例子就是超大背包问题，就是背包问题，不过限制条件不适合用dp：1&lt;=n&lt;=40, 1&lt;= w[i],v[i] &lt;= 10<sup>15</sup>, 1&lt;W&lt;10<sup>15</sup>;</p>
+
+<p>n比较小，就考虑能不能枚举，但是直接枚举复杂度是2n, 240铁定是不行的，所以，需要再优化。这时，就可以利用折半枚举，把所有的物品拆成2部分，先选一半，再选一半。实际上就是先枚举一半（2<sup>20</sup>），假设枚举的这一半是w2,v2。存起来后，我们可以排除掉所有的w2[i]&lt;=w2[j] &amp;&amp; v2[i] >= v2[j]的j,按照w,v的字典序排序后很容易做到这一点。之后声誉的元素都满足w2[i]&lt;w2[j]等价与v2[i]&lt;v2[j]，我们要计算的是max{v2| w2&lt;= W-w1},就只需要找到满足w2[i]&lt;= W-w1[i]的最大的i就行，这个可以用二分搜索完成。复杂度是O（2<sup>n</sup>/2 * n）,是可以在时限内完成的！</p>
+
+<p>总结：对于枚举情况很多的时候，并且跟顺序有关的时候，可以折半，先枚举一半存起来，然后用二分查找的方法降低复杂度！</p>
+]]></content>
+  </entry>
+  
+</feed>
