@@ -3,8 +3,7 @@ layout: post
 title: "连通度总结"
 date: 2015-03-14 18:56:00 +0800
 comments: true
-categories: 图论
-tag: 图论 连通度
+categories: 
 ---
 
 做[POJ 1966 Cable TV Network](http://poj.org/problem?id=1966)时遇到的问题，用到了一些网络流的知识

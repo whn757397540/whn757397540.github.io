@@ -4,7 +4,6 @@ title: "图论总结(一)"
 date: 2015-03-14 18:54:04 +0800
 comments: true
 categories: 图论
-tag: 图论 最短路 最小生成树 
 ---
 今天搞了一天的图论，重新熟悉了下Dijkstra，SPFA，PRIM和Kruskal算法，这里总结一下！
 
