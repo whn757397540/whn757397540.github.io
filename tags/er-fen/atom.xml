@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 二分 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/er-fen/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-03-16T17:06:28+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[二分查找及其应用总结]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/03/14/er-fen-cha-zhao-ji-qi-ying-yong-zong-jie/"/>
+    <updated>2015-03-14T18:55:45+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/03/14/er-fen-cha-zhao-ji-qi-ying-yong-zong-jie</id>
+    <content type="html"><![CDATA[<p>二分查找及其应用总结
+二分搜索法，是通过不断缩小解可能存在的范围，从而求的问题最优解的方法。经常会出现的是二分搜索和其他算法结合的题目。</p>
+
+<!--more-->
+
+
+<p>(PS:有关二分姿势的选取，可以看看<a href="http://blog.csdn.net/u012139398/article/details/38637311">峰霸这短小精悍的博文</a></p>
+
+<ol>
+<li>首先，最基本的，从有序数组中查找某个值。</li>
+</ol>
+
+
+<p>这个问题，再stl中有lower_bound()和upper_bound()来解决，这里给出一个内部算法结构，再简单说说STL的用法</p>
+
+<pre><code class="c++">int lowerBound(int a[], int n, int aim)//返回值是&gt;=aim的第一个位置，如果不存在，返回最后一个元素之后的一个位置（也就是n）
+{
+    int l = -1, r = n;//初始化解的存在范围，这里求lower_bound的时候采取的是左闭右开的
+
+    while(r-l &gt; 1)//重复循环，一知道解的范围足够小
+    {
+        int mid = (l+r)/2;
+        if (a[mid] &gt;= aim)//如果mid满足条件
+            r = mid;//解的存在范围变为(l, mid]
+        else
+            l = mid;//解的存在范围变为(mid, r]
+    }
+    return r;
+}
+</code></pre>
+
+<p>当然，这只是针对整数的情况，而根据实际情况，还会有可能是其他的元素，或者其他的要求，要视情况而定。不再多说，提一下STL库里的两个函数的用法:</p>
+
+<p>首先，lower_bound(a, a+n, d)返回的是数组a里面（a可以是任何有序的数组）,元素值>=d的第一个元素的位置，如果不存在，则返回的是最后一个元素之后的第一个位置，注意，他的返回值是指针！</p>
+
+<p>然后，upper_bound(a, a+n, d)，与lower_bound（）类似，不过这里找的是>d的第一个元素的位置，不包括等于，不存在的情况与lowerbound相同，返回值也是指针</p>
+
+<ol>
+<li>假定一个解并判断是否可行（二分答案法）</li>
+</ol>
+
+
+<p>这种解题方法并不是第一次用了，什么情况下用这种方法呢？如果在求解最大化或最小化的问题中，能够比较简单的判断条件是否满足，那么使用二分搜索法就可以很好得解决问题。</p>
+
+<p>举个简单的例子：</p>
+
+<p><a href="http://poj.org/problem?id=1064">POJ 1064 Cable master</a></p>
+
+<p>我们如果假定答案是x的话，那么每条绳子最多可以切成floor(L[i] / x)段，那么我们只需要判断所有的绳子最多可以切成多少段，如果能切得比K段更多（或者相等），那么就能知道有可能切得更长，这个判断就对应了之前代码的a[mid] >= aim的条件了；同样，反之就说明切得太长了，需要往短了切。所以呢，参考下之前的代码，很容易能写出这一题的代码！我的<a href="/acm/poj/poj1064/">代码</a>仅供参考。</p>
+
+<p>这种类型的题目还很多，记住两个要点：最大化或者最小化问题中;能够比较简单地判断条件是否满足；在满足以上两个条件的情况下，二分搜索法是一个很好的办法，复杂度是O（判断的复杂度×log(maxans)）.</p>
+
+<ol>
+<li>最大化最小值问题</li>
+</ol>
+
+
+<p>类似最大化最小值或者最小化最大值的问题，通常用二分搜索法就可以很好的解决（实际上，跟2的二分答案法是差不多的）。不多说，挂个例题和解法就过了。</p>
+
+<p><a href="http://poj.org/problem?id=2456">POJ 2456 Aggressive cows</a></p>
+
+<p>定义一个canMake(int d)函数,代表可以安排牛的位置使离得最近的互相仇恨的牛的距离不小于d。这个问题只用贪心法就很容易判断了（具体过程不说了）。之后进行二分答案就好！</p>
+
+<p>参考<a href="/acm/poj/poj2456/">代码</a></p>
+
+<ol>
+<li>最大化平均值</li>
+</ol>
+
+
+<p>这种题呢，说实话，还没有太多印象遇到过，不过既然书上提到了，这里就来讲一讲罗！先来看问题：</p>
+
+<p>有n个物品的重量和价值分别为wi和vi，要从中选出k个物品是的单位重量的价值最大。</p>
+
+<p>这个问题，我刚开始看到的想法就是直接贪心按照单价排序不就好了嘛，可是后来发现这种贪心是错误的（给的样例就能证明）。那么我们可以这样来假设，定义:</p>
+
+<p>C(x) = 可以选择使得单位重量的价值不小于x。</p>
+
+<p>那么原问题就等于是求满足C(x)的最大的x。那么解决了判断问题，就又可以二分答案了。关键我们是怎么判断C(x)呢？假设我们选了某个物品的集合S那么它们的单位重量的价值就是 sigma(vi)/sigma(wi)。</p>
+
+<p>因此就变成了判断是否存在S满足下面的条件</p>
+
+<p>sigma(vi)/sigma(wi) >= x;</p>
+
+<p>把这个不等式变形就得到</p>
+
+<p>sigma(vi - x*wi) >= 0.</p>
+
+<p>因此，我们只需要对vi-x*wi的值进行排序贪心的选取，判断从大到小前k个的和不小于0就行了。每次判断的复杂度是O（nlogn）.</p>
+
+<p>通过上面的内容，我们会发现，不管怎么样，用到二分答案的时候，我们需要先找到一个判断条件，然后对答案进行二分。二分，更重要的是这种思想，它不仅仅是能够搜索数值，还能有更广阔的应用！</p>
+
+<p><a href="/blog/archives">&lt;–返回</a></p>
+]]></content>
+  </entry>
+  
+</feed>

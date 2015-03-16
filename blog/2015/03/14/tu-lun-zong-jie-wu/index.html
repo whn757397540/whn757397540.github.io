@@ -56,11 +56,8 @@
   
 <ul class="main-navigation">
   <li><a href="/">首页</a></li>
-  <li><a href="/blog/categories/tech/">技术</a></li>
-  <li><a href="/blog/categories/life/">生活</a></li>
-  <li><a href="/blog/categories/book/">读书</a></li>
+  <li><a href="/blog/archives">文章</a></li>
   <li><a href="/tag-cloud/">标签云</a></li>
-  <li><a href="/about">关于</a></li>
 </ul>
 
 </nav>
@@ -948,7 +945,10 @@ var jiathis_config = {
 <section>
   <h1>Tags</h1>
   <ul class="tag-cloud">
-    <a style="font-size: NaN%" href="/tags/dan-xing-peng-zhuang/">弹性碰撞</a> &nbsp 
+    <a style="font-size: NaN%" href="/tags/er-fen/">二分</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/er-jin-zhi/">二进制</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/chi-qu-fa/">尺取法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/dan-xing-peng-zhuang/">弹性碰撞</a> &nbsp 
 <a style="font-size: NaN%" href="/tags/ji-qiao-fang-fa/">技巧方法</a>
 
   </ul>
@@ -964,7 +964,21 @@ var jiathis_config = {
 
     </div>
   </div>
-  <footer role="contentinfo"></script>
+  <footer role="contentinfo">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
 <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
 <p>
   Copyright &copy; 2015 - hnnwang -

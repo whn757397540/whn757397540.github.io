@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 尺取法 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/chi-qu-fa/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-03-16T17:06:28+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[尺取法]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/02/14/chi-qu-fa/"/>
+    <updated>2015-02-14T18:56:11+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/02/14/chi-qu-fa</id>
+    <content type="html"><![CDATA[<p>尺取法
+尺取法，不止一次听说过，也大概知道是怎么回事儿，不过没怎么用过（好像旋转卡壳有用到过），今天就着书本系统地总结一下！</p>
+
+<!--more-->
+
+
+<p>反复推进区间的开头和末尾，来求取满足条件的最小区间的方法成为尺取法</p>
+
+<p>很简单，不复杂，就着两个例子简单说一下就好。</p>
+
+<p>首先，最基础的一道题。</p>
+
+<p><a href="http://poj.org/problem?id=3061">POJ3061 Subsequence</a></p>
+
+<p>这道题本身就是一道水体，用一些比较暴力的方法也能过，这里只把尺取法说一下！</p>
+
+<p>算法过程如下：（这里依旧取左闭右开的区间[s,t)）</p>
+
+<p>以s=t=sum=0初始化；
+只要依然有sum&lt;S,就不断讲sum增加a[t]，并且t++;
+如果2中无法满足sum>=0则终止，否则，更新res = min(res,t-s);
+将sum减去a[s],s++然后返回到2。
+上面的过程是书上的过程，跟我自己写的略有不同，但是也算是大同小异，我也懒得改了，我之前没写过，自然谈不上什么姿势，姿势最好还是按照上面说的步骤来吧！我的挫挫的代码也挂出来</p>
+
+<p><a href="http://poj.org/problem?id=3320">POJ3320 Jessica’s Reading Problem</a></p>
+
+<p>这题就稍微需要拐一个弯儿了。我是在知道要用尺取法的情况下，刻意去想而想出来的解法，如果没有知道用尺取法，我也不清楚多久会想出来。</p>
+
+<p>说说我的思路，这道题所有知识点都被覆盖的话，那么你所选择的区间里，所有的知识点都应该要被看到至少一次！所以，我就想如果能够把每个知识点被看到的次数标记出来就好了！但是，知识点的范围是int以内，这就决定了不能直接用数组存储，所以我想到了一个常用的手段，离散化！因为最多106页，所以离散化后，知识点的标号不会超过106。所以呢，离散化后就能够标记次数了。而且，离散化处理的复杂度也就是nlogn，可以接受！</p>
+
+<p>那么有了上面的处理之后，就只需要按照尺取法的步骤来写就好，不同的只不过是判断条件以及标识变量（比如之前一道题的sum）的改变方式而已，仔细想一想，应该很容易解决！这里也挂出我自己的<a href="/acm/poj/poj3320/">参考代码</a></p>
+
+<p>这道题，除了我使用的离散化的处理方法之外，还可以用map来处理，这里给出来参考代码：（PS：这是书上的代码）</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;string&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#include &lt;cmath&gt;
+
+using namespace std;
+const int INF = 0x3f3f3f3f;
+const int maxn = 111111;
+typedef long long ll;
+int a[maxn];
+int P;
+int main()
+{
+    int p;
+    scanf("%d", &amp;P);
+    set&lt;int&gt; all;
+    for (int i = 0; i &lt; P; i++)
+    {
+        scanf("%d", &amp;a[i]);
+        all.insert(a[i]);
+    }
+    int n = all.size();
+    //利用尺取法求解
+    int s = 0, t = 0, num = 0;
+    map&lt;int, int&gt; count;//map映射，知识点-&gt;出现次数的映射
+    int res = P;
+    for (;;)
+    {
+        while(t&lt;P &amp;&amp; num &lt; n)
+            if (count[a[t++]]++ == 0)
+                num++;
+        if (num &lt; n)
+            break;
+        res = min(res, t-s);
+        if (--count[a[s++]] == 0)
+            num--;
+    }
+    printf("%d\n", res);
+
+    return 0;
+}
+</code></pre>
+
+<p><a href="/blog/archives">&lt;–Back</a></p>
+]]></content>
+  </entry>
+  
+</feed>
