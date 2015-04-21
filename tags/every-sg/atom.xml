@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: EVERY-SG | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/tags/every-sg/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-04-20T22:53:39+08:00</updated>
+  <updated>2015-04-21T22:50:55+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -21,6 +21,9 @@
     <content type="html"><![CDATA[<p>第二场</p>
 
 <p>PS：这是我的第一篇octopress博客，是把CSDN上的第二场个人排位赛的题解搬了过来，并加上了第五题的题解，以后还会陆续写其他场次，好了，开始）</p>
+
+<!--more-->
+
 
 <p>这次训练的题目，两道水题（卡数据类型，有好多人不能1A，我也在内），还有3道题，不是很容易。</p>
 
