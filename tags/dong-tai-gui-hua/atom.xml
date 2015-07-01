@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 动态规划 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/tags/dong-tai-gui-hua/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-04-21T22:50:55+08:00</updated>
+  <updated>2015-07-01T20:14:09+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -432,6 +432,9 @@ int main()
     <updated>2014-06-20T22:36:48+08:00</updated>
     <id>http://whn757397540.github.io/blog/2014/06/20/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai</id>
     <content type="html"><![CDATA[<p>第三场</p>
+
+<!--more-->
+
 
 <p>A题 <a href="http://code.bupt.edu.cn/problem/p/429/">BOJ 429 学姐的数码管</a></p>
 
