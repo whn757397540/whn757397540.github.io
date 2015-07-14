@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://whn757397540.github.io/blog/2015/07/14/test-new/</loc>
+    <lastmod>2015-07-14T11:12:54+08:00</lastmod>
+  </url>
+  <url>
     <loc>http://whn757397540.github.io/blog/2015/07/01/suan-fa-she-ji-yu-fen-xi-qi-mo-fu-xi-zong-jie/</loc>
     <lastmod>2015-07-01T15:50:30+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/blog/2015/04/12/test/</loc>
+    <lastmod>2015-04-12T00:00:00+08:00</lastmod>
   </url>
   <url>
     <loc>http://whn757397540.github.io/blog/2015/03/14/shu-zhuang-shu-zu-yi-ji-xian-duan-shu-zong-jie/</loc>
@@ -73,14 +81,6 @@
     <lastmod>2014-12-19T18:53:31+08:00</lastmod>
   </url>
   <url>
-    <loc>http://whn757397540.github.io/blog/2014/07/20/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai/</loc>
-    <lastmod>2014-07-20T22:35:29+08:00</lastmod>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/blog/2014/06/20/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai/</loc>
-    <lastmod>2014-06-20T22:36:48+08:00</lastmod>
-  </url>
-  <url>
     <loc>http://whn757397540.github.io/404.html</loc>
   </url>
   <url>
@@ -90,16 +90,7 @@
     <loc>http://whn757397540.github.io/</loc>
   </url>
   <url>
-    <loc>http://whn757397540.github.io/tag-cloud/</loc>
-  </url>
-  <url>
     <loc>http://whn757397540.github.io/acm/poj/poj3320/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/acm/poj/poj3276/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/acm/poj/poj2456/</loc>
   </url>
   <url>
     <loc>http://whn757397540.github.io/acm/poj/poj1064/</loc>
@@ -111,28 +102,16 @@
     <loc>http://whn757397540.github.io/acm/poj/poj3684/</loc>
   </url>
   <url>
+    <loc>http://whn757397540.github.io/acm/poj/poj2456/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/tag-cloud/</loc>
+  </url>
+  <url>
     <loc>http://whn757397540.github.io/acm/poj/poj1852/</loc>
   </url>
   <url>
-    <loc>http://whn757397540.github.io/tags/xiao-mo-ni/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/tags/zi-fu-chuan-hash/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/tags/kuai-su-mi/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/tags/dong-tai-gui-hua/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/tags/ji-suan-ji-he/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/tags/bo-yi/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/tags/every-sg/</loc>
+    <loc>http://whn757397540.github.io/acm/poj/poj3276/</loc>
   </url>
   <url>
     <loc>http://whn757397540.github.io/tags/chi-qu-fa-ji-qiao-fang-fa/</loc>
@@ -186,12 +165,18 @@
     <loc>http://whn757397540.github.io/tags/shu-zhuang-shu-zu-xian-duan-shu-shu-ju-jie-gou/</loc>
   </url>
   <url>
-    <loc>http://whn757397540.github.io/blog/categories/acm/</loc>
-  </url>
-  <url>
     <loc>http://whn757397540.github.io/blog/categories/bo-ke-pei-zhi/</loc>
   </url>
   <url>
     <loc>http://whn757397540.github.io/blog/categories/ji-qiao-fang-fa/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/blog/categories/tu-lun/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/blog/categories/shu-ju-jie-gou/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/posts/2/</loc>
   </url>
 </urlset>

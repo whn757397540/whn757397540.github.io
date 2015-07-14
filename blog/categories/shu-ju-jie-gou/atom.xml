@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Tag: 树状数组 线段树 数据结构 | hnnwang's Blog]]></title>
-  <link href="http://whn757397540.github.io/tags/shu-zhuang-shu-zu-xian-duan-shu-shu-ju-jie-gou/atom.xml" rel="self"/>
+  <title><![CDATA[Category: 数据结构 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/blog/categories/shu-ju-jie-gou/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
   <updated>2015-07-14T11:13:29+08:00</updated>
   <id>http://whn757397540.github.io/</id>
