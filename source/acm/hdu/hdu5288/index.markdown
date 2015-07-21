@@ -1,0 +1,81 @@
+---
+layout: page
+title: "hdu5288"
+date: 2015-07-22 00:03
+comments: true
+sharing: true
+footer: true
+---
+
+
+```c++
+#include <iostream>
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+#include<cmath>
+#include<queue>
+#include <vector>
+using namespace std;
+#define MAXN 100100
+const int mod = 1e9+7;
+int n,k,a[MAXN],l[MAXN],r[MAXN];
+int pos[10010];
+vector<int> yin[10010];
+
+void build()
+{
+    int ma = 0;
+    for(int i = 1; i <= 10000; i++)
+        for(int j = 1; j <= i; j++)
+            if(i % j == 0) yin[i].push_back(j);
+
+}
+
+int main()
+{
+   // int T;
+    build();
+   // system("pause");
+    //freopen("in.txt","r",stdin);
+    int n;
+    while(scanf("%d", &n) == 1)
+    {
+        memset(pos, -1, sizeof(pos));
+        for(int i = 0; i < n; i++)
+            scanf("%d", &a[i]);
+        for(int i = 0; i < n; i++)
+        {
+            l[i] = -1;
+            for(int j = 0, sz = yin[a[i]].size(); j < sz; j++)
+            {
+                l[i] = max(l[i], pos[yin[a[i]][j]]);
+            }
+            pos[a[i]] = i;
+        }
+        memset(pos, 0x3f3f3f3f, sizeof(pos));
+        for(int i = n-1; i >= 0; i--)
+        {
+            r[i] = n;
+            for(int j = 0, sz = yin[a[i]].size(); j < sz; j++)
+            {
+                r[i] = min(r[i], pos[yin[a[i]][j]]);
+            }
+            pos[a[i]] = i;
+        }
+
+
+        long long ans =0;
+        for(int i = 0; i < n; i++)
+        {
+           // cout<<l[i]<<" "<<r[i]<<endl;
+            ans = (ans + ((long long)(r[i]-i)*(i-l[i])))%mod;
+        }
+        printf("%I64d\n", ans);
+    }
+
+    return 0;
+}
+```
+
+

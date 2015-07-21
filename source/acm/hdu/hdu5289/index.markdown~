@@ -1,0 +1,67 @@
+---
+layout: page
+title: "hdu5289"
+date: 2015-07-22 00:04
+comments: true
+sharing: true
+footer: true
+---
+
+```c++
+#include <iostream>
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+#include<cmath>
+#include<queue>
+using namespace std;
+#define MAXN 100100
+int n,k,a[MAXN];
+int qmax[MAXN];
+int qmin[MAXN];
+int h1, t1, h2, t2, h, t;
+
+int main()
+{
+    int T;
+    //freopen("in.txt","r",stdin);
+    scanf("%d",&T);
+    while(T--)
+    {
+        scanf("%d%d",&n,&k);
+        for(int i = 0; i < n; i++)
+            scanf("%d", &a[i]);
+        h = t = 0;
+        h1 = t1 = 0;
+        h2 = t2 = 0;
+
+//        qmax[t1++] = a[0];
+//        qmin[t2++] = a[0];
+        long long ans = 0;
+        int head = 0;
+        for (int i=0; i<n; i++)
+        {
+            while(t1 != h1 && a[qmax[t1-1]] <= a[i]) t1--;
+                qmax[t1++] = i;
+            while(t2 != h2 && a[qmin[t2-1]] >= a[i]) t2--;
+                qmin[t2++] = i;
+            if(a[qmax[h1]] - a[qmin[h2]] < k) ans += i-head+1;
+            else
+            {
+                while(h1 < t1 && h2 < t2 && a[qmax[h1]] - a[qmin[h2]] >= k)
+                {
+                    head++;
+                    if(h1 < t1 && qmax[h1] < head) h1++;
+                    if(h2 < t2 && qmin[h2] < head) h2++;
+                }
+                ans += i - head + 1;
+            }
+           // cout<<ans<<endl;
+            //system("pause");
+        }
+        printf("%I64d\n", ans);
+
+    }
+    return 0;
+}
+```
