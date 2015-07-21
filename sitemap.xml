@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://whn757397540.github.io/blog/2015/07/14/test-new/</loc>
-    <lastmod>2015-07-14T11:12:54+08:00</lastmod>
+    <loc>http://whn757397540.github.io/blog/2015/07/21/test-new/</loc>
+    <lastmod>2015-07-21T23:10:54+08:00</lastmod>
   </url>
   <url>
     <loc>http://whn757397540.github.io/blog/2015/07/01/suan-fa-she-ji-yu-fen-xi-qi-mo-fu-xi-zong-jie/</loc>
@@ -90,7 +90,13 @@
     <loc>http://whn757397540.github.io/</loc>
   </url>
   <url>
-    <loc>http://whn757397540.github.io/acm/poj/poj3320/</loc>
+    <loc>http://whn757397540.github.io/acm/hdu/hdu5288/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/acm/poj/poj3276/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/acm/poj/poj2456/</loc>
   </url>
   <url>
     <loc>http://whn757397540.github.io/acm/poj/poj1064/</loc>
@@ -99,19 +105,25 @@
     <loc>http://whn757397540.github.io/acm/poj/poj2104/</loc>
   </url>
   <url>
-    <loc>http://whn757397540.github.io/acm/poj/poj3684/</loc>
+    <loc>http://whn757397540.github.io/acm/hdu/hdu5289/</loc>
   </url>
   <url>
-    <loc>http://whn757397540.github.io/acm/poj/poj2456/</loc>
+    <loc>http://whn757397540.github.io/acm/hdu/hdu5294/</loc>
   </url>
   <url>
     <loc>http://whn757397540.github.io/tag-cloud/</loc>
   </url>
   <url>
+    <loc>http://whn757397540.github.io/acm/poj/poj3320/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/acm/poj/poj3684/</loc>
+  </url>
+  <url>
     <loc>http://whn757397540.github.io/acm/poj/poj1852/</loc>
   </url>
   <url>
-    <loc>http://whn757397540.github.io/acm/poj/poj3276/</loc>
+    <loc>http://whn757397540.github.io/acm/hdu/hdu5299/</loc>
   </url>
   <url>
     <loc>http://whn757397540.github.io/tags/chi-qu-fa-ji-qiao-fang-fa/</loc>
@@ -165,6 +177,15 @@
     <loc>http://whn757397540.github.io/tags/shu-zhuang-shu-zu-xian-duan-shu-shu-ju-jie-gou/</loc>
   </url>
   <url>
+    <loc>http://whn757397540.github.io/tags/bo-yi-lun/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/tags/wang-luo-liu/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/tags/dan-diao-dui-lie/</loc>
+  </url>
+  <url>
     <loc>http://whn757397540.github.io/blog/categories/bo-ke-pei-zhi/</loc>
   </url>
   <url>
@@ -177,6 +198,6 @@
     <loc>http://whn757397540.github.io/blog/categories/shu-ju-jie-gou/</loc>
   </url>
   <url>
-    <loc>http://whn757397540.github.io/posts/2/</loc>
+    <loc>http://whn757397540.github.io/blog/categories/duo-xiao/</loc>
   </url>
 </urlset>
