@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 单调队列 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/tags/dan-diao-dui-lie/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-07-22T00:11:55+08:00</updated>
+  <updated>2015-07-23T00:00:11+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[]]></title>
+    <title type="html"><![CDATA[2015年多校联合训练第一场]]></title>
     <link href="http://whn757397540.github.io/blog/2015/07/21/test-new/"/>
     <updated>2015-07-21T23:10:54+08:00</updated>
     <id>http://whn757397540.github.io/blog/2015/07/21/test-new</id>
@@ -22,8 +22,6 @@
 
 <!--more-->
 
-
-<p>今天先写4道题目：</p>
 
 <p>1001题：<a href="http://acm.hdu.edu.cn/showproblem.php?pid=5288">hdu 5288 OO’s Sequence</a></p>
 
@@ -37,13 +35,27 @@
 
 <p>这个题非常简单，使用单调队列，维护一个最大值的单调队列和一个最小值的单调队列，然后设定一个头，每次当最大值和最小值的差不小于k就让头加1，否则在答案里增加当前的区间长度。具体可以根据<a href="/acm/hdu/hdu5289/">代码</a>来看清楚</p>
 
-<p>1007题：<a href="http://acm.hdu.edu.cn/showproblem.php?pid=5294">HDU 5294</a></p>
+<p>1005题 <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5292">HDU 5292 Pocket Cube</a></p>
+
+<p>这个题其实没什么好说的，算是一个结论题，仔细研究过魔方的人很容易就知道，而没玩过的人想想出来是非常困难的。就是按照官方题解的思路来喽，上面写的圈值+代表1，-代表-1，0代表0。当然正负反一下也可以，不过要保证对面的数字和为0.</p>
+
+<p>1006题 <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5293">HDU 5293 Tree chain problem</a></p>
+
+<p>树型dp，本人这方面比较弱，看了题解才能写出来，玮神说这题要比第9题简单，2333。思路就是题解中的思路，关于后面的求和部分，可以利用树状数组（时间比较紧）。对于dfs过程中到达的每个点，记录达到这个点的时间戳和离开这个点的时间戳。然后以时间戳为下标来更新树状数组，在达到这个点的时候加上对应的数字（求sum[i]的和就加上sum[i]，求d[i]的和就加上d[i],用两个树状数组维护），离开这个点的时候减去这个数字，这样只需要对应求和就可以得到想要的和。</p>
+
+<p><a href="/acm/hdu/hdu5293/">代码</a>在这里，刚开始是建的双向图，然后给T了，就只好建单向图。还有就是这题要扩栈，在题目的hint里有提示，但是一定要用c++交才可以。</p>
+
+<p>1007题 <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5294">HDU 5294 Tree chain problem</a></p>
 
 <p>其实并不难，就是敲的时候小心模板不要敲错了，我们的做法是先求最短路（用dijkstra），然后记录所有最短路径上的点的父亲节点，然后从终点开始dfs父亲节点，最终构造出一个最短路的图。</p>
 
 <p>之后就是在这个图的基础上，设定所有的边流量为1求最大流（也就是在求这个图的最小割），这是第一个输出数据，第二个数据应该是所有边的边数减去边数最少的最短路上的边数，这个可以用bfs来求，不过我们是用了dfs来求的。</p>
 
 <p><a href="/acm/hdu/hdu5294/">代码在这里</a></p>
+
+<p>1009题 <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5296">HDU 5296 Annoying problem</a></p>
+
+<p>这个题也是看了题解才知道怎么写，而且也参考了标程，首先处理LCA，记录dfs顺序也是用到了时间戳。为什么要选择dfs序最近的左右两个点呢？其实对于每种情况，不只是这两个点可以，也有其他的点可以，但是画图后观察可以发现，dfs序最近的两个点之间的路径到点的距离肯定是是所有集和的最近距离（说了好像没说一样，我也只是看了题解后画了画，并不知道怎么证明。），而实现上，找这两个点，利用了set。<a href="/acm/hdu/hdu5296/">代码</a>在这里</p>
 
 <p>1012题 <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5299">hdu 5299 Circles Game</a></p>
 
