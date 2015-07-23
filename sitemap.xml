@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://whn757397540.github.io/blog/2015/07/24/test/</loc>
+    <lastmod>2015-07-24T05:57:05+08:00</lastmod>
+  </url>
+  <url>
     <loc>http://whn757397540.github.io/blog/2015/07/21/test-new/</loc>
     <lastmod>2015-07-21T23:10:54+08:00</lastmod>
   </url>
   <url>
     <loc>http://whn757397540.github.io/blog/2015/07/01/suan-fa-she-ji-yu-fen-xi-qi-mo-fu-xi-zong-jie/</loc>
     <lastmod>2015-07-01T15:50:30+08:00</lastmod>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/blog/2015/04/12/test/</loc>
-    <lastmod>2015-04-12T00:00:00+08:00</lastmod>
   </url>
   <url>
     <loc>http://whn757397540.github.io/blog/2015/03/14/shu-zhuang-shu-zu-yi-ji-xian-duan-shu-zong-jie/</loc>
@@ -135,6 +135,21 @@
     <loc>http://whn757397540.github.io/acm/hdu/hdu5292/</loc>
   </url>
   <url>
+    <loc>http://whn757397540.github.io/blog/categories/bo-ke-pei-zhi/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/blog/categories/ji-qiao-fang-fa/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/blog/categories/tu-lun/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/blog/categories/shu-ju-jie-gou/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/blog/categories/duo-xiao/</loc>
+  </url>
+  <url>
     <loc>http://whn757397540.github.io/tags/chi-qu-fa-ji-qiao-fang-fa/</loc>
   </url>
   <url>
@@ -193,20 +208,5 @@
   </url>
   <url>
     <loc>http://whn757397540.github.io/tags/dan-diao-dui-lie/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/blog/categories/bo-ke-pei-zhi/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/blog/categories/ji-qiao-fang-fa/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/blog/categories/tu-lun/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/blog/categories/shu-ju-jie-gou/</loc>
-  </url>
-  <url>
-    <loc>http://whn757397540.github.io/blog/categories/duo-xiao/</loc>
   </url>
 </urlset>
