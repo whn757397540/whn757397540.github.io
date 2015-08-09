@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 2-sat | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/2-sat/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-09T23:00:29+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[图论总结(六)]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/03/14/tu-lun-zong-jie-liu/"/>
+    <updated>2015-03-14T18:55:18+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/03/14/tu-lun-zong-jie-liu</id>
+    <content type="html"><![CDATA[<p>2-sat问题</p>
+
+<!--more-->
+
+
+<p>2-sat问题嘛，去鞍山打比赛之前看过一次，是在刘汝佳白书上看的，看的迷迷糊糊似懂非懂的（说白了其实是没有看懂），这次看的《挑战程序设计竞赛》上的，一下子就全部闹明白了。</p>
+
+<p>首先，解释一下什么叫做sat问题：给定一个布尔方程，判断是否存在一组布尔变量的真值指派使得整个方程为真的问题，被称为布尔方程的可满足性问题（sat）。sat问题是NP完全性问题，但是对于满足一定限制条件的sat问题，还是能够有效求解的。看下面的合取范式：</p>
+
+<p>(a或b或……）且（c或d或………）且……（PS:符号不好打， 所以只能用文字代替了）</p>
+
+<p>其中a,b,c,d……等被称为文字，它是一个布尔变量或者其否定。像 (a或b或……) 这样用 或 连接的部分称为子句。如果合取范式的每个子句中的文字个数都不超过2个，那么对应的sat问题又称为2-sat问题。</p>
+
+<p>通过以上的说明，应该能够知道什么事sat问题了。那么这类问题怎么求解呢？利用强连通分量，可以在布尔公式句数的线性时间内解决2-sat问题。首先，利用=>(蕴涵)符号将每个子句（a 或 b） 改成其等价形式（非a => b 且 非b => a）。这样远布尔公式就变成了把 a=>b 形式的布尔公式用 与 链接起来的形式。 对于每个布尔变量x, 构造两个顶点分别代表 x 和 非x， 以 => 关系为边建立有向图。 此时，如果图上a能到达b点的话，就表示当a为真的时候b也肯定为真。因此，该图中同一个强连通分量所含的所有文字的布尔值均相同（可能真可能假）。</p>
+
+<p>如果存在某个布尔变量x，x 和 非x 均在同一个强连通分量重，则显然无法令整个布尔公式的值为真。 反之，如果不存在这样的布尔变量，那么对于每个布尔变量x，让</p>
+
+<p>x所在的强连通分量的拓扑序在 非x 所在的强连通分量之后 &lt;==> x为真</p>
+
+<p>就是使得该公式值为真的一组合适的布尔变量赋值。（记住后面的是真就好，这个是在需要输出一种可能的结果的时候会用得到）</p>
+
+<p>接下来看题</p>
+
+<p><a href="http://poj.org/problem?id=3683">POJ 3683 Priest John’s Busiest Day</a></p>
+
+<p>这道题，我们知道，对于每一组S,T,D，只有2种情况需要结婚仪式，就是(S, S+D) 和 (T-D, T)，把这两种情况分别设为同一个布尔变量的真和假就好。假设对应i于j的两个布尔型变量分别为xi（Si+Di）,xj(Sj+Dj),那么 非xi 对应（T[i] - D[i], T[i]）, 非xj 对应（T[j] - D[j], T[j]）。加入xi和xj矛盾，我们就有 xi且xj 为假， 那么 非xi 或 非xj 就为真，把这个式子按照之前所说的规则进行转换就能得到一组加边的方法。同理，对于其他的矛盾也是这样处理。</p>
+
+<p>那么，对应的这道题的连边的方式就出来了，然后就没有什么难度了。给两个代码。</p>
+
+<p>Tarjan</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;string&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#include &lt;cmath&gt;
+#include &lt;stack&gt;
+
+using namespace std;
+const int maxv = 11111;
+const int maxm = 2222222;
+struct Edge{
+    int from, to, next;
+    Edge(){}
+    Edge(int from, int to, int next):from(from), to(to), next(next){}
+};
+
+Edge E[maxm];
+int head[maxv];
+int nume;
+int pre[maxv],lowlink[maxv],sccno[maxv],dfs_clock,scc_cnt;
+int S[maxv];
+int tops;
+
+void init()
+{
+    nume = 0;
+    memset(head, -1, sizeof(head));
+    tops = 0;
+}
+
+void addEdge(int from, int to)
+{
+    E[nume] = Edge(from, to, head[from]);
+    head[from] = nume++;
+}
+
+void dfs(int u)
+{
+    pre[u] = lowlink[u] = ++dfs_clock;
+    S[tops++] = u;
+    for (int i = head[u]; i != -1; i = E[i].next)
+    {
+        int v = E[i].to;
+        if (!pre[v])
+        {
+            dfs(v);;
+            lowlink[u] = min(lowlink[u], lowlink[v]);
+        }
+        else if(!sccno[v])
+            lowlink[u] = min(lowlink[u], pre[v]);
+    }
+    if (lowlink[u] == pre[u])
+    {
+        scc_cnt++;
+        while(true)
+        {
+            int x = S[--tops];
+            sccno[x] = scc_cnt;
+            if(x == u)
+                break;
+        }
+    }
+}
+
+void find_scc(int n)
+{
+    dfs_clock = scc_cnt = 0;
+    memset(sccno, 0, sizeof(sccno));
+    memset(pre, 0, sizeof(pre));
+    for (int i = 0; i &lt; n; i++)
+        if(!pre[i]) dfs(i);
+}
+
+int s[maxv],t[maxv],d[maxv];
+int main()
+{
+    int n;
+    init();
+    scanf("%d", &amp;n);
+    for (int i = 0; i &lt; n; i++)
+    {
+        int hh,mm;
+        scanf("%d:%d", &amp;hh, &amp;mm);
+        s[i] = hh*60+mm;
+        scanf("%d:%d", &amp;hh, &amp;mm);
+        t[i] = hh*60+mm;
+        scanf("%d", &amp;d[i]);
+    }
+
+    for (int i = 0; i &lt; n; i++)
+    {
+        int t1 = s[i] + d[i], s1 = t[i] - d[i];
+        for (int j = i+1; j &lt; n; j++)
+        {
+            int t2 = s[j] + d[j], s2 = t[j] - d[j];
+            if (s[j] &lt; t1 &amp;&amp; t2 &gt; s[i])
+            {
+                addEdge(i,j+n);
+                addEdge(j,i+n);
+            }
+            if (s2 &lt; t1 &amp;&amp; t[j] &gt; s[i])
+            {
+                addEdge(i,j);
+                addEdge(j+n,i+n);
+            }
+            if (s[j] &lt; t[i] &amp;&amp; t2 &gt; s1)
+            {
+                addEdge(i+n, j+n);
+                addEdge(j,i);
+            }
+            if (s2 &lt; t[i] &amp;&amp; t[j] &gt; s1)
+            {
+                addEdge(i+n,j);
+                addEdge(j+n,i);
+            }
+        }
+    }
+    find_scc(2*n);
+    bool judge = true;
+    for (int i = 0; i &lt; n; i++)
+        if(sccno[i] == sccno[n+i])
+        {
+            judge = false;
+            break;
+        }
+    if(judge)
+    {
+        printf("YES\n");
+        for (int i = 0; i &lt; n; i++)
+        {
+            if(sccno[i] &lt; sccno[n+i])
+                printf("%02d:%02d %02d:%02d\n", s[i]/60, s[i]%60, (s[i]+d[i])/60, (s[i]+d[i])%60);
+            else
+                printf("%02d:%02d %02d:%02d\n", (t[i]-d[i])/60, (t[i]-d[i])%60, t[i]/60, t[i]%60);
+        }
+    }
+    else
+        printf("NO\n");
+    system("pause");
+    return 0;
+}
+</code></pre>
+
+<p>Kosaraju</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;string&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#include &lt;cmath&gt;
+
+using namespace std;
+const int maxv = 22222;
+const int maxe = 2222222;
+
+int V;
+struct Edge{
+    int from, to, next;
+    Edge(){}
+    Edge(int from, int to, int next):from(from), to(to), next(next){}
+};
+Edge E[maxe];//图的邻接表表示
+Edge rE[maxe];//把边反向后的图
+int head[maxv], rhead[maxv];
+int nume,rnume;
+int vs[maxv];//后续遍历顺序的顶点列表
+int cntvs;
+bool used[maxv];//访问标记
+int tporder[maxv];//所属强联通分量的拓扑序
+
+void init()
+{
+    nume = rnume = 0;
+    memset(head, -1, sizeof(head));
+    memset(rhead, -1, sizeof(rhead));
+    cntvs = 0;
+}
+void addEdge(int from, int to)
+{
+    E[nume] = Edge(from, to, head[from]);
+    head[from] = nume++;
+    rE[rnume] = Edge(to, from, rhead[to]);
+    rhead[to] = rnume++;
+}
+
+void dfs(int v)
+{
+    used[v] = true;
+    for (int i = head[v]; i != -1; i = E[i].next)
+        if (!used[E[i].to]) dfs(E[i].to);
+    vs[cntvs++] = v;
+}
+
+void rdfs(int v, int k)
+{
+    used[v] = true;
+    tporder[v] = k;
+    for (int i = rhead[v]; i != -1; i = rE[i].next)
+        if (!used[rE[i].to]) rdfs(rE[i].to, k);
+}
+
+int scc()
+{
+    memset(used, false, sizeof(used));
+
+    for (int v= 0 ; v &lt; V; v++)
+        if (!used[v])   dfs(v);
+    memset(used, 0, sizeof(used));
+    int k = 0;
+    for (int i = cntvs-1; i &gt;= 0; i--)
+        if (!used[vs[i]]) rdfs(vs[i], k++);
+    return k;
+}
+
+
+int s[maxv],t[maxv],d[maxv];
+int main()
+{
+    int n;
+    init();
+    scanf("%d", &amp;n);
+    for (int i = 0; i &lt; n; i++)
+    {
+        int hh,mm;
+        scanf("%d:%d", &amp;hh, &amp;mm);
+        s[i] = hh*60+mm;
+        scanf("%d:%d", &amp;hh, &amp;mm);
+        t[i] = hh*60+mm;
+        scanf("%d", &amp;d[i]);
+    }
+    int t1,t2,s1,s2;
+    for (int i = 0; i &lt; n; i++)
+    {
+        t1 = s[i] + d[i], s1 = t[i] - d[i];
+        for (int j = 0; j &lt; i; j++)
+        {
+            t2 = s[j] + d[j], s2 = t[j] - d[j];
+            if (min(t1, t2) &gt; max(s[i],s[j]))
+            {
+                addEdge(i,j+n);
+                addEdge(j,i+n);
+            }
+            if (max(s[i],s2) &lt; min(t1, t[j]))
+            {
+                addEdge(i,j);
+                addEdge(j+n,i+n);
+            }
+            if (max(s[j],s1) &lt; min(t[i],t2))
+            {
+                addEdge(i+n, j+n);
+                addEdge(j,i);
+            }
+            if (min(t[i], t[j]) &gt; max(s1,s2))
+            {
+                addEdge(i+n,j);
+                addEdge(j+n,i);
+            }
+        }
+    }
+    V = 2*n;
+    scc();
+    bool judge = true;
+    for (int i = 0; i &lt; n; i++)
+        if(tporder[i] == tporder[n+i])
+        {
+            judge = false;
+            break;
+        }
+    if(judge)
+    {
+        printf("YES\n");
+        for (int i = 0; i &lt; n; i++)
+        {
+            if(tporder[i] &gt; tporder[n+i])
+                printf("%02d:%02d %02d:%02d\n", s[i]/60, s[i]%60, (s[i]+d[i])/60, (s[i]+d[i])%60);
+            else
+                printf("%02d:%02d %02d:%02d\n", (t[i]-d[i])/60, (t[i]-d[i])%60, t[i]/60, t[i]%60);
+        }
+    }
+    else
+        printf("NO\n");
+   // system("pause");
+    return 0;
+}
+</code></pre>
+
+<p>这里注意一点，Tarjan的拓扑序跟Kosaraju是相反的，之前所说的后面，对应Kosaraju里面的就是标号比较大，对应Tarjan里面的就是标号比较小。</p>
+
+<p>做这种题的关键是抽象出布尔代数来，然后用蕴含关系来连边，注意你要化简的布尔式子一定是 与 的关系，最后通过强连通分量来求出2-sat的结果。</p>
+]]></content>
+  </entry>
+  
+</feed>

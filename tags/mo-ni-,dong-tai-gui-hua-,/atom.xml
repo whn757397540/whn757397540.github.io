@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 模拟，动态规划， | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/mo-ni-,dong-tai-gui-hua-,/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-09T23:00:29+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[2015年多校联合训练（二）]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/07/24/test/"/>
+    <updated>2015-07-24T05:57:05+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/07/24/test</id>
+    <content type="html"><![CDATA[<!-- more -->
+
+
+<p>1002题： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5301">HDU 5301 Building</a></p>
+
+<p>这道题实际应该是最水的题目了，非常简单，最大的面积的矩形的宽度肯定是1，而长度只有可能是5个位置之中的到边界的最小距离的最大值，这5个位置分别是，不能占用的块相邻的4个位置和中心的位置。敲的时候细心一点就好。</p>
+
+<p>1004题： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5303">HDU 5303 Delicious Apples</a></p>
+
+<p>这道题，在比赛时应该是做不出来的。根据曹霸的思路，是一道dp题。</p>
+
+<p>由于苹果总数只有10<sup>5</sup>个，所以我们可以这样dp，先按照距离给果树排序，然后依次给每个苹果标号，编号为i的苹果与储藏处的距离记录在apple[i]之中。之后用两个数组，dp1[i]来记录顺时针出发（总是顺时针出发）最后取到第i个苹果时所花费的总距离（第i个之前的苹果都被运回了储藏处，这也是我们之前排序的原因。），则dp1[i] = dp1[i-k]+apple[i]+min(apple[i],L-apple[i])，因为取的第i个苹果有可能在左半圆，也有可能在右半圆，在右半圆应该是接着往前走走到起点比原路返回近。同理，dp2[i]表示逆时针的，同样i也要反过来，从大到小。。最后再暴力判断一下，对于每个i作为分界点来计算dp1[i]+dp2[i+1]的最小值即可。</p>
+
+<p><a href="/acm/hdu/hdu5301/">代码</a></p>
+
+<p>1006题： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5305">HDU 5305 Friends</a></p>
+
+<p>这道题如果数据范围大的化不会很简单，由于数据范围并不大，所以直接暴力枚举即可，记得稍微剪枝一下，比如如果有个人同奇数个人有关系的，就肯定不可能有符合的情况了。</p>
+
+<p>1009题： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5308">HDU 5308 I Wanna Become A 24-Point Master</a></p>
+
+<p>这个就是一个模拟题，我们的思路是，</p>
+
+<p>首先1～3是不可能构成的</p>
+
+<p>然后4～12手动构造，</p>
+
+<p>13～18有如下规律：首先令k=(24-n),用k+1个数构成k，然后再加上n得到24，剩下的肯定是偶数个，就加一个减一个即可。（当然，这个到24都是适用的）</p>
+
+<p>19之后有如下规律：当n为奇数时，我们可以用3个数构造一个2，再用16个数构造8个1，然后就可以构造出一个4和一个6，然后相乘得到24，总共花费19个数，剩下偶数个数，加一个减一个即可；当n为偶数时，用20个数构造10个1，之后就可以构造一个4和一个6，然后得到24，之后剩下的还是偶数个数，只需要加一个减一个即可。</p>
+
+<p>之后就可以写出来了，我们的<a href="/acm/hdu/hdu5308/">代码</a>在这里。</p>
+
+<p>其实还有很多种构造方法，比如我们可以用5个1构造一个4，7个1构造一个6（先相加再相除），共用12个；或者用4个1构造一个3，9个1构造一个8，共用13个；这样，在12之后就可以统一写了，这是S菊苣他们队伍的思路。其他的当然也有，就不用一一列举了，就是写的时候小心一点，就是一个不算特别大的模拟题。</p>
+
+<p>今天就先到这里</p>
+]]></content>
+  </entry>
+  
+</feed>
