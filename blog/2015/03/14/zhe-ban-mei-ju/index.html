@@ -1,14 +1,42 @@
 
-<script src="/javascripts/modernizr-2.0.js"></script>
-  <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>                                                                                                                           
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script> &#8211;>
-  <script src="/javascripts/libs/jquery.min.js"></script>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>折半枚举 - hnnwang&#8217;s Blog</title>
+  <meta name="author" content="hnnwang">
+
+  
+  <meta name="description" content="这个，也是一种优化技巧，其思想来源于传统的双向搜索！ 要点: 把要枚举的多个东西分成2部分分开来进行枚举，从而达到降低时间复杂度的目的，实际上是一种牺牲空间换取时间的方法，分成两部分来枚举的时候，就是先枚举一部分存起来，再根据存起来的这部分对剩下的一部分进行枚举。光说也看不出效果来，来看一道题。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://whn757397540.github.io/blog/2015/03/14/zhe-ban-mei-ju/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <script>
+  <link href="/atom.xml" rel="alternate" title="hnnwang's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<!--<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>&#8211;>
+
+  
+
+</head>
 
 <body   >
   <header role="banner"><hgroup>
-  <h1><a href="/">hnnwang's Blog</a></h1>
+  <h1><a href="/">hnnwang&#8217;s Blog</a></h1>
   
     <h2>Just for ACM-ICPC.</h2>
   
