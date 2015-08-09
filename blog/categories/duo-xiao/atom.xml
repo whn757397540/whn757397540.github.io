@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 多校 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/blog/categories/duo-xiao/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-07-23T21:26:04+08:00</updated>
+  <updated>2015-08-09T22:15:30+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -18,7 +18,10 @@
     <link href="http://whn757397540.github.io/blog/2015/07/24/test/"/>
     <updated>2015-07-24T05:57:05+08:00</updated>
     <id>http://whn757397540.github.io/blog/2015/07/24/test</id>
-    <content type="html"><![CDATA[<p>1002题： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5301">HDU 5301 Building</a></p>
+    <content type="html"><![CDATA[<!-- more -->
+
+
+<p>1002题： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=5301">HDU 5301 Building</a></p>
 
 <p>这道题实际应该是最水的题目了，非常简单，最大的面积的矩形的宽度肯定是1，而长度只有可能是5个位置之中的到边界的最小距离的最大值，这5个位置分别是，不能占用的块相邻的4个位置和中心的位置。敲的时候细心一点就好。</p>
 
