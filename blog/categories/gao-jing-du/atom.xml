@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 高精度 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/blog/categories/gao-jing-du/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T18:00:30+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[POJ1047 Round and Round We Go]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/poj1047-round-and-round-we-go/"/>
+    <updated>2015-08-10T16:54:14+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/poj1047-round-and-round-we-go</id>
+    <content type="html"><![CDATA[<p>本来说做到高精度题目放松下，结果竟然被卡了一个小时，好在学到了一点东西。</p>
+
+<!--more-->
+
+
+<p>其实也没有什么可以写的东西，用到了一点以前不知道的东西，就是，给BigInteger赋值可以这样</p>
+
+<pre><code class="c++">String s = "12345";
+BigInteger a = new BigInteger(s);
+</code></pre>
+
+<p>这样执行的结果是吧12345赋值给a;</p>
+
+<p>不过在网上还看到有人说可以酱紫来赋值</p>
+
+<pre><code class="c++">String s = "12345";
+BigInteger a = BigInteger.valueOf(s)
+</code></pre>
+
+<p>可是我试了试不行，不知道是不是他说错了。。。</p>
+
+<p>还有就是字符串比较是否相等的时候，貌似不能直接用==，而应该用</p>
+
+<pre><code class="c++">s.equals(s1);
+</code></pre>
+
+<p>反正我用“==”错了！</p>
+
+<p>别的没有什么了，这题的思路也很简单，就是在读入的字符串末尾再加一个相同的字符串形成一个新的字符串，然后判断他的对应的倍数是不是那个新串的子串就可以了！至于判断方法，由于串比较短，所以直接暴力判断就好了。</p>
+
+<p>我的代码！</p>
+
+<pre><code class="c++">import java.io.*;
+import java.math.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner cin = new Scanner(new BufferedInputStream(System.in));
+        BigInteger a;
+        String s;
+        int n;
+        while(cin.hasNext())
+        {
+          s = cin.next();
+          String s2 = s + s;
+          n = s.length();
+          int n2 = s2.length();
+          a = new BigInteger(s);
+          BigInteger c = a;
+          boolean judge = true;
+            for (int i = 2; i &lt;= n; i ++)
+            {
+              c = c.add(a);
+              String ss = c.toString();
+              judge = false;
+              for(int k = 0; k &lt; n; k ++)
+              {
+                  if (ss.equals(s2.substring(k,k + ss.length())))
+                  {
+                      judge = true;
+                      break;
+                  }
+              }
+              if (!judge) break;
+            }
+            if (judge)
+              System.out.println(s+" is cyclic");
+            else
+              System.out.println(s+" is not cyclic");
+        }
+    }
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[初窥java]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/17/chu-kui-java/"/>
+    <updated>2014-08-17T14:49:05+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/17/chu-kui-java</id>
+    <content type="html"><![CDATA[<p>今天敲了一整天的JAVA，顺便把一道拖了好久的题做了，第一次训练的E题。这里总结下今天学习java的收获</p>
+
+<p>学习java，以后可能会深入的学习，不过就目前来说，掌握点大数的知识，在需要的时候能够写出来就好了。</p>
+
+<!--more-->
+
+
+<p>首先，需要用到的头文件以及开头</p>
+
+<pre><code class="java">import java.io.*;
+import java.math.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner cin = new Scanner(new BufferedInputStream(System.in));
+        //内容
+    }
+}
+</code></pre>
+
+<p>大数，分为高精度浮点数BigDecimal和高精度整数BigInteger。今天用到的几点相关操作总结如下</p>
+
+<pre><code class="java">  BigDecimal a,b;
+  int n=100;
+  a = cin.nextBigDecimal;//读入
+  b = BigDecimal.valueOf(1);//赋值；
+  a = a.add(b);//a+b；
+  a = a.subtract(b);//a-b;
+  a = a.divide(b);//a/b;
+  a = a.divide(b,k,BigDecimal.ROUND_HALF_UP);//a/b，在小数点后第k位四舍五入
+  a = a.mutiply(b);//a*b;
+  a = a.setScale(k,BigDecimal.ROUND_HALF_UP);//在小数第k位四舍五入
+  a = a.pow(n);//a的n次幂。
+  a = a.stripTrailingZeros();//去后导0;
+  String str = a.toPlainString();//转化为字符串，不用科学计数法表示。
+  str.startsWith(String类型)//判断字符串开头是否是括号内的字符串。
+  str = str.substring(l,r);//取str的子串，只加一个参数的时候默认r到字符串尾。
+  char ch = str.charAt(k);//取出字符串第k位字符。
+  System.out.println(a+" "+str);//输出并换行
+</code></pre>
+
+<p>主要是有关高精度浮点数的，至于高精度整数的话，比浮点数简单多了。不再继续罗列了，用法差不多（取余的操作是mod），可以类比int和double的对应用法的差别。</p>
+
+<p>差点忘了，再补充一点，有关EOF读入的问题，还有就是有关大小比较的问题。</p>
+
+<pre><code class="java">  BigInteger a,b;
+  a = BigInteger.ZERO;
+  b = BigInteger.ONE;//大整数赋值可以类似上面用valueOf，也可以这样；
+  while (cin.hasNext())//这个是判断接下来有没有读入，如果没有，就返回false，然后就会退出了，其他的比如cin.hasNextInt()是一样的道理，不过限制了类型。
+  {
+     a = cin.nextBigInteger();
+     b = cin.nextBigInteger();
+     if (a.compareTo(b) == -1) System.out.println("a &lt; b");
+     else if (a.compareTo(b) == 0) Syetem.out.println("a &gt; b");
+     else if (a.compareTo(b) == 1) System.out.printf("a == b\n");
+  }
+</code></pre>
+
+<p>应该没有错吧?以上属于一个今天刚接触JAVA的人用记事本手敲的，如果有错的话，请见谅；</p>
+
+<p>接下来，挂下第一次排位E题的代码。思路就是在syx童鞋的思路，不过在空间上稍微优化了下，由于后一个状态只跟前一个状态有关，所以用滚动数组就好。下面附我的代码。</p>
+
+<pre><code class="c++">import java.io.*;
+import java.math.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner cin = new Scanner (new BufferedInputStream(System.in));
+        int n;
+        while (cin.hasNext())
+        {
+            n = cin.nextInt();
+            BigInteger[][] dp = new BigInteger[2][n+1];
+            dp[0][1] = BigInteger.ONE;
+            dp[0][0] = BigInteger.ZERO;
+            int now=0;
+            for (int i = 2;i &lt;= n; i ++)
+            {
+                for (int j = 0 ; j&lt;= i; j ++)
+                    dp[now^1][j] = BigInteger.ZERO;
+                dp[now][i] = BigInteger.ZERO;
+                for (int j = 1;j &lt;= i;j ++)
+                {
+                    BigInteger mid=BigInteger.valueOf(j);
+                    dp[now^1][j] = dp[now][j-1].add(dp[now][j]);
+                    dp[now^1][j] = dp[now^1][j].multiply(mid);
+                }
+                now^=1;
+            }
+            BigInteger ans = BigInteger.ZERO;
+            for (int i = 1; i &lt;= n; i ++)
+                ans = ans.add(dp[now][i]);
+            System.out.println(ans);
+        }
+    }
+}
+</code></pre>
+
+<p>总之，经过这一天的JAVA练习，一般的高精度应该已经可以用JAVA写出来了。至于什么时候再去深入学习JAVA，那至少得等我的C++掌握熟悉了以后吧！</p>
+
+<p><a href="http://hnnwang.github.io/blog/2014/08/11/chu-kui-java/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
+  
+</feed>

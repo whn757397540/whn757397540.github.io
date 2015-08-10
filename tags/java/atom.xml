@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: JAVA | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/java/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T18:00:30+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[JAVA字符串反转]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/javazi-fu-chuan-fan-zhuan/"/>
+    <updated>2015-08-10T17:32:30+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/javazi-fu-chuan-fan-zhuan</id>
+    <content type="html"><![CDATA[<p>又学习到一点点，其实没必要发个博客，不过就发出来记录给自己看吧,JAVA字符串反转。</p>
+
+<!--more-->
+
+
+<p>就是一个StringBuffer类里的reverse()函数，举个例子</p>
+
+<pre><code class="java">String str = "abcde";
+String Rstr = new StringBuffer(str).reverse().toString();
+</code></pre>
+
+<p>那么Rstr就应该是”edcba”</p>
+
+<p><a href="http://poj.org/problem?id=1504">poj 1504Adding Reversed Numbers</a></p>
+
+<p>就是给你两个数，然后反转后相加，结果再反转，然后输出；</p>
+
+<p>代码如下：</p>
+
+<pre><code class="java">import java.io.*;
+import java.math.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner cin = new Scanner(new BufferedInputStream(System.in));
+        BigInteger a,b;
+        int n;
+        n = cin.nextInt();
+        for (int kase = 1; kase &lt;= n; kase++)
+        {
+          String stra = cin.next();
+          String strb = cin.next();
+          String ansa = new StringBuffer(stra).reverse().toString();
+          String ansb = new StringBuffer(strb).reverse().toString();
+          a = new BigInteger(ansa);
+          b = new BigInteger(ansb);
+          String tmp = a.add(b).toString();
+          BigInteger ans = new BigInteger(new StringBuffer(tmp).reverse().toString());
+          System.out.println(ans);
+        }
+    }
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
+  
+</feed>

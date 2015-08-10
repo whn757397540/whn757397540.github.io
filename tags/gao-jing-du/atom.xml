@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 高精度 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/gao-jing-du/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T18:00:30+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[POJ1047 Round and Round We Go]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/poj1047-round-and-round-we-go/"/>
+    <updated>2015-08-10T16:54:14+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/poj1047-round-and-round-we-go</id>
+    <content type="html"><![CDATA[<p>本来说做到高精度题目放松下，结果竟然被卡了一个小时，好在学到了一点东西。</p>
+
+<!--more-->
+
+
+<p>其实也没有什么可以写的东西，用到了一点以前不知道的东西，就是，给BigInteger赋值可以这样</p>
+
+<pre><code class="c++">String s = "12345";
+BigInteger a = new BigInteger(s);
+</code></pre>
+
+<p>这样执行的结果是吧12345赋值给a;</p>
+
+<p>不过在网上还看到有人说可以酱紫来赋值</p>
+
+<pre><code class="c++">String s = "12345";
+BigInteger a = BigInteger.valueOf(s)
+</code></pre>
+
+<p>可是我试了试不行，不知道是不是他说错了。。。</p>
+
+<p>还有就是字符串比较是否相等的时候，貌似不能直接用==，而应该用</p>
+
+<pre><code class="c++">s.equals(s1);
+</code></pre>
+
+<p>反正我用“==”错了！</p>
+
+<p>别的没有什么了，这题的思路也很简单，就是在读入的字符串末尾再加一个相同的字符串形成一个新的字符串，然后判断他的对应的倍数是不是那个新串的子串就可以了！至于判断方法，由于串比较短，所以直接暴力判断就好了。</p>
+
+<p>我的代码！</p>
+
+<pre><code class="c++">import java.io.*;
+import java.math.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner cin = new Scanner(new BufferedInputStream(System.in));
+        BigInteger a;
+        String s;
+        int n;
+        while(cin.hasNext())
+        {
+          s = cin.next();
+          String s2 = s + s;
+          n = s.length();
+          int n2 = s2.length();
+          a = new BigInteger(s);
+          BigInteger c = a;
+          boolean judge = true;
+            for (int i = 2; i &lt;= n; i ++)
+            {
+              c = c.add(a);
+              String ss = c.toString();
+              judge = false;
+              for(int k = 0; k &lt; n; k ++)
+              {
+                  if (ss.equals(s2.substring(k,k + ss.length())))
+                  {
+                      judge = true;
+                      break;
+                  }
+              }
+              if (!judge) break;
+            }
+            if (judge)
+              System.out.println(s+" is cyclic");
+            else
+              System.out.println(s+" is not cyclic");
+        }
+    }
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[初窥java]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/17/chu-kui-java/"/>
+    <updated>2014-08-17T14:49:05+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/17/chu-kui-java</id>
+    <content type="html"><![CDATA[<p>今天敲了一整天的JAVA，顺便把一道拖了好久的题做了，第一次训练的E题。这里总结下今天学习java的收获</p>
+
+<p>学习java，以后可能会深入的学习，不过就目前来说，掌握点大数的知识，在需要的时候能够写出来就好了。</p>
+
+<!--more-->
+
+
+<p>首先，需要用到的头文件以及开头</p>
+
+<pre><code class="java">import java.io.*;
+import java.math.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner cin = new Scanner(new BufferedInputStream(System.in));
+        //内容
+    }
+}
+</code></pre>
+
+<p>大数，分为高精度浮点数BigDecimal和高精度整数BigInteger。今天用到的几点相关操作总结如下</p>
+
+<pre><code class="java">  BigDecimal a,b;
+  int n=100;
+  a = cin.nextBigDecimal;//读入
+  b = BigDecimal.valueOf(1);//赋值；
+  a = a.add(b);//a+b；
+  a = a.subtract(b);//a-b;
+  a = a.divide(b);//a/b;
+  a = a.divide(b,k,BigDecimal.ROUND_HALF_UP);//a/b，在小数点后第k位四舍五入
+  a = a.mutiply(b);//a*b;
+  a = a.setScale(k,BigDecimal.ROUND_HALF_UP);//在小数第k位四舍五入
+  a = a.pow(n);//a的n次幂。
+  a = a.stripTrailingZeros();//去后导0;
+  String str = a.toPlainString();//转化为字符串，不用科学计数法表示。
+  str.startsWith(String类型)//判断字符串开头是否是括号内的字符串。
+  str = str.substring(l,r);//取str的子串，只加一个参数的时候默认r到字符串尾。
+  char ch = str.charAt(k);//取出字符串第k位字符。
+  System.out.println(a+" "+str);//输出并换行
+</code></pre>
+
+<p>主要是有关高精度浮点数的，至于高精度整数的话，比浮点数简单多了。不再继续罗列了，用法差不多（取余的操作是mod），可以类比int和double的对应用法的差别。</p>
+
+<p>差点忘了，再补充一点，有关EOF读入的问题，还有就是有关大小比较的问题。</p>
+
+<pre><code class="java">  BigInteger a,b;
+  a = BigInteger.ZERO;
+  b = BigInteger.ONE;//大整数赋值可以类似上面用valueOf，也可以这样；
+  while (cin.hasNext())//这个是判断接下来有没有读入，如果没有，就返回false，然后就会退出了，其他的比如cin.hasNextInt()是一样的道理，不过限制了类型。
+  {
+     a = cin.nextBigInteger();
+     b = cin.nextBigInteger();
+     if (a.compareTo(b) == -1) System.out.println("a &lt; b");
+     else if (a.compareTo(b) == 0) Syetem.out.println("a &gt; b");
+     else if (a.compareTo(b) == 1) System.out.printf("a == b\n");
+  }
+</code></pre>
+
+<p>应该没有错吧?以上属于一个今天刚接触JAVA的人用记事本手敲的，如果有错的话，请见谅；</p>
+
+<p>接下来，挂下第一次排位E题的代码。思路就是在syx童鞋的思路，不过在空间上稍微优化了下，由于后一个状态只跟前一个状态有关，所以用滚动数组就好。下面附我的代码。</p>
+
+<pre><code class="c++">import java.io.*;
+import java.math.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner cin = new Scanner (new BufferedInputStream(System.in));
+        int n;
+        while (cin.hasNext())
+        {
+            n = cin.nextInt();
+            BigInteger[][] dp = new BigInteger[2][n+1];
+            dp[0][1] = BigInteger.ONE;
+            dp[0][0] = BigInteger.ZERO;
+            int now=0;
+            for (int i = 2;i &lt;= n; i ++)
+            {
+                for (int j = 0 ; j&lt;= i; j ++)
+                    dp[now^1][j] = BigInteger.ZERO;
+                dp[now][i] = BigInteger.ZERO;
+                for (int j = 1;j &lt;= i;j ++)
+                {
+                    BigInteger mid=BigInteger.valueOf(j);
+                    dp[now^1][j] = dp[now][j-1].add(dp[now][j]);
+                    dp[now^1][j] = dp[now^1][j].multiply(mid);
+                }
+                now^=1;
+            }
+            BigInteger ans = BigInteger.ZERO;
+            for (int i = 1; i &lt;= n; i ++)
+                ans = ans.add(dp[now][i]);
+            System.out.println(ans);
+        }
+    }
+}
+</code></pre>
+
+<p>总之，经过这一天的JAVA练习，一般的高精度应该已经可以用JAVA写出来了。至于什么时候再去深入学习JAVA，那至少得等我的C++掌握熟悉了以后吧！</p>
+
+<p><a href="http://hnnwang.github.io/blog/2014/08/11/chu-kui-java/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[BestCoder Round #5]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/17/bestcoder-round-number-5/"/>
+    <updated>2014-08-17T14:40:33+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/17/bestcoder-round-number-5</id>
+    <content type="html"><![CDATA[<p>打的第二场bestcoder，再一次被AK了，T_T.我只写写了的A，B题.</p>
+
+<p>A题 <a href="http://acm.hdu.edu.cn/showproblem.php?pid=4956">HDU 4956 Poor Hanamichi</a></p>
+
+<p>这题，暴力就好，观察他的公式，ans = (r + 8) / 11 + ( l -1 + 8) / 11;由于l是不变的，所以后一半是个定值，前一半，每逢r % 11 == 3 就直接加1，也就是从第一个r % 11 == 3开始，每隔11个数 +1，只需要找到他公式的ans +1但是正常的答案却没有 +1的数就好,也就是如果在 [l,r]之间存在一个数 k % 11 == 3 且不满足题目条件，就能证明他那个算法是错误的。事实上，题目中的证明是一个必要条件，而不是充分条件。也就是说，只有满足 k % 11 == 3的数才有可能符合题目的条件，所以这样子做是对的。</p>
+
+<p>附上我的代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+
+
+bool getAns(long long n)
+{
+    int a[100];
+    int i = 0;
+
+    while (n &gt; 0)
+    {
+        a[i++] = n % 10;
+        n /= 10;
+    }
+    int sum[2] = {0};
+    for (int j = 0; j &lt; i; j++)
+    {
+        sum[j&amp;1] += a[j];
+    }
+    if (sum[0] - sum[1] == 3) return true;
+    else return false;
+}
+int main()
+{
+    long long l,r;
+    long long ans1,ans2;
+    long long ans;
+    int t;
+    cin&gt;&gt;t;
+    while (t--)
+    {
+        ans1=ans2=0;
+        ans = -1;
+        scanf("%I64d%I64d", &amp;l, &amp;r);
+        while (l % 11 != 3) l++;
+        for (long long i = l; i &lt;= r; i +=11)
+        {
+            ans2 =(i + 8) / 11 -(l - 1 + 8) / 11;
+            if (getAns(i)) ans1++;
+            if (ans1!=ans2)
+            {
+                ans = i;
+                break;
+            }
+        }
+        printf("%I64d\n",ans);
+    }
+}
+</code></pre>
+
+<p>B题 <a href="http://acm.hdu.edu.cn/showproblem.php?pid=4957">HDU 4957 Poor Mitsui</a></p>
+
+<p>此题，0A，没有人过，因为谁也没有想到，要用到高精度浮点数，包括出题人自己。。。（事实上，有人想到了，不过想到的也没有过的！因为他题目中有提示用%.0f输出，就让别人不会想去用高精度出发）</p>
+
+<p>搞了一整天，最后用java过了，这里说下思路吧。</p>
+
+<p>贪心，倒序，这就是这道题的核心思想。先挂个<a href="http://beegerous.diandian.com/post/2014-07-08/40062168095">链接</a>,这题跟那里里的模型其实是一样的。我接下来只分析为什么一样。</p>
+
+<p>首先我们先假设接水的顺序已经排好了，那么我们要计算总的时间，肯定要从最后一桶水开始计算，因为前面接水的时间是受后面影响的.那么我们时间也就不按常理出牌，时间也倒着算.</p>
+
+<p>设接最后一桶水之前倒着算的时间tot = 0.那么接最后一桶水就用t = b[n] / (v – a[n]),然后更新tot,tot = tot + t;</p>
+
+<p>那么接之前一桶水时，就需要多接出足够之前一个桶流tot时间的水，也就是要多接tot * a[n-1]的水， 那么接满这桶水（指的是接水到刚好满足要求）用的时间就应该是t1 = (b[n-1] + tot * a[n-1])/(v – a[i]); …………</p>
+
+<p>依次这样类推，我们就能得到这样一个公式，假设接满第i桶后面的水要用tot的时间，那么接满当前这桶水所用的时间应该就是 ti = (b[i] + tot * a[i])/(v – a[i]). 而a[i],b[i]是题目给定的，所以，我们对比bee学长博客里写的，就会发现，</p>
+
+<p>这里的b[i]/(v – a[i]) 就相当于他那里的b[i],</p>
+
+<p>a[i]/(v – a[i]) 就相当于他那里的a[i]，</p>
+
+<p>tot就相当于是t。</p>
+
+<p>那么这就好说了，通过他的证明，我们知道只要按照(b[i]/(v – a[i]))/(a[i]/(v – a[i])) = b[i] / a[i] 来排序就好了.之后就是一个贪心的过程了。</p>
+
+<p><strong>注意一个坑，就是如果b[i]为0的话，那么a[i]无论多大，都是可以满足题目要求的，而且i号桶也不用接水的，就是不用多接足够流tot时间的水了</strong></p>
+
+<p>刚刚A的JAVA代码，由于不怎么会java，所以排序手写了冒泡（只有40个数，这个用冒泡也无所谓了）这回应该是 30A了！T_T 0.0</p>
+
+<pre><code class="java">import java.io.*;
+import java.math.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner cin = new Scanner(new BufferedInputStream(System.in));
+        int T,n,v;
+        int[] a = new int[50];
+        int[] b = new int[50];
+        T = cin.nextInt();
+        while (T &gt; 0)
+        {
+            T--;
+            n = cin.nextInt();
+            v = cin.nextInt();
+            int maxa = 0;
+            for (int i = 1; i &lt;= n; i ++)
+                a[i] = cin.nextInt();
+            for (int i = 1; i &lt;= n; i ++)
+            {
+                b[i] = cin.nextInt();
+                if (b[i]!=0 &amp;&amp; maxa &lt; a[i])
+                    maxa = a[i];
+            }
+            if (maxa &gt;= v) System.out.println(-1);
+            else
+            {
+                for (int i = 1; i &lt;= n; i ++)
+                    for (int j = n; j &gt; i; j --)
+                    {
+                        if (a[j] * b[j-1] &gt;= a[j-1] * b[j])
+                        {
+                            int mid = a[j];
+                            a[j] = a[j-1];
+                            a[j-1] = mid;
+                            mid = b[j];
+                            b[j] = b[j-1];
+                            b[j-1] = mid;
+                        }
+                    }
+                BigDecimal ans = BigDecimal.ZERO;
+                BigDecimal V = BigDecimal.valueOf(v);
+                for (int i = 1; i &lt;= n; i ++)
+                {
+                    BigDecimal aa = BigDecimal.valueOf(a[i]);
+                    BigDecimal bb = BigDecimal.valueOf(b[i]);
+                    if (b[i] != 0)
+                        ans = ans.add((bb.add(ans.multiply(aa))).divide(V.subtract(aa),200,BigDecimal.ROUND_HALF_UP));
+                }
+                ans = ans.setScale(0,BigDecimal.ROUND_HALF_UP);
+                System.out.println(ans);
+            }
+        }
+    }
+}
+</code></pre>
+
+<p><strong>写代码过程中学到了一点，就是有关BigDecimal的除法，如果除法的结果是无限小数的话，是会报错的，可以酱紫来写</strong></p>
+
+<pre><code class="java">a.divide(b,k,Decimal.ROUND_HALF_UP);//k表示小数点后多少位
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
+  
+</feed>

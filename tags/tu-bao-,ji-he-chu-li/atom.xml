@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 凸包，几何处理 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/tu-bao-,ji-he-chu-li/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T18:00:30+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[HDU 4977 a Simple Problem From ZOJ.]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/hdu-4977-a-simple-problem-from-zoj/"/>
+    <updated>2015-08-10T16:53:56+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/hdu-4977-a-simple-problem-from-zoj</id>
+    <content type="html"><![CDATA[<p>2014多校联合训练十——1007</p>
+
+<!--more-->
+
+
+<p>这道题，如果只说搞这道题的时间的话，大概一整天吧，最后在题解的帮助下过了！</p>
+
+<p>思路，先求一个凸包，因为直接如果有包含不了的点，肯定是在凸包上，（因为凸包内的点如果不能包含，凸包上绝对有不能包含的点；凸包上的点被全部被包含，凸包内的点也肯定会被包含。我用的是Andrew算法来求凸包的，需要注意的一点是（被这点坑了好久），由于酱紫求凸包的时候，可能扫描到已经放入凸包的点，所以数组的下标可能超过点的个数，也就是说如果你的数组开小了的话，可能会越界。解决方法很简单，把数组开到原来的二倍，或者，把点放进凸包的时候判断下之前是否放了进去，第一种节省代码量，第二种节省空间</p>
+
+<p>求出凸包上的点之后，就根据凸包上相邻的两个点与六角星的限制关系来求出对应的旋转区间就行，当然，需要选取一个初始方向，我是设六角星的一个角与x轴平行时的极角为0的！如果其中一个点到中心的比六角星的一个角到中心的距离还要远的话，就必定不能覆盖了！如果在此之内，有以下几种情况。</p>
+
+<p>1.两点均不在六角星内圆外</p>
+
+<p><img src="/pictures/hdu4977/allinside.png" alt="" /></p>
+
+<p>（PS：上图如果点在边上也是可以的，只要不在圆外就好） 在这种情况下，所有的区间是都符合的，所以他对求交的结果没有影响的！不用去管他了就！</p>
+
+<p>2.两点均在六角星内圆外</p>
+
+<p>而在这种情况下，又有以下几种情况：</p>
+
+<p>(1) 线段与圆没有交点</p>
+
+<p><img src="/pictures/hdu4977/alloutside.png" alt="" /></p>
+
+<p>在这种情况下，求出对应于这个线段的旋转区间就好</p>
+
+<p>(2) 线段与圆有一个交点</p>
+
+<p><img src="/pictures/hdu4977/tangency1.png" alt="" /></p>
+
+<p>这种情况下，必然是想切线段交点为sol[0] = sol[1]，只需要求出对应的两段线段的旋转区间就好</p>
+
+<p>(3) 线段与圆有两个交点</p>
+
+<p><img src="/pictures/hdu4977/intersection.png" alt="" /></p>
+
+<p>这种情况下，求对应两段在外面的线段的旋转区间就好！</p>
+
+<p>3.其中一点不在圆外，另一点在圆外</p>
+
+<p><img src="/pictures/hdu4977/InsideOutside.png" alt="" />
+<img src="/pictures/hdu4977/tangency2.png" alt="" /></p>
+
+<p>这种情况只要求出跟圆的一个交点就行了，然后求对应在外面的线段的旋转区间！</p>
+
+<p>通过上面的处理，我们就能把这个问题转化成求对应一个线段的旋转区间，最后看对应的区间的交集是否为空的问题！</p>
+
+<p>简单说下怎么求对应一个线段的旋转区间，首先假设某个点P跟中心的距离为l，如果这个点在六角星的边上，可以求出一个对应的中心角，这个用正弦定理或者余弦定理都能求出来。那么角度的旋转范围就是向量OP的极角加减对应的求出来的中心角（想想，为什么？）。有关求极角有点需要强调对向量（x,y）求极角，用atan2(y,x)返回的值是（-PI,PI)的，开区间闭区间不重要，浮点数本身就是不精确的，所以需要注意范围</p>
+
+<p>接下里是从标程中学到的求不同区间的对应的交集的方法！</p>
+
+<p>具体请结合后来给的代码来体味下，我可能说不很清楚，需要自己来理解！</p>
+
+<p>有一个cnt，来记录总共有多少组区间被放到了ans中去（注意，是“组”，不是“个”），ans是一个pair&lt;double,int>类的数组，其中double记录角度，int记录这个角度是记录的每个区间的l还是r，让代表l的int小于代表r的int就好，然后按照字典序来排序！而标程中选取的计算区间为-PI到PI，所以如果有一个超过了PI，他会减去2*PI，但是，这样可能出现r超过了PI，但是l却没有超过PI，这样就会出现l>r的情况，cnt要减1,为什么要减一呢？这得从他是如何来利用这个cnt来说起！cnt记录的是符合条件的组数，所以只要碰到不少于cnt个不被封闭的l（不被封闭就是没有碰到自己对应的r）就好（当然，是按照字典序排序了之后的），自己捣一下逻辑想想为什么吧！而之前如果出现一个r会让计数少1,所以cnt要减1,不知道有没有解释清楚！这是我主要的参考标程的地方！</p>
+
+<p>下面挂两个代码，一个是我自己参考标程的cnt做法后改的自己的代码,另一个是按照标程的方法改的自己的代码，其实就是求区间时的分类标准不一样而已！</p>
+
+<p>代码1</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;algorithm&gt;
+#include &lt;cmath&gt;
+#include &lt;vector&gt;
+#define next (i+1)%n
+const double eps = 1e-8;
+using namespace std;
+const double PI = acos(-1.0);
+const double sqrt3 = sqrt(3.0);
+
+int dcmp(double x)//精度比较
+{
+    if (x &lt; -eps) return -1;
+    else if (x &gt; eps) return 1;
+    else return 0;
+}
+
+
+double add(double a, double b)//考虑到精度的加法
+{
+    if (abs(a + b) &lt; eps * (abs(a) + abs(b))) return 0;
+    return a + b;
+}
+
+
+struct Point//也可看做向量
+{
+    double x,y;
+    Point() {}
+    Point(double x,double y) : x(x),y(y){}
+    Point operator + (Point p) {return Point(add(x, p.x),add(y, p.y)); }//向量 + 向量 = 向量
+    Point operator - (Point p) {return Point(add(x, -p.x),add(y, -p.y)); } // 向量 - 向量 = 向量
+    Point operator * (double a) {return Point(x * a, y * a); }// 向量 * 数 = 向量
+    Point operator / (double a) {return Point(x / a, y / a); }//向量 / 数 = 向量
+    bool operator &lt; (const Point p) const {return dcmp(x - p.x) &lt; 0 || dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y)&lt;0; } //字典序比较，重定义&lt;
+    bool operator == (const Point p) const {return dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y) == 0; }//重定义 ==
+    double dot(Point p) {return add(x * p.x, y * p.y); }//点积
+    double det(Point p) {return add(x * p.y, -y * p.x); }//叉积,旋转方向取逆时针
+    double length() {return sqrt(x*x + y*y); }//向量长度
+    double Angle() {return atan2(y,x);}//两向量夹角
+    Point Rotate(double rad) {return Point(add(x * cos(rad),- y * sin(rad)), add(x * sin(rad), y * cos(rad))); }//逆时针旋转rad
+    Point Normal() {return Point(-y / length(), x / length()); }//求单位法向量
+};
+
+typedef Point Vector;
+int ConvexHull(Point* p,int n, Point* ch)
+{
+    sort(p,p+n);
+    int m = 0;
+    for (int i = 0; i &lt; n ; i ++)
+    {
+        while (m &gt; 1 &amp;&amp; (ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m --;
+        ch[m++] = p[i];
+    }
+    int k = m;
+    for (int i = n-2; i &gt;= 0; i--)
+    {
+        while (m &gt; k &amp;&amp;(ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m--;
+        ch[m++] = p[i];
+    }
+    if (n &gt; 1) m--;
+    return m;
+}
+struct Circle
+{
+    Point c;
+    double r;
+    Circle(){}
+    Circle(Point c, double r): c(c),r(r){}
+    Point point(double a)
+    {
+        return Point(c.x + cos(a)*r, c.y + sin(a)*r);
+    }
+}C;
+
+int getLineCircleIntersection(Point p,Vector v,Circle C,Point sol[])
+{
+    double t1,t2;
+    double a= v.x, b = p.x - C.c.x, c = v.y, d = p.y - C.c.y;
+    double e = a*a + c*c, f = 2*(a*b + c*d), g = b*b + d*d -C.r*C.r;
+    double delta = f*f - 4*e*g;
+    if (dcmp(delta) &lt; 0) return 0;
+    if (dcmp(delta) == 0)
+    {
+        t1 = t2 = -f / (2 * e); sol[0] = p + v*t1;
+        return 1;
+    }
+    t1 = (-f - sqrt(delta)) / (2*e); sol[0] = p + v*t1;
+    t2 = (-f + sqrt(delta)) / (2*e); sol[1] = p + v*t2;
+    return 2;
+}
+
+double getAngle(double R, double l)//得到一点对应的角度
+{
+    return asin(R * sin( PI/6 ) / l) - PI/6;
+}
+int cnt;
+vector &lt;pair&lt;double,int&gt; &gt; ans;
+bool Section(Point a,Point b,double R)
+{
+    double da = getAngle(R, a.length()), db = getAngle(R, b.length());
+    double aa = a.Angle(), bb = b.Angle();
+    if (dcmp(aa-bb-PI) &gt; 0) aa-=2*PI;
+    else if(dcmp(bb-aa-PI) &gt; 0) bb-=2*PI;
+    double l=max(aa-da,bb-db), r = min(aa+da,bb+db);
+    if (r&lt;l)
+        return false;
+    cnt++;
+    for(int i=0;i&lt;6;i++)
+    {
+        l+=PI/3,r+=PI/3;
+        if(l&gt;=PI) l -= 2*PI;
+        if(r&gt;=PI) r -= 2*PI;
+        ans.push_back(make_pair(l,-1));
+        ans.push_back(make_pair(r,1) );
+        if(r &lt; l) cnt--;
+    }
+    return true;
+}
+
+bool getSection(Point a, Point b, Circle C)
+{
+    if (dcmp(a.length()-C.r) &lt;= 0 &amp;&amp; dcmp(b.length()-C.r) &lt;= 0)
+        return true;
+    Point psol[2];
+    int n = getLineCircleIntersection(a, b-a, C, psol);
+    if(n == 0)
+        return Section(a, b, C.r*sqrt3);
+    else if (n == 1)
+    {
+        if ((a-b).length() &lt; max((a-psol[0]).length(), (b-psol[0]).length()))
+            return Section(a,b,C.r*sqrt3);
+        else
+            return Section(a,psol[0],C.r*sqrt3) &amp;&amp; Section(b,psol[0],C.r*sqrt3);
+    }
+    else if (n == 2)
+    {
+        Point p1,p2;
+        if (dcmp(a.length()-C.r) &lt;= 0)
+        {
+            p1 = b;
+            if ((b-psol[0]).length() &lt; (b-psol[1]).length())
+                p2 = psol[0];
+            else
+                p2 = psol[1];
+            return Section(p1, p2, C.r*sqrt3);
+        }
+        else if (dcmp(b.length()-C.r) &lt;= 0)
+        {
+            p1 = a;
+            if ((a-psol[0]).length() &lt; (a-psol[1]).length())
+                p2 = psol[0];
+            else
+                p2 = psol[1];
+            return Section(p1,p2,C.r*sqrt3);
+        }
+        else if (dcmp((b-psol[0]).length()+(a-psol[0]).length()-(a-b).length()) == 0)
+            return Section(a,psol[0], C.r*sqrt3) &amp;&amp; Section(b, psol[1], C.r*sqrt3);
+        else
+            return Section(a,b,C.r*sqrt3);
+
+    }
+}
+
+Point P[2000],Hull[2000];
+int main()
+{
+    int T;
+    freopen("1007.in","r",stdin);
+    scanf("%d",&amp;T);
+    for (int kase = 1; kase &lt;= T; kase ++)
+    {
+        int m,r;
+        Circle C = Circle(Point(0,0),0);
+        scanf("%d%lf", &amp;m, &amp;C.r);
+        const double R = C.r*sqrt3;
+        bool flag = true;
+        for (int i = 0; i &lt; m; i++)
+            scanf("%lf%lf", &amp;P[i].x, &amp;P[i].y);
+        int n = ConvexHull(P, m, Hull);
+        ans.clear();
+        cnt = 0;
+        for (int i = 0; i &lt; n; i++)
+        {
+
+            if (dcmp(Hull[i].length()-R) &gt; 0 || dcmp(Hull[next].length()-R) &gt; 0)
+            {
+                flag = false;
+                break;
+            }
+            flag = getSection(Hull[i],Hull[next],C);
+            if(!flag) break;
+        }
+
+        if (flag)
+        {
+            sort(ans.begin(), ans.end());
+            int now = 0,h = 0;
+            for (int i = 0; i &lt; ans.size(); i++)
+            {
+                now -= ans[i].second;
+                if (h == cnt)
+                    break;
+                h = max(h, now);
+            }
+            if (h!=cnt)
+                flag = false;
+        }
+        printf("Case #%d: ", kase);
+        if (flag) printf("Succeeded.\n");
+        else printf("Failed.\n");
+    }
+}
+</code></pre>
+
+<p>代码2</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;algorithm&gt;
+#include &lt;cmath&gt;
+#include &lt;vector&gt;
+#define next (i+1)%n
+const double eps = 1e-8;
+using namespace std;
+const double PI = acos(-1);
+const double sqrt3 = sqrt(3);
+
+int dcmp(double x)//精度比较
+{
+    if (x &lt; -eps) return -1;
+    else if (x &gt; eps) return 1;
+    else return 0;
+}
+
+
+double add(double a, double b)//考虑到精度的加法
+{
+    if (abs(a + b) &lt; eps * (abs(a) + abs(b))) return 0;
+    return a + b;
+}
+
+
+struct Point//也可看做向量
+{
+    double x,y;
+    Point() {}
+    Point(double x,double y) : x(x),y(y){}
+    Point operator + (Point p) {return Point(add(x, p.x),add(y, p.y)); }//向量 + 向量 = 向量
+    Point operator - (Point p) {return Point(add(x, -p.x),add(y, -p.y)); } // 向量 - 向量 = 向量
+    Point operator * (double a) {return Point(x * a, y * a); }// 向量 * 数 = 向量
+    Point operator / (double a) {return Point(x / a, y / a); }//向量 / 数 = 向量
+    bool operator &lt; (const Point p) const {return dcmp(x - p.x) &lt; 0 || dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y)&lt;0; } //字典序比较，重定义&lt;
+    bool operator == (const Point p) const {return dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y) == 0; }//重定义 ==
+    double dot(Point p) {return add(x * p.x, y * p.y); }//点积
+    double det(Point p) {return add(x * p.y, -y * p.x); }//叉积,旋转方向取逆时针
+    double length() {return sqrt(x*x + y*y); }//向量长度
+    double Angle() {return atan2(y,x);}//两向量夹角
+    Point Rotate(double rad) {return Point(add(x * cos(rad),- y * sin(rad)), add(x * sin(rad), y * cos(rad))); }//逆时针旋转rad
+    Point Normal() {return Point(-y / length(), x / length()); }//求单位法向量
+};
+
+typedef Point Vector;
+int ConvexHull(Point* p,int n, Point* ch)//求凸包，凸包的点按照逆时针保存在*ch中。
+{
+    sort(p,p+n);
+    int m = 0;
+    for (int i = 0; i &lt; n ; i ++)
+    {
+        while (m &gt; 1 &amp;&amp; (ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m --;
+        ch[m++] = p[i];
+    }
+    int k = m;
+    for (int i = n-2; i &gt;= 0; i--)
+    {
+        while (m &gt; k &amp;&amp;(ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m--;
+        ch[m++] = p[i];
+    }
+    if (n &gt; 1) m--;
+    return m;
+}
+struct Circle//圆的定义，其中定义了求圆上与极轴成a度角的点的坐标
+{
+    Point c;
+    double r;
+    Circle(){}
+    Circle(Point c, double r): c(c),r(r){}
+    Point point(double a)
+    {
+        return Point(c.x + cos(a)*r, c.y + sin(a)*r);
+    }
+}C;
+
+int getLineCircleIntersection(Point p,Vector v,Circle C,Point sol[])//求圆与直线的交点，返回交点个数并将交点按顺序放在sol[]离
+{
+    double t1,t2;
+    double a= v.x, b = p.x - C.c.x, c = v.y, d = p.y - C.c.y;
+    double e = a*a + c*c, f = 2*(a*b + c*d), g = b*b + d*d -C.r*C.r;
+    double delta = f*f - 4*e*g;
+    if (dcmp(delta) &lt; 0) return 0;
+    if (dcmp(delta) == 0)
+    {
+        t1 = t2 = -f / (2 * e); sol[0] = sol[1] = p + v*t1;
+        return 1;
+    }
+    t1 = (-f - sqrt(delta)) / (2*e); sol[0] = p + v*t1;
+    t2 = (-f + sqrt(delta)) / (2*e); sol[1] = p + v*t2;
+    return 2;
+}
+
+double getAngle(double R, double l)//得到一点对应的角度
+{
+    return asin(R * sin( PI/6 ) / l) - PI/6;
+}
+
+bool OnSegment(Point p, Point a1, Point a2)//判断点是否在线段上,如果是不包括两端点的线段，把后面的相等去掉即可。
+{
+    return dcmp((a1 - p).det(a2 - p)) == 0 &amp;&amp; dcmp((a1 - p).dot(a2 - p)) &lt; 0;
+}
+
+int cnt;
+vector &lt;pair&lt;double,int&gt; &gt; ans;
+bool Section(Point a,Point b,double R)//给出求出的圆外线段两点a,b,R（六角星中心到六角星一个角顶点的距离），求对应的区间，放在ans中
+{
+    double aa = a.Angle(), bb = b.Angle();
+    double da = getAngle(R, a.length()), db = getAngle(R, b.length());
+    if (dcmp(aa-bb-PI) &gt; 0) aa-=2*PI;
+    else if(dcmp(bb-aa-PI) &gt; 0) bb-=2*PI;
+    double l=max(aa-da,bb-db), r = min(aa+da,bb+db);
+    if (dcmp(r-l)&lt;0)
+        return false;
+    cnt++;//题解中有解释
+    for(int i=0;i&lt;6;i++)
+    {
+        l+=PI/3,r+=PI/3;
+        if(dcmp(l-PI)&gt;=0) l -= 2*PI;
+        if(dcmp(r-PI)&gt;=0) r -= 2*PI;
+        ans.push_back(make_pair(l,-1));
+        ans.push_back(make_pair(r,1) );
+        if(r &lt; l) cnt--;//如果发生这种情况，说明在刚开始多出来一个r区间，应该减去一个计数
+    }
+    return true;
+}
+bool getSection(Point a, Point b, Circle C)//给定两点，分情况求解
+{
+    double lena = a.length(),lenb = b.length();
+    if (dcmp(lena-C.r) &lt;= 0 &amp;&amp; dcmp(lenb-C.r) &lt;= 0)//都在圆内，肯定满足，相当于全区间满足，所以不用计数，也不用放进ans去
+        return true;
+    Point sol[2];
+    int n = getLineCircleIntersection(a,b-a,C,sol);
+    double R = C.r*sqrt3;
+    if (dcmp(lena-C.r) &gt; 0 &amp;&amp; dcmp(lenb - C.r) &gt; 0)//都在圆外
+    {
+        if (n == 0) return Section(a,b,R);
+        bool judge0 = OnSegment(sol[0],a,b);//与圆的第一个交点在线段上
+        bool judge1 = OnSegment(sol[1],a,b);//与圆的第二个交点在线段上
+        if (judge0 || judge1)//一个交点相当于两个交点重合，两个交点就是两个交点，所以对应的代码是一样的
+            return Section(a,sol[0],R) &amp;&amp; Section(sol[1],b,R);
+        return Section(a, b, R);//没有交点的话，就是整个线段在圆外
+    }
+    if (dcmp(lena - C.r) &gt; 0)//a点在圆内
+        return Section(a,sol[0],R);
+    return Section(sol[1],b,R);//b点在圆内
+}
+
+Point P[2000],Hull[2000];//这个不明白，明明题目中说的最多有1000个镜像，为毛开1005会TLE T_T
+int main()
+{
+    int T;
+    scanf("%d",&amp;T);
+    for (int kase = 1; kase &lt;= T; kase ++)
+    {
+        int m,r;
+        Circle C = Circle(Point(0,0),0);
+        scanf("%d%lf", &amp;m, &amp;C.r);
+        const double R = C.r*sqrt3;
+        bool flag = true;
+        for (int i = 0; i &lt; m; i++)
+            scanf("%lf%lf", &amp;P[i].x, &amp;P[i].y);
+        int n = ConvexHull(P, m, Hull);
+        ans.clear();
+        cnt = 0;
+        for (int i = 0; i &lt; n &amp;&amp; flag; i++)
+        {
+
+            if (dcmp(Hull[i].length()-R) &gt; 0 || dcmp(Hull[next].length()-R) &gt; 0)
+            {
+                flag = false;
+                break;
+            }
+            flag = getSection(Hull[i],Hull[next],C);
+        }
+
+        if (flag)//这个过程会在题解里解释
+        {
+            sort(ans.begin(), ans.end());
+            int now = 0,h = 0;
+            for (int i = 0; i &lt; ans.size(); i++)
+            {
+                now -= ans[i].second;
+                if (h == cnt)
+                    break;
+                h = max(h, now);
+            }
+            if (h!=cnt)
+                flag = false;
+        }
+        printf("Case #%d: ", kase);
+        if (flag) printf("Succeeded.\n");
+        else printf("Failed.\n");
+    }
+}
+</code></pre>
+
+<p>最后说下在标程中学到的一种小技巧，就是便利整个凸包的所有的边可以这样</p>
+
+<pre><code class="c++">for (int i = 0 ; i &lt; n ; i ++)
+    Vector edge = Hull[(i+1)%n] - Hull[i];
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

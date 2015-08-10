@@ -1,0 +1,415 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>HDU4986 桶分打表大法第二弹 - hnnwang&#8217;s Blog</title>
+  <meta name="author" content="hnnwang">
+
+  
+  <meta name="description" content="Bestcoder7的第2题，本是一个数学题。会的话，几分钟出答案，不会的话，这里也有一种乱搞的方法！ 好了，进入正题，这题其实就是求调和级数的和，也就是1+½+1/3+……+1/n; 一种方法，数学法，貌似是个数学竞赛题！结论是，当n足够大的话，调和级数的和可以近似为ln(n+1)+r(欧拉常数 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://whn757397540.github.io/blog/2015/08/10/hdu4986-tong-fen-da-biao-da-fa-di-er-dan/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="hnnwang's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.useso.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.useso.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+
+  
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">hnnwang&#8217;s Blog</a></h1>
+  
+    <h2>Just for ACM-ICPC.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:whn757397540.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">首页</a></li>
+  <li><a href="/blog/archives">文章</a></li>
+  <li><a href="/tag-cloud/">标签云</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">HDU4986 桶分打表大法第二弹</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-08-10T16:56:34+08:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Bestcoder7的第2题，本是一个数学题。会的话，几分钟出答案，不会的话，这里也有一种乱搞的方法！</p>
+
+<!--more-->
+
+
+<p>好了，进入正题，这题其实就是求调和级数的和，也就是1+½+1/3+……+1/n;</p>
+
+<p>一种方法，数学法，貌似是个数学竞赛题！结论是，当n足够大的话，调和级数的和可以近似为ln(n+1)+r(欧拉常数），貌似是个数学奥赛题，这个想要证明的话，去百度下吧！</p>
+
+<p>另一种方法，分桶打表乱搞大法，当时排位赛的时候用到过，求10亿以内的质数。这里也是，我选的桶的大小是100万（这个是自己来把握的），就是每逢100万保存一个数，然后在100万的区间内直接暴力求解。。</p>
+
+<p>两种方法的代码都在下面</p>
+
+<p>桶分打表大法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="cp">#include &lt;cstdio&gt;</span>
+</span><span class='line'><span class="kt">double</span> <span class="n">a</span><span class="p">[]</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mf">14.3927267229</span><span class="p">,</span><span class="mf">15.0858736534</span><span class="p">,</span><span class="mf">15.4913386782</span><span class="p">,</span><span class="mf">15.7790207090</span><span class="p">,</span><span class="mf">16.0021642353</span><span class="p">,</span><span class="mf">16.1844857754</span><span class="p">,</span><span class="mf">16.3386364433</span><span class="p">,</span><span class="mf">16.4721678270</span><span class="p">,</span><span class="mf">16.5899508558</span><span class="p">,</span><span class="mf">16.6953113659</span><span class="p">,</span><span class="mf">16.7906215411</span><span class="p">,</span><span class="mf">16.8776329143</span><span class="p">,</span><span class="mf">16.9576756188</span><span class="p">,</span><span class="mf">17.0317835882</span><span class="p">,</span><span class="mf">17.1007764573</span><span class="p">,</span><span class="mf">17.1653149764</span><span class="p">,</span><span class="mf">17.2259395963</span><span class="p">,</span><span class="mf">17.2830980085</span><span class="p">,</span><span class="mf">17.3371652283</span><span class="p">,</span><span class="mf">17.3884585214</span><span class="p">,</span><span class="mf">17.4372486844</span><span class="p">,</span><span class="mf">17.4837686989</span><span class="p">,</span><span class="mf">17.5282204605</span><span class="p">,</span><span class="mf">17.5707800740</span><span class="p">,</span><span class="mf">17.6116020677</span><span class="p">,</span><span class="mf">17.6508227801</span><span class="p">,</span><span class="mf">17.6885631074</span><span class="p">,</span><span class="mf">17.7249307509</span><span class="p">,</span><span class="mf">17.7600220701</span><span class="p">,</span><span class="mf">17.7939236212</span><span class="p">,</span><span class="mf">17.8267134435</span><span class="p">,</span><span class="mf">17.8584621413</span><span class="p">,</span><span class="mf">17.8892337995</span><span class="p">,</span><span class="mf">17.9190867622</span><span class="p">,</span><span class="mf">17.9480742986</span><span class="p">,</span><span class="mf">17.9762451752</span><span class="p">,</span><span class="mf">18.0036441490</span><span class="p">,</span><span class="mf">18.0303123957</span><span class="p">,</span><span class="mf">18.0562878818</span><span class="p">,</span><span class="mf">18.0816056895</span><span class="p">,</span><span class="mf">18.1062983018</span><span class="p">,</span><span class="mf">18.1303958531</span><span class="p">,</span><span class="mf">18.1539263502</span><span class="p">,</span><span class="mf">18.1769158681</span><span class="p">,</span><span class="mf">18.1993887237</span><span class="p">,</span><span class="mf">18.2213676302</span><span class="p">,</span><span class="mf">18.2428738352</span><span class="p">,</span><span class="mf">18.2639272442</span><span class="p">,</span><span class="mf">18.2845465312</span><span class="p">,</span><span class="mf">18.3047492383</span><span class="p">,</span><span class="mf">18.3245518654</span><span class="p">,</span><span class="mf">18.3439699511</span><span class="p">,</span><span class="mf">18.3630181459</span><span class="p">,</span><span class="mf">18.3817102787</span><span class="p">,</span><span class="mf">18.4000594172</span><span class="p">,</span><span class="mf">18.4180779225</span><span class="p">,</span><span class="mf">18.4357774995</span><span class="p">,</span><span class="mf">18.4531692420</span><span class="p">,</span><span class="mf">18.4702636752</span><span class="p">,</span><span class="mf">18.4870707934</span><span class="p">,</span><span class="mf">18.5036000952</span><span class="p">,</span><span class="mf">18.5198606160</span><span class="p">,</span><span class="mf">18.5358609572</span><span class="p">,</span><span class="mf">18.5516093140</span><span class="p">,</span><span class="mf">18.5671135005</span><span class="p">,</span><span class="mf">18.5823809725</span><span class="p">,</span><span class="mf">18.5974188497</span><span class="p">,</span><span class="mf">18.6122339354</span><span class="p">,</span><span class="mf">18.6268327347</span><span class="p">,</span><span class="mf">18.6412214721</span><span class="p">,</span><span class="mf">18.6554061069</span><span class="p">,</span><span class="mf">18.6693923488</span><span class="p">,</span><span class="mf">18.6831856709</span><span class="p">,</span><span class="mf">18.6967913228</span><span class="p">,</span><span class="mf">18.7102143431</span><span class="p">,</span><span class="mf">18.7234595697</span><span class="p">,</span><span class="mf">18.7365316512</span><span class="p">,</span><span class="mf">18.7494350560</span><span class="p">,</span><span class="mf">18.7621740817</span><span class="p">,</span><span class="mf">18.7747528638</span><span class="p">,</span><span class="mf">18.7871753837</span><span class="p">,</span><span class="mf">18.7994454762</span><span class="p">,</span><span class="mf">18.8115668367</span><span class="p">,</span><span class="mf">18.8235430277</span><span class="p">,</span><span class="mf">18.8353774852</span><span class="p">,</span><span class="mf">18.8470735249</span><span class="p">,</span><span class="mf">18.8586343473</span><span class="p">,</span><span class="mf">18.8700630430</span><span class="p">,</span><span class="mf">18.8813625982</span><span class="p">,</span><span class="mf">18.8925358987</span><span class="p">,</span><span class="mf">18.9035857349</span><span class="p">,</span><span class="mf">18.9145148053</span><span class="p">,</span><span class="mf">18.9253257214</span><span class="p">,</span><span class="mf">18.9360210105</span><span class="p">,</span><span class="mf">18.9466031197</span><span class="p">,</span><span class="mf">18.9570744195</span><span class="p">,</span><span class="mf">18.9674372065</span><span class="p">,</span><span class="mf">18.9776937066</span><span class="p">,</span><span class="mf">18.9878460780</span><span class="p">,</span><span class="mf">18.9978964139</span><span class="p">,</span><span class="mf">19.0078467447</span><span class="p">,</span><span class="mf">19.0176990411</span><span class="p">,</span><span class="mf">19.0274552159</span><span class="p">,</span><span class="mf">19.0371171268</span><span class="p">,</span><span class="mf">19.0466865778</span><span class="p">,</span><span class="mf">19.0561653217</span><span class="p">,</span><span class="mf">19.0655550620</span><span class="p">,</span><span class="mf">19.0748574546</span><span class="p">,</span><span class="mf">19.0840741097</span><span class="p">,</span><span class="mf">19.0932065932</span><span class="p">,</span><span class="mf">19.1022564287</span><span class="p">,</span><span class="mf">19.1112250986</span><span class="p">,</span><span class="mf">19.1201140460</span><span class="p">,</span><span class="mf">19.1289246756</span><span class="p">,</span><span class="mf">19.1376583556</span><span class="p">,</span><span class="mf">19.1463164183</span><span class="p">,</span><span class="mf">19.1549001619</span><span class="p">,</span><span class="mf">19.1634108516</span><span class="p">,</span><span class="mf">19.1718497202</span><span class="p">,</span><span class="mf">19.1802179698</span><span class="p">,</span><span class="mf">19.1885167726</span><span class="p">,</span><span class="mf">19.1967472717</span><span class="p">,</span><span class="mf">19.2049105823</span><span class="p">,</span><span class="mf">19.2130077925</span><span class="p">,</span><span class="mf">19.2210399642</span><span class="p">,</span><span class="mf">19.2290081338</span><span class="p">,</span><span class="mf">19.2369133133</span><span class="p">,</span><span class="mf">19.2447564907</span><span class="p">,</span><span class="mf">19.2525386311</span><span class="p">,</span><span class="mf">19.2602606772</span><span class="p">,</span><span class="mf">19.2679235499</span><span class="p">,</span><span class="mf">19.2755281492</span><span class="p">,</span><span class="mf">19.2830753548</span><span class="p">,</span><span class="mf">19.2905660265</span><span class="p">,</span><span class="mf">19.2980010050</span><span class="p">,</span><span class="mf">19.3053811123</span><span class="p">,</span><span class="mf">19.3127071523</span><span class="p">,</span><span class="mf">19.3199799116</span><span class="p">,</span><span class="mf">19.3272001596</span><span class="p">,</span><span class="mf">19.3343686490</span><span class="p">,</span><span class="mf">19.3414861168</span><span class="p">,</span><span class="mf">19.3485532840</span><span class="p">,</span><span class="mf">19.3555708566</span><span class="p">,</span><span class="mf">19.3625395259</span><span class="p">,</span><span class="mf">19.3694599687</span><span class="p">,</span><span class="mf">19.3763328480</span><span class="p">,</span><span class="mf">19.3831588130</span><span class="p">,</span><span class="mf">19.3899385000</span><span class="p">,</span><span class="mf">19.3966725322</span><span class="p">,</span><span class="mf">19.4033615203</span><span class="p">,</span><span class="mf">19.4100060630</span><span class="p">,</span><span class="mf">19.4166067470</span><span class="p">,</span><span class="mf">19.4231641475</span><span class="p">,</span><span class="mf">19.4296788285</span><span class="p">,</span><span class="mf">19.4361513430</span><span class="p">,</span><span class="mf">19.4425822333</span><span class="p">,</span><span class="mf">19.4489720314</span><span class="p">,</span><span class="mf">19.4553212591</span><span class="p">,</span><span class="mf">19.4616304282</span><span class="p">,</span><span class="mf">19.4679000412</span><span class="p">,</span><span class="mf">19.4741305910</span><span class="p">,</span><span class="mf">19.4803225612</span><span class="p">,</span><span class="mf">19.4864764267</span><span class="p">,</span><span class="mf">19.4925926537</span><span class="p">,</span><span class="mf">19.4986716998</span><span class="p">,</span><span class="mf">19.5047140142</span><span class="p">,</span><span class="mf">19.5107200383</span><span class="p">,</span><span class="mf">19.5166902052</span><span class="p">,</span><span class="mf">19.5226249407</span><span class="p">,</span><span class="mf">19.5285246629</span><span class="p">,</span><span class="mf">19.5343897823</span><span class="p">,</span><span class="mf">19.5402207026</span><span class="p">,</span><span class="mf">19.5460178203</span><span class="p">,</span><span class="mf">19.5517815250</span><span class="p">,</span><span class="mf">19.5575121996</span><span class="p">,</span><span class="mf">19.5632102207</span><span class="p">,</span><span class="mf">19.5688759583</span><span class="p">,</span><span class="mf">19.5745097760</span><span class="p">,</span><span class="mf">19.5801120315</span><span class="p">,</span><span class="mf">19.5856830765</span><span class="p">,</span><span class="mf">19.5912232569</span><span class="p">,</span><span class="mf">19.5967329127</span><span class="p">,</span><span class="mf">19.6022123784</span><span class="p">,</span><span class="mf">19.6076619832</span><span class="p">,</span><span class="mf">19.6130820506</span><span class="p">,</span><span class="mf">19.6184728993</span><span class="p">,</span><span class="mf">19.6238348424</span><span class="p">,</span><span class="mf">19.6291681884</span><span class="p">,</span><span class="mf">19.6344732406</span><span class="p">,</span><span class="mf">19.6397502977</span><span class="p">,</span><span class="mf">19.6449996535</span><span class="p">,</span><span class="mf">19.6502215975</span><span class="p">,</span><span class="mf">19.6554164144</span><span class="p">,</span><span class="mf">19.6605843845</span><span class="p">,</span><span class="mf">19.6657257840</span><span class="p">,</span><span class="mf">19.6708408846</span><span class="p">,</span><span class="mf">19.6759299541</span><span class="p">,</span><span class="mf">19.6809932561</span><span class="p">,</span><span class="mf">19.6860310501</span><span class="p">,</span><span class="mf">19.6910435919</span><span class="p">,</span><span class="mf">19.6960311334</span><span class="p">,</span><span class="mf">19.7009939227</span><span class="p">,</span><span class="mf">19.7059322044</span><span class="p">,</span><span class="mf">19.7108462192</span><span class="p">,</span><span class="mf">19.7157362044</span><span class="p">,</span><span class="mf">19.7206023941</span><span class="p">,</span><span class="mf">19.7254450185</span><span class="p">,</span><span class="mf">19.7302643050</span><span class="p">,</span><span class="mf">19.7350604772</span><span class="p">,</span><span class="mf">19.7398337560</span><span class="p">,</span><span class="mf">19.7445843587</span><span class="p">,</span><span class="mf">19.7493124999</span><span class="p">,</span><span class="mf">19.7540183909</span><span class="p">,</span><span class="mf">19.7587022402</span><span class="p">,</span><span class="mf">19.7633642533</span><span class="p">,</span><span class="mf">19.7680046329</span><span class="p">,</span><span class="mf">19.7726235787</span><span class="p">,</span><span class="mf">19.7772212879</span><span class="p">,</span><span class="mf">19.7817979550</span><span class="p">,</span><span class="mf">19.7863537715</span><span class="p">,</span><span class="mf">19.7908889266</span><span class="p">,</span><span class="mf">19.7954036070</span><span class="p">,</span><span class="mf">19.7998979966</span><span class="p">,</span><span class="mf">19.8043722770</span><span class="p">,</span><span class="mf">19.8088266273</span><span class="p">,</span><span class="mf">19.8132612244</span><span class="p">,</span><span class="mf">19.8176762426</span><span class="p">,</span><span class="mf">19.8220718540</span><span class="p">,</span><span class="mf">19.8264482286</span><span class="p">,</span><span class="mf">19.8308055340</span><span class="p">,</span><span class="mf">19.8351439356</span><span class="p">,</span><span class="mf">19.8394635967</span><span class="p">,</span><span class="mf">19.8437646786</span><span class="p">,</span><span class="mf">19.8480473404</span><span class="p">,</span><span class="mf">19.8523117391</span><span class="p">,</span><span class="mf">19.8565580300</span><span class="p">,</span><span class="mf">19.8607863661</span><span class="p">,</span><span class="mf">19.8649968986</span><span class="p">,</span><span class="mf">19.8691897769</span><span class="p">,</span><span class="mf">19.8733651483</span><span class="p">,</span><span class="mf">19.8775231584</span><span class="p">,</span><span class="mf">19.8816639511</span><span class="p">,</span><span class="mf">19.8857876683</span><span class="p">,</span><span class="mf">19.8898944502</span><span class="p">,</span><span class="mf">19.8939844355</span><span class="p">,</span><span class="mf">19.8980577608</span><span class="p">,</span><span class="mf">19.9021145615</span><span class="p">,</span><span class="mf">19.9061549710</span><span class="p">,</span><span class="mf">19.9101791213</span><span class="p">,</span><span class="mf">19.9141871427</span><span class="p">,</span><span class="mf">19.9181791640</span><span class="p">,</span><span class="mf">19.9221553124</span><span class="p">,</span><span class="mf">19.9261157136</span><span class="p">,</span><span class="mf">19.9300604919</span><span class="p">,</span><span class="mf">19.9339897700</span><span class="p">,</span><span class="mf">19.9379036693</span><span class="p">,</span><span class="mf">19.9418023097</span><span class="p">,</span><span class="mf">19.9456858097</span><span class="p">,</span><span class="mf">19.9495542865</span><span class="p">,</span><span class="mf">19.9534078558</span><span class="p">,</span><span class="mf">19.9572466321</span><span class="p">,</span><span class="mf">19.9610707285</span><span class="p">,</span><span class="mf">19.9648802569</span><span class="p">,</span><span class="mf">19.9686753279</span><span class="p">,</span><span class="mf">19.9724560507</span><span class="p">,</span><span class="mf">19.9762225335</span><span class="p">,</span><span class="mf">19.9799748831</span><span class="p">,</span><span class="mf">19.9837132052</span><span class="p">,</span><span class="mf">19.9874376043</span><span class="p">,</span><span class="mf">19.9911481837</span><span class="p">,</span><span class="mf">19.9948450456</span><span class="p">,</span><span class="mf">19.9985282910</span><span class="p">,</span><span class="mf">20.0021980199</span><span class="p">,</span><span class="mf">20.0058543311</span><span class="p">,</span><span class="mf">20.0094973224</span><span class="p">,</span><span class="mf">20.0131270904</span><span class="p">,</span><span class="mf">20.0167437309</span><span class="p">,</span><span class="mf">20.0203473384</span><span class="p">,</span><span class="mf">20.0239380065</span><span class="p">,</span><span class="mf">20.0275158278</span><span class="p">,</span><span class="mf">20.0310808940</span><span class="p">,</span><span class="mf">20.0346332956</span><span class="p">,</span><span class="mf">20.0381731223</span><span class="p">,</span><span class="mf">20.0417004628</span><span class="p">,</span><span class="mf">20.0452154049</span><span class="p">,</span><span class="mf">20.0487180354</span><span class="p">,</span><span class="mf">20.0522084404</span><span class="p">,</span><span class="mf">20.0556867047</span><span class="p">,</span><span class="mf">20.0591529127</span><span class="p">,</span><span class="mf">20.0626071476</span><span class="p">,</span><span class="mf">20.0660494918</span><span class="p">,</span><span class="mf">20.0694800268</span><span class="p">,</span><span class="mf">20.0728988336</span><span class="p">,</span><span class="mf">20.0763059919</span><span class="p">,</span><span class="mf">20.0797015809</span><span class="p">,</span><span class="mf">20.0830856789</span><span class="p">,</span><span class="mf">20.0864583634</span><span class="p">,</span><span class="mf">20.0898197111</span><span class="p">,</span><span class="mf">20.0931697979</span><span class="p">,</span><span class="mf">20.0965086992</span><span class="p">,</span><span class="mf">20.0998364893</span><span class="p">,</span><span class="mf">20.1031532419</span><span class="p">,</span><span class="mf">20.1064590300</span><span class="p">,</span><span class="mf">20.1097539259</span><span class="p">,</span><span class="mf">20.1130380011</span><span class="p">,</span><span class="mf">20.1163113265</span><span class="p">,</span><span class="mf">20.1195739721</span><span class="p">,</span><span class="mf">20.1228260075</span><span class="p">,</span><span class="mf">20.1260675014</span><span class="p">,</span><span class="mf">20.1292985220</span><span class="p">,</span><span class="mf">20.1325191367</span><span class="p">,</span><span class="mf">20.1357294123</span><span class="p">,</span><span class="mf">20.1389294150</span><span class="p">,</span><span class="mf">20.1421192104</span><span class="p">,</span><span class="mf">20.1452988633</span><span class="p">,</span><span class="mf">20.1484684380</span><span class="p">,</span><span class="mf">20.1516279983</span><span class="p">,</span><span class="mf">20.1547776072</span><span class="p">,</span><span class="mf">20.1579173272</span><span class="p">,</span><span class="mf">20.1610472202</span><span class="p">,</span><span class="mf">20.1641673476</span><span class="p">,</span><span class="mf">20.1672777700</span><span class="p">,</span><span class="mf">20.1703785476</span><span class="p">,</span><span class="mf">20.1734697402</span><span class="p">,</span><span class="mf">20.1765514067</span><span class="p">,</span><span class="mf">20.1796236058</span><span class="p">,</span><span class="mf">20.1826863953</span><span class="p">,</span><span class="mf">20.1857398328</span><span class="p">,</span><span class="mf">20.1887839752</span><span class="p">,</span><span class="mf">20.1918188788</span><span class="p">,</span><span class="mf">20.1948445998</span><span class="p">,</span><span class="mf">20.1978611933</span><span class="p">,</span><span class="mf">20.2008687143</span><span class="p">,</span><span class="mf">20.2038672173</span><span class="p">,</span><span class="mf">20.2068567562</span><span class="p">,</span><span class="mf">20.2098373843</span><span class="p">,</span><span class="mf">20.2128091547</span><span class="p">,</span><span class="mf">20.2157721198</span><span class="p">,</span><span class="mf">20.2187263317</span><span class="p">,</span><span class="mf">20.2216718419</span><span class="p">,</span><span class="mf">20.2246087016</span><span class="p">,</span><span class="mf">20.2275369614</span><span class="p">,</span><span class="mf">20.2304566715</span><span class="p">,</span><span class="mf">20.2333678817</span><span class="p">,</span><span class="mf">20.2362706413</span><span class="p">,</span><span class="mf">20.2391649994</span><span class="p">,</span><span class="mf">20.2420510043</span><span class="p">,</span><span class="mf">20.2449287041</span><span class="p">,</span><span class="mf">20.2477981465</span><span class="p">,</span><span class="mf">20.2506593788</span><span class="p">,</span><span class="mf">20.2535124478</span><span class="p">,</span><span class="mf">20.2563573999</span><span class="p">,</span><span class="mf">20.2591942812</span><span class="p">,</span><span class="mf">20.2620231374</span><span class="p">,</span><span class="mf">20.2648440138</span><span class="p">,</span><span class="mf">20.2676569551</span><span class="p">,</span><span class="mf">20.2704620060</span><span class="p">,</span><span class="mf">20.2732592107</span><span class="p">,</span><span class="mf">20.2760486127</span><span class="p">,</span><span class="mf">20.2788302557</span><span class="p">,</span><span class="mf">20.2816041826</span><span class="p">,</span><span class="mf">20.2843704361</span><span class="p">,</span><span class="mf">20.2871290585</span><span class="p">,</span><span class="mf">20.2898800919</span><span class="p">,</span><span class="mf">20.2926235778</span><span class="p">,</span><span class="mf">20.2953595576</span><span class="p">,</span><span class="mf">20.2980880723</span><span class="p">,</span><span class="mf">20.3008091624</span><span class="p">,</span><span class="mf">20.3035228683</span><span class="p">,</span><span class="mf">20.3062292299</span><span class="p">,</span><span class="mf">20.3089282868</span><span class="p">,</span><span class="mf">20.3116200785</span><span class="p">,</span><span class="mf">20.3143046439</span><span class="p">,</span><span class="mf">20.3169820216</span><span class="p">,</span><span class="mf">20.3196522502</span><span class="p">,</span><span class="mf">20.3223153676</span><span class="p">,</span><span class="mf">20.3249714116</span><span class="p">,</span><span class="mf">20.3276204198</span><span class="p">,</span><span class="mf">20.3302624293</span><span class="p">,</span><span class="mf">20.3328974769</span><span class="p">,</span><span class="mf">20.3355255993</span><span class="p">,</span><span class="mf">20.3381468328</span><span class="p">,</span><span class="mf">20.3407612134</span><span class="p">,</span><span class="mf">20.3433687768</span><span class="p">,</span><span class="mf">20.3459695585</span><span class="p">,</span><span class="mf">20.3485635936</span><span class="p">,</span><span class="mf">20.3511509172</span><span class="p">,</span><span class="mf">20.3537315638</span><span class="p">,</span><span class="mf">20.3563055678</span><span class="p">,</span><span class="mf">20.3588729633</span><span class="p">,</span><span class="mf">20.3614337841</span><span class="p">,</span><span class="mf">20.3639880639</span><span class="p">,</span><span class="mf">20.3665358360</span><span class="p">,</span><span class="mf">20.3690771334</span><span class="p">,</span><span class="mf">20.3716119890</span><span class="p">,</span><span class="mf">20.3741404354</span><span class="p">,</span><span class="mf">20.3766625048</span><span class="p">,</span><span class="mf">20.3791782294</span><span class="p">,</span><span class="mf">20.3816876410</span><span class="p">,</span><span class="mf">20.3841907712</span><span class="p">,</span><span class="mf">20.3866876514</span><span class="p">,</span><span class="mf">20.3891783127</span><span class="p">,</span><span class="mf">20.3916627861</span><span class="p">,</span><span class="mf">20.3941411021</span><span class="p">,</span><span class="mf">20.3966132912</span><span class="p">,</span><span class="mf">20.3990793837</span><span class="p">,</span><span class="mf">20.4015394095</span><span class="p">,</span><span class="mf">20.4039933985</span><span class="p">,</span><span class="mf">20.4064413801</span><span class="p">,</span><span class="mf">20.4088833838</span><span class="p">,</span><span class="mf">20.4113194386</span><span class="p">,</span><span class="mf">20.4137495734</span><span class="p">,</span><span class="mf">20.4161738170</span><span class="p">,</span><span class="mf">20.4185921979</span><span class="p">,</span><span class="mf">20.4210047443</span><span class="p">,</span><span class="mf">20.4234114843</span><span class="p">,</span><span class="mf">20.4258124459</span><span class="p">,</span><span class="mf">20.4282076566</span><span class="p">,</span><span class="mf">20.4305971440</span><span class="p">,</span><span class="mf">20.4329809353</span><span class="p">,</span><span class="mf">20.4353590577</span><span class="p">,</span><span class="mf">20.4377315381</span><span class="p">,</span><span class="mf">20.4400984031</span><span class="p">,</span><span class="mf">20.4424596793</span><span class="p">,</span><span class="mf">20.4448153930</span><span class="p">,</span><span class="mf">20.4471655703</span><span class="p">,</span><span class="mf">20.4495102373</span><span class="p">,</span><span class="mf">20.4518494196</span><span class="p">,</span><span class="mf">20.4541831430</span><span class="p">,</span><span class="mf">20.4565114327</span><span class="p">,</span><span class="mf">20.4588343141</span><span class="p">,</span><span class="mf">20.4611518123</span><span class="p">,</span><span class="mf">20.4634639520</span><span class="p">,</span><span class="mf">20.4657707581</span><span class="p">,</span><span class="mf">20.4680722551</span><span class="p">,</span><span class="mf">20.4703684674</span><span class="p">,</span><span class="mf">20.4726594191</span><span class="p">,</span><span class="mf">20.4749451344</span><span class="p">,</span><span class="mf">20.4772256371</span><span class="p">,</span><span class="mf">20.4795009509</span><span class="p">,</span><span class="mf">20.4817710994</span><span class="p">,</span><span class="mf">20.4840361061</span><span class="p">,</span><span class="mf">20.4862959940</span><span class="p">,</span><span class="mf">20.4885507864</span><span class="p">,</span><span class="mf">20.4908005062</span><span class="p">,</span><span class="mf">20.4930451760</span><span class="p">,</span><span class="mf">20.4952848186</span><span class="p">,</span><span class="mf">20.4975194564</span><span class="p">,</span><span class="mf">20.4997491117</span><span class="p">,</span><span class="mf">20.5019738067</span><span class="p">,</span><span class="mf">20.5041935635</span><span class="p">,</span><span class="mf">20.5064084038</span><span class="p">,</span><span class="mf">20.5086183495</span><span class="p">,</span><span class="mf">20.5108234220</span><span class="p">,</span><span class="mf">20.5130236429</span><span class="p">,</span><span class="mf">20.5152190335</span><span class="p">,</span><span class="mf">20.5174096149</span><span class="p">,</span><span class="mf">20.5195954081</span><span class="p">,</span><span class="mf">20.5217764340</span><span class="p">,</span><span class="mf">20.5239527134</span><span class="p">,</span><span class="mf">20.5261242669</span><span class="p">,</span><span class="mf">20.5282911150</span><span class="p">,</span><span class="mf">20.5304532780</span><span class="p">,</span><span class="mf">20.5326107762</span><span class="p">,</span><span class="mf">20.5347636295</span><span class="p">,</span><span class="mf">20.5369118581</span><span class="p">,</span><span class="mf">20.5390554816</span><span class="p">,</span><span class="mf">20.5411945199</span><span class="p">,</span><span class="mf">20.5433289924</span><span class="p">,</span><span class="mf">20.5454589186</span><span class="p">,</span><span class="mf">20.5475843179</span><span class="p">,</span><span class="mf">20.5497052095</span><span class="p">,</span><span class="mf">20.5518216124</span><span class="p">,</span><span class="mf">20.5539335456</span><span class="p">,</span><span class="mf">20.5560410280</span><span class="p">,</span><span class="mf">20.5581440781</span><span class="p">,</span><span class="mf">20.5602427148</span><span class="p">,</span><span class="mf">20.5623369564</span><span class="p">,</span><span class="mf">20.5644268213</span><span class="p">,</span><span class="mf">20.5665123278</span><span class="p">,</span><span class="mf">20.5685934940</span><span class="p">,</span><span class="mf">20.5706703380</span><span class="p">,</span><span class="mf">20.5727428776</span><span class="p">,</span><span class="mf">20.5748111306</span><span class="p">,</span><span class="mf">20.5768751148</span><span class="p">,</span><span class="mf">20.5789348478</span><span class="p">,</span><span class="mf">20.5809903470</span><span class="p">,</span><span class="mf">20.5830416297</span><span class="p">,</span><span class="mf">20.5850887134</span><span class="p">,</span><span class="mf">20.5871316150</span><span class="p">,</span><span class="mf">20.5891703517</span><span class="p">,</span><span class="mf">20.5912049404</span><span class="p">,</span><span class="mf">20.5932353979</span><span class="p">,</span><span class="mf">20.5952617411</span><span class="p">,</span><span class="mf">20.5972839864</span><span class="p">,</span><span class="mf">20.5993021506</span><span class="p">,</span><span class="mf">20.6013162500</span><span class="p">,</span><span class="mf">20.6033263009</span><span class="p">,</span><span class="mf">20.6053323196</span><span class="p">,</span><span class="mf">20.6073343223</span><span class="p">,</span><span class="mf">20.6093323249</span><span class="p">,</span><span class="mf">20.6113263436</span><span class="p">,</span><span class="mf">20.6133163940</span><span class="p">,</span><span class="mf">20.6153024919</span><span class="p">,</span><span class="mf">20.6172846531</span><span class="p">,</span><span class="mf">20.6192628931</span><span class="p">,</span><span class="mf">20.6212372274</span><span class="p">,</span><span class="mf">20.6232076714</span><span class="p">,</span><span class="mf">20.6251742404</span><span class="p">,</span><span class="mf">20.6271369496</span><span class="p">,</span><span class="mf">20.6290958140</span><span class="p">,</span><span class="mf">20.6310508489</span><span class="p">,</span><span class="mf">20.6330020690</span><span class="p">,</span><span class="mf">20.6349494893</span><span class="p">,</span><span class="mf">20.6368931245</span><span class="p">,</span><span class="mf">20.6388329893</span><span class="p">,</span><span class="mf">20.6407690983</span><span class="p">,</span><span class="mf">20.6427014661</span><span class="p">,</span><span class="mf">20.6446301070</span><span class="p">,</span><span class="mf">20.6465550354</span><span class="p">,</span><span class="mf">20.6484762656</span><span class="p">,</span><span class="mf">20.6503938117</span><span class="p">,</span><span class="mf">20.6523076879</span><span class="p">,</span><span class="mf">20.6542179081</span><span class="p">,</span><span class="mf">20.6561244864</span><span class="p">,</span><span class="mf">20.6580274366</span><span class="p">,</span><span class="mf">20.6599267724</span><span class="p">,</span><span class="mf">20.6618225075</span><span class="p">,</span><span class="mf">20.6637146557</span><span class="p">,</span><span class="mf">20.6656032304</span><span class="p">,</span><span class="mf">20.6674882451</span><span class="p">,</span><span class="mf">20.6693697131</span><span class="p">,</span><span class="mf">20.6712476480</span><span class="p">,</span><span class="mf">20.6731220628</span><span class="p">,</span><span class="mf">20.6749929707</span><span class="p">,</span><span class="mf">20.6768603849</span><span class="p">,</span><span class="mf">20.6787243183</span><span class="p">,</span><span class="mf">20.6805847840</span><span class="p">,</span><span class="mf">20.6824417947</span><span class="p">,</span><span class="mf">20.6842953634</span><span class="p">,</span><span class="mf">20.6861455026</span><span class="p">,</span><span class="mf">20.6879922252</span><span class="p">,</span><span class="mf">20.6898355437</span><span class="p">,</span><span class="mf">20.6916754706</span><span class="p">,</span><span class="mf">20.6935120184</span><span class="p">,</span><span class="mf">20.6953451995</span><span class="p">,</span><span class="mf">20.6971750262</span><span class="p">,</span><span class="mf">20.6990015107</span><span class="p">,</span><span class="mf">20.7008246653</span><span class="p">,</span><span class="mf">20.7026445020</span><span class="p">,</span><span class="mf">20.7044610329</span><span class="p">,</span><span class="mf">20.7062742700</span><span class="p">,</span><span class="mf">20.7080842253</span><span class="p">,</span><span class="mf">20.7098909105</span><span class="p">,</span><span class="mf">20.7116943375</span><span class="p">,</span><span class="mf">20.7134945180</span><span class="p">,</span><span class="mf">20.7152914637</span><span class="p">,</span><span class="mf">20.7170851861</span><span class="p">,</span><span class="mf">20.7188756969</span><span class="p">,</span><span class="mf">20.7206630075</span><span class="p">,</span><span class="mf">20.7224471293</span><span class="p">,</span><span class="mf">20.7242280736</span><span class="p">,</span><span class="mf">20.7260058519</span><span class="p">,</span><span class="mf">20.7277804753</span><span class="p">,</span><span class="mf">20.7295519549</span><span class="p">,</span><span class="mf">20.7313203020</span><span class="p">,</span><span class="mf">20.7330855275</span><span class="p">,</span><span class="mf">20.7348476425</span><span class="p">,</span><span class="mf">20.7366066579</span><span class="p">,</span><span class="mf">20.7383625846</span><span class="p">,</span><span class="mf">20.7401154334</span><span class="p">,</span><span class="mf">20.7418652151</span><span class="p">,</span><span class="mf">20.7436119405</span><span class="p">,</span><span class="mf">20.7453556201</span><span class="p">,</span><span class="mf">20.7470962645</span><span class="p">,</span><span class="mf">20.7488338844</span><span class="p">,</span><span class="mf">20.7505684902</span><span class="p">,</span><span class="mf">20.7523000924</span><span class="p">,</span><span class="mf">20.7540287013</span><span class="p">,</span><span class="mf">20.7557543273</span><span class="p">,</span><span class="mf">20.7574769806</span><span class="p">,</span><span class="mf">20.7591966715</span><span class="p">,</span><span class="mf">20.7609134101</span><span class="p">,</span><span class="mf">20.7626272066</span><span class="p">,</span><span class="mf">20.7643380710</span><span class="p">,</span><span class="mf">20.7660460133</span><span class="p">,</span><span class="mf">20.7677510435</span><span class="p">,</span><span class="mf">20.7694531716</span><span class="p">,</span><span class="mf">20.7711524074</span><span class="p">,</span><span class="mf">20.7728487606</span><span class="p">,</span><span class="mf">20.7745422411</span><span class="p">,</span><span class="mf">20.7762328586</span><span class="p">,</span><span class="mf">20.7779206227</span><span class="p">,</span><span class="mf">20.7796055431</span><span class="p">,</span><span class="mf">20.7812876293</span><span class="p">,</span><span class="mf">20.7829668908</span><span class="p">,</span><span class="mf">20.7846433371</span><span class="p">,</span><span class="mf">20.7863169777</span><span class="p">,</span><span class="mf">20.7879878218</span><span class="p">,</span><span class="mf">20.7896558789</span><span class="p">,</span><span class="mf">20.7913211582</span><span class="p">,</span><span class="mf">20.7929836690</span><span class="p">,</span><span class="mf">20.7946434204</span><span class="p">,</span><span class="mf">20.7963004216</span><span class="p">,</span><span class="mf">20.7979546817</span><span class="p">,</span><span class="mf">20.7996062098</span><span class="p">,</span><span class="mf">20.8012550147</span><span class="p">,</span><span class="mf">20.8029011057</span><span class="p">,</span><span class="mf">20.8045444914</span><span class="p">,</span><span class="mf">20.8061851809</span><span class="p">,</span><span class="mf">20.8078231829</span><span class="p">,</span><span class="mf">20.8094585062</span><span class="p">,</span><span class="mf">20.8110911596</span><span class="p">,</span><span class="mf">20.8127211518</span><span class="p">,</span><span class="mf">20.8143484915</span><span class="p">,</span><span class="mf">20.8159731872</span><span class="p">,</span><span class="mf">20.8175952476</span><span class="p">,</span><span class="mf">20.8192146811</span><span class="p">,</span><span class="mf">20.8208314964</span><span class="p">,</span><span class="mf">20.8224457017</span><span class="p">,</span><span class="mf">20.8240573056</span><span class="p">,</span><span class="mf">20.8256663164</span><span class="p">,</span><span class="mf">20.8272727425</span><span class="p">,</span><span class="mf">20.8288765920</span><span class="p">,</span><span class="mf">20.8304778734</span><span class="p">,</span><span class="mf">20.8320765948</span><span class="p">,</span><span class="mf">20.8336727643</span><span class="p">,</span><span class="mf">20.8352663901</span><span class="p">,</span><span class="mf">20.8368574804</span><span class="p">,</span><span class="mf">20.8384460430</span><span class="p">,</span><span class="mf">20.8400320862</span><span class="p">,</span><span class="mf">20.8416156178</span><span class="p">,</span><span class="mf">20.8431966458</span><span class="p">,</span><span class="mf">20.8447751781</span><span class="p">,</span><span class="mf">20.8463512225</span><span class="p">,</span><span class="mf">20.8479247870</span><span class="p">,</span><span class="mf">20.8494958792</span><span class="p">,</span><span class="mf">20.8510645070</span><span class="p">,</span><span class="mf">20.8526306780</span><span class="p">,</span><span class="mf">20.8541944000</span><span class="p">,</span><span class="mf">20.8557556806</span><span class="p">,</span><span class="mf">20.8573145273</span><span class="p">,</span><span class="mf">20.8588709479</span><span class="p">,</span><span class="mf">20.8604249497</span><span class="p">,</span><span class="mf">20.8619765404</span><span class="p">,</span><span class="mf">20.8635257274</span><span class="p">,</span><span class="mf">20.8650725181</span><span class="p">,</span><span class="mf">20.8666169200</span><span class="p">,</span><span class="mf">20.8681589403</span><span class="p">,</span><span class="mf">20.8696985865</span><span class="p">,</span><span class="mf">20.8712358658</span><span class="p">,</span><span class="mf">20.8727707856</span><span class="p">,</span><span class="mf">20.8743033529</span><span class="p">,</span><span class="mf">20.8758335751</span><span class="p">,</span><span class="mf">20.8773614593</span><span class="p">,</span><span class="mf">20.8788870126</span><span class="p">,</span><span class="mf">20.8804102421</span><span class="p">,</span><span class="mf">20.8819311550</span><span class="p">,</span><span class="mf">20.8834497581</span><span class="p">,</span><span class="mf">20.8849660586</span><span class="p">,</span><span class="mf">20.8864800635</span><span class="p">,</span><span class="mf">20.8879917796</span><span class="p">,</span><span class="mf">20.8895012138</span><span class="p">,</span><span class="mf">20.8910083731</span><span class="p">,</span><span class="mf">20.8925132643</span><span class="p">,</span><span class="mf">20.8940158942</span><span class="p">,</span><span class="mf">20.8955162695</span><span class="p">,</span><span class="mf">20.8970143972</span><span class="p">,</span><span class="mf">20.8985102837</span><span class="p">,</span><span class="mf">20.9000039360</span><span class="p">,</span><span class="mf">20.9014953606</span><span class="p">,</span><span class="mf">20.9029845641</span><span class="p">,</span><span class="mf">20.9044715533</span><span class="p">,</span><span class="mf">20.9059563345</span><span class="p">,</span><span class="mf">20.9074389145</span><span class="p">,</span><span class="mf">20.9089192996</span><span class="p">,</span><span class="mf">20.9103974965</span><span class="p">,</span><span class="mf">20.9118735115</span><span class="p">,</span><span class="mf">20.9133473512</span><span class="p">,</span><span class="mf">20.9148190218</span><span class="p">,</span><span class="mf">20.9162885297</span><span class="p">,</span><span class="mf">20.9177558814</span><span class="p">,</span><span class="mf">20.9192210832</span><span class="p">,</span><span class="mf">20.9206841412</span><span class="p">,</span><span class="mf">20.9221450619</span><span class="p">,</span><span class="mf">20.9236038513</span><span class="p">,</span><span class="mf">20.9250605158</span><span class="p">,</span><span class="mf">20.9265150615</span><span class="p">,</span><span class="mf">20.9279674946</span><span class="p">,</span><span class="mf">20.9294178212</span><span class="p">,</span><span class="mf">20.9308660474</span><span class="p">,</span><span class="mf">20.9323121792</span><span class="p">,</span><span class="mf">20.9337562228</span><span class="p">,</span><span class="mf">20.9351981841</span><span class="p">,</span><span class="mf">20.9366380692</span><span class="p">,</span><span class="mf">20.9380758839</span><span class="p">,</span><span class="mf">20.9395116343</span><span class="p">,</span><span class="mf">20.9409453263</span><span class="p">,</span><span class="mf">20.9423769658</span><span class="p">,</span><span class="mf">20.9438065586</span><span class="p">,</span><span class="mf">20.9452341106</span><span class="p">,</span><span class="mf">20.9466596276</span><span class="p">,</span><span class="mf">20.9480831154</span><span class="p">,</span><span class="mf">20.9495045797</span><span class="p">,</span><span class="mf">20.9509240264</span><span class="p">,</span><span class="mf">20.9523414611</span><span class="p">,</span><span class="mf">20.9537568895</span><span class="p">,</span><span class="mf">20.9551703173</span><span class="p">,</span><span class="mf">20.9565817501</span><span class="p">,</span><span class="mf">20.9579911936</span><span class="p">,</span><span class="mf">20.9593986534</span><span class="p">,</span><span class="mf">20.9608041350</span><span class="p">,</span><span class="mf">20.9622076440</span><span class="p">,</span><span class="mf">20.9636091859</span><span class="p">,</span><span class="mf">20.9650087663</span><span class="p">,</span><span class="mf">20.9664063905</span><span class="p">,</span><span class="mf">20.9678020642</span><span class="p">,</span><span class="mf">20.9691957926</span><span class="p">,</span><span class="mf">20.9705875813</span><span class="p">,</span><span class="mf">20.9719774356</span><span class="p">,</span><span class="mf">20.9733653608</span><span class="p">,</span><span class="mf">20.9747513625</span><span class="p">,</span><span class="mf">20.9761354457</span><span class="p">,</span><span class="mf">20.9775176159</span><span class="p">,</span><span class="mf">20.9788978784</span><span class="p">,</span><span class="mf">20.9802762384</span><span class="p">,</span><span class="mf">20.9816527011</span><span class="p">,</span><span class="mf">20.9830272718</span><span class="p">,</span><span class="mf">20.9843999556</span><span class="p">,</span><span class="mf">20.9857707577</span><span class="p">,</span><span class="mf">20.9871396833</span><span class="p">,</span><span class="mf">20.9885067375</span><span class="p">,</span><span class="mf">20.9898719254</span><span class="p">,</span><span class="mf">20.9912352522</span><span class="p">,</span><span class="mf">20.9925967228</span><span class="p">,</span><span class="mf">20.9939563423</span><span class="p">,</span><span class="mf">20.9953141157</span><span class="p">,</span><span class="mf">20.9966700481</span><span class="p">,</span><span class="mf">20.9980241445</span><span class="p">,</span><span class="mf">20.9993764097</span><span class="p">,</span><span class="mf">21.0007268488</span><span class="p">,</span><span class="mf">21.0020754667</span><span class="p">,</span><span class="mf">21.0034222683</span><span class="p">,</span><span class="mf">21.0047672584</span><span class="p">,</span><span class="mf">21.0061104419</span><span class="p">,</span><span class="mf">21.0074518237</span><span class="p">,</span><span class="mf">21.0087914087</span><span class="p">,</span><span class="mf">21.0101292015</span><span class="p">,</span><span class="mf">21.0114652071</span><span class="p">,</span><span class="mf">21.0127994301</span><span class="p">,</span><span class="mf">21.0141318753</span><span class="p">,</span><span class="mf">21.0154625475</span><span class="p">,</span><span class="mf">21.0167914513</span><span class="p">,</span><span class="mf">21.0181185915</span><span class="p">,</span><span class="mf">21.0194439728</span><span class="p">,</span><span class="mf">21.0207675997</span><span class="p">,</span><span class="mf">21.0220894770</span><span class="p">,</span><span class="mf">21.0234096092</span><span class="p">,</span><span class="mf">21.0247280009</span><span class="p">,</span><span class="mf">21.0260446568</span><span class="p">,</span><span class="mf">21.0273595814</span><span class="p">,</span><span class="mf">21.0286727792</span><span class="p">,</span><span class="mf">21.0299842548</span><span class="p">,</span><span class="mf">21.0312940127</span><span class="p">,</span><span class="mf">21.0326020573</span><span class="p">,</span><span class="mf">21.0339083933</span><span class="p">,</span><span class="mf">21.0352130249</span><span class="p">,</span><span class="mf">21.0365159567</span><span class="p">,</span><span class="mf">21.0378171930</span><span class="p">,</span><span class="mf">21.0391167384</span><span class="p">,</span><span class="mf">21.0404145971</span><span class="p">,</span><span class="mf">21.0417107735</span><span class="p">,</span><span class="mf">21.0430052721</span><span class="p">,</span><span class="mf">21.0442980971</span><span class="p">,</span><span class="mf">21.0455892529</span><span class="p">,</span><span class="mf">21.0468787437</span><span class="p">,</span><span class="mf">21.0481665739</span><span class="p">,</span><span class="mf">21.0494527477</span><span class="p">,</span><span class="mf">21.0507372694</span><span class="p">,</span><span class="mf">21.0520201432</span><span class="p">,</span><span class="mf">21.0533013733</span><span class="p">,</span><span class="mf">21.0545809641</span><span class="p">,</span><span class="mf">21.0558589195</span><span class="p">,</span><span class="mf">21.0571352439</span><span class="p">,</span><span class="mf">21.0584099413</span><span class="p">,</span><span class="mf">21.0596830159</span><span class="p">,</span><span class="mf">21.0609544719</span><span class="p">,</span><span class="mf">21.0622243134</span><span class="p">,</span><span class="mf">21.0634925443</span><span class="p">,</span><span class="mf">21.0647591690</span><span class="p">,</span><span class="mf">21.0660241913</span><span class="p">,</span><span class="mf">21.0672876153</span><span class="p">,</span><span class="mf">21.0685494451</span><span class="p">,</span><span class="mf">21.0698096847</span><span class="p">,</span><span class="mf">21.0710683382</span><span class="p">,</span><span class="mf">21.0723254093</span><span class="p">,</span><span class="mf">21.0735809023</span><span class="p">,</span><span class="mf">21.0748348209</span><span class="p">,</span><span class="mf">21.0760871693</span><span class="p">,</span><span class="mf">21.0773379512</span><span class="p">,</span><span class="mf">21.0785871706</span><span class="p">,</span><span class="mf">21.0798348314</span><span class="p">,</span><span class="mf">21.0810809374</span><span class="p">,</span><span class="mf">21.0823254927</span><span class="p">,</span><span class="mf">21.0835685009</span><span class="p">,</span><span class="mf">21.0848099660</span><span class="p">,</span><span class="mf">21.0860498918</span><span class="p">,</span><span class="mf">21.0872882820</span><span class="p">,</span><span class="mf">21.0885251405</span><span class="p">,</span><span class="mf">21.0897604711</span><span class="p">,</span><span class="mf">21.0909942776</span><span class="p">,</span><span class="mf">21.0922265636</span><span class="p">,</span><span class="mf">21.0934573330</span><span class="p">,</span><span class="mf">21.0946865895</span><span class="p">,</span><span class="mf">21.0959143367</span><span class="p">,</span><span class="mf">21.0971405784</span><span class="p">,</span><span class="mf">21.0983653183</span><span class="p">,</span><span class="mf">21.0995885601</span><span class="p">,</span><span class="mf">21.1008103073</span><span class="p">,</span><span class="mf">21.1020305637</span><span class="p">,</span><span class="mf">21.1032493329</span><span class="p">,</span><span class="mf">21.1044666185</span><span class="p">,</span><span class="mf">21.1056824242</span><span class="p">,</span><span class="mf">21.1068967534</span><span class="p">,</span><span class="mf">21.1081096098</span><span class="p">,</span><span class="mf">21.1093209970</span><span class="p">,</span><span class="mf">21.1105309185</span><span class="p">,</span><span class="mf">21.1117393779</span><span class="p">,</span><span class="mf">21.1129463786</span><span class="p">,</span><span class="mf">21.1141519243</span><span class="p">,</span><span class="mf">21.1153560183</span><span class="p">,</span><span class="mf">21.1165586643</span><span class="p">,</span><span class="mf">21.1177598656</span><span class="p">,</span><span class="mf">21.1189596258</span><span class="p">,</span><span class="mf">21.1201579483</span><span class="p">,</span><span class="mf">21.1213548365</span><span class="p">,</span><span class="mf">21.1225502940</span><span class="p">,</span><span class="mf">21.1237443239</span><span class="p">,</span><span class="mf">21.1249369299</span><span class="p">,</span><span class="mf">21.1261281153</span><span class="p">,</span><span class="mf">21.1273178834</span><span class="p">,</span><span class="mf">21.1285062377</span><span class="p">,</span><span class="mf">21.1296931815</span><span class="p">,</span><span class="mf">21.1308787181</span><span class="p">,</span><span class="mf">21.1320628508</span><span class="p">,</span><span class="mf">21.1332455831</span><span class="p">,</span><span class="mf">21.1344269181</span><span class="p">,</span><span class="mf">21.1356068592</span><span class="p">,</span><span class="mf">21.1367854098</span><span class="p">,</span><span class="mf">21.1379625729</span><span class="p">,</span><span class="mf">21.1391383520</span><span class="p">,</span><span class="mf">21.1403127503</span><span class="p">,</span><span class="mf">21.1414857709</span><span class="p">,</span><span class="mf">21.1426574172</span><span class="p">,</span><span class="mf">21.1438276924</span><span class="p">,</span><span class="mf">21.1449965996</span><span class="p">,</span><span class="mf">21.1461641420</span><span class="p">,</span><span class="mf">21.1473303229</span><span class="p">,</span><span class="mf">21.1484951454</span><span class="p">,</span><span class="mf">21.1496586127</span><span class="p">,</span><span class="mf">21.1508207279</span><span class="p">,</span><span class="mf">21.1519814941</span><span class="p">,</span><span class="mf">21.1531409145</span><span class="p">,</span><span class="mf">21.1542989922</span><span class="p">,</span><span class="mf">21.1554557304</span><span class="p">,</span><span class="mf">21.1566111320</span><span class="p">,</span><span class="mf">21.1577652002</span><span class="p">,</span><span class="mf">21.1589179381</span><span class="p">,</span><span class="mf">21.1600693487</span><span class="p">,</span><span class="mf">21.1612194351</span><span class="p">,</span><span class="mf">21.1623682003</span><span class="p">,</span><span class="mf">21.1635156473</span><span class="p">,</span><span class="mf">21.1646617793</span><span class="p">,</span><span class="mf">21.1658065991</span><span class="p">,</span><span class="mf">21.1669501098</span><span class="p">,</span><span class="mf">21.1680923144</span><span class="p">,</span><span class="mf">21.1692332158</span><span class="p">,</span><span class="mf">21.1703728171</span><span class="p">,</span><span class="mf">21.1715111211</span><span class="p">,</span><span class="mf">21.1726481309</span><span class="p">,</span><span class="mf">21.1737838494</span><span class="p">,</span><span class="mf">21.1749182794</span><span class="p">,</span><span class="mf">21.1760514240</span><span class="p">,</span><span class="mf">21.1771832861</span><span class="p">,</span><span class="mf">21.1783138684</span><span class="p">,</span><span class="mf">21.1794431740</span><span class="p">,</span><span class="mf">21.1805712057</span><span class="p">,</span><span class="mf">21.1816979664</span><span class="p">,</span><span class="mf">21.1828234589</span><span class="p">,</span><span class="mf">21.1839476862</span><span class="p">,</span><span class="mf">21.1850706509</span><span class="p">,</span><span class="mf">21.1861923560</span><span class="p">,</span><span class="mf">21.1873128043</span><span class="p">,</span><span class="mf">21.1884319986</span><span class="p">,</span><span class="mf">21.1895499417</span><span class="p">,</span><span class="mf">21.1906666364</span><span class="p">,</span><span class="mf">21.1917820855</span><span class="p">,</span><span class="mf">21.1928962917</span><span class="p">,</span><span class="mf">21.1940092579</span><span class="p">,</span><span class="mf">21.1951209867</span><span class="p">,</span><span class="mf">21.1962314810</span><span class="p">,</span><span class="mf">21.1973407435</span><span class="p">,</span><span class="mf">21.1984487768</span><span class="p">,</span><span class="mf">21.1995555838</span><span class="p">,</span><span class="mf">21.2006611671</span><span class="p">,</span><span class="mf">21.2017655295</span><span class="p">,</span><span class="mf">21.2028686735</span><span class="p">,</span><span class="mf">21.2039706020</span><span class="p">,</span><span class="mf">21.2050713176</span><span class="p">,</span><span class="mf">21.2061708229</span><span class="p">,</span><span class="mf">21.2072691207</span><span class="p">,</span><span class="mf">21.2083662135</span><span class="p">,</span><span class="mf">21.2094621040</span><span class="p">,</span><span class="mf">21.2105567949</span><span class="p">,</span><span class="mf">21.2116502887</span><span class="p">,</span><span class="mf">21.2127425881</span><span class="p">,</span><span class="mf">21.2138336957</span><span class="p">,</span><span class="mf">21.2149236140</span><span class="p">,</span><span class="mf">21.2160123458</span><span class="p">,</span><span class="mf">21.2170998935</span><span class="p">,</span><span class="mf">21.2181862597</span><span class="p">,</span><span class="mf">21.2192714470</span><span class="p">,</span><span class="mf">21.2203554579</span><span class="p">,</span><span class="mf">21.2214382951</span><span class="p">,</span><span class="mf">21.2225199609</span><span class="p">,</span><span class="mf">21.2236004581</span><span class="p">,</span><span class="mf">21.2246797890</span><span class="p">,</span><span class="mf">21.2257579562</span><span class="p">,</span><span class="mf">21.2268349622</span><span class="p">,</span><span class="mf">21.2279108096</span><span class="p">,</span><span class="mf">21.2289855007</span><span class="p">,</span><span class="mf">21.2300590381</span><span class="p">,</span><span class="mf">21.2311314242</span><span class="p">,</span><span class="mf">21.2322026616</span><span class="p">,</span><span class="mf">21.2332727527</span><span class="p">,</span><span class="mf">21.2343416999</span><span class="p">,</span><span class="mf">21.2354095056</span><span class="p">,</span><span class="mf">21.2364761724</span><span class="p">,</span><span class="mf">21.2375417026</span><span class="p">,</span><span class="mf">21.2386060987</span><span class="p">,</span><span class="mf">21.2396693630</span><span class="p">,</span><span class="mf">21.2407314980</span><span class="p">,</span><span class="mf">21.2417925060</span><span class="p">,</span><span class="mf">21.2428523895</span><span class="p">,</span><span class="mf">21.2439111509</span><span class="p">,</span><span class="mf">21.2449687924</span><span class="p">,</span><span class="mf">21.2460253166</span><span class="p">,</span><span class="mf">21.2470807257</span><span class="p">,</span><span class="mf">21.2481350220</span><span class="p">,</span><span class="mf">21.2491882080</span><span class="p">,</span><span class="mf">21.2502402859</span><span class="p">,</span><span class="mf">21.2512912582</span><span class="p">,</span><span class="mf">21.2523411270</span><span class="p">,</span><span class="mf">21.2533898948</span><span class="p">,</span><span class="mf">21.2544375639</span><span class="p">,</span><span class="mf">21.2554841364</span><span class="p">,</span><span class="mf">21.2565296148</span><span class="p">,</span><span class="mf">21.2575740014</span><span class="p">,</span><span class="mf">21.2586172983</span><span class="p">,</span><span class="mf">21.2596595078</span><span class="p">,</span><span class="mf">21.2607006324</span><span class="p">,</span><span class="mf">21.2617406741</span><span class="p">,</span><span class="mf">21.2627796352</span><span class="p">,</span><span class="mf">21.2638175180</span><span class="p">,</span><span class="mf">21.2648543247</span><span class="p">,</span><span class="mf">21.2658900576</span><span class="p">,</span><span class="mf">21.2669247188</span><span class="p">,</span><span class="mf">21.2679583107</span><span class="p">,</span><span class="mf">21.2689908353</span><span class="p">,</span><span class="mf">21.2700222949</span><span class="p">,</span><span class="mf">21.2710526917</span><span class="p">,</span><span class="mf">21.2720820278</span><span class="p">,</span><span class="mf">21.2731103056</span><span class="p">,</span><span class="mf">21.2741375270</span><span class="p">,</span><span class="mf">21.2751636944</span><span class="p">,</span><span class="mf">21.2761888098</span><span class="p">,</span><span class="mf">21.2772128754</span><span class="p">,</span><span class="mf">21.2782358934</span><span class="p">,</span><span class="mf">21.2792578659</span><span class="p">,</span><span class="mf">21.2802787950</span><span class="p">,</span><span class="mf">21.2812986829</span><span class="p">,</span><span class="mf">21.2823175317</span><span class="p">,</span><span class="mf">21.2833353435</span><span class="p">,</span><span class="mf">21.2843521204</span><span class="p">,</span><span class="mf">21.2853678645</span><span class="p">,</span><span class="mf">21.2863825780</span><span class="p">,</span><span class="mf">21.2873962628</span><span class="p">,</span><span class="mf">21.2884089211</span><span class="p">,</span><span class="mf">21.2894205550</span><span class="p">,</span><span class="mf">21.2904311665</span><span class="p">,</span><span class="mf">21.2914407577</span><span class="p">,</span><span class="mf">21.2924493307</span><span class="p">,</span><span class="mf">21.2934568874</span><span class="p">,</span><span class="mf">21.2944634300</span><span class="p">,</span><span class="mf">21.2954689605</span><span class="p">,</span><span class="mf">21.2964734810</span><span class="p">,</span><span class="mf">21.2974769933</span><span class="p">,</span><span class="mf">21.2984794997</span><span class="p">,</span><span class="mf">21.2994810020</span><span class="p">,</span><span class="mf">21.3004815023</span><span class="p">};</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">n</span><span class="p">)</span><span class="o">!=</span><span class="n">EOF</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">cnt</span> <span class="o">=</span> <span class="n">n</span><span class="o">/</span><span class="mi">1000000</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">mod</span> <span class="o">=</span> <span class="n">n</span><span class="o">%</span><span class="mi">1000000</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">double</span> <span class="n">ans</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">cnt</span><span class="p">];</span>
+</span><span class='line'>        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">cnt</span><span class="o">*</span><span class="mi">1000000</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">ans</span> <span class="o">+=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">i</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%.4f</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ans</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>数学方法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="cp">#include &lt;cstdio&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;cstring&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;algorithm&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;cmath&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;vector&gt;</span>
+</span><span class='line'><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span><span class='line'><span class="k">const</span> <span class="kt">double</span> <span class="n">r</span> <span class="o">=</span> <span class="mf">0.57721566490153286060651209</span><span class="p">;</span>
+</span><span class='line'><span class="kt">double</span> <span class="n">rec</span><span class="p">[</span><span class="mi">1000000</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">1000000</span> <span class="p">;</span> <span class="n">i</span> <span class="o">++</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">i</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">(</span><span class="o">~</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">n</span><span class="p">))</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">1000000</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%.4f</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">rec</span><span class="p">[</span><span class="n">n</span><span class="p">]);</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%.4f</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">r</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">hnnwang</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-08-10T16:56:34+08:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/luan-gao/'>乱搞</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_share_slide jiathis_share_24x24" id="jiathis_share_slide">
+<div class="jiathis_share_slide_top" id="jiathis_share_title"></div>
+<div class="jiathis_share_slide_inner">
+<div class="jiathis_style_24x24">
+<a class="jiathis_button_qzone"></a>
+<a class="jiathis_button_tsina"></a>
+<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+<script type="text/javascript">
+var jiathis_config = {
+	slide:{
+		divid:'jiathis_main',
+		pos:'right'
+	}
+};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>	
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_slide.js" charset="utf-8"></script>
+</div></div></div>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2008932"></script>
+<!-- UY END -->
+
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/08/10/poj1912-a-highway-and-the-seven-dwarfs/" title="Previous Post: POJ1912 a Highway and the Seven Dwarfs">&laquo; POJ1912 a Highway and the Seven Dwarfs</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/08/10/xuan-zhuan-qia-ke-zong-jie/" title="Next Post: 旋转卡壳总结">旋转卡壳总结 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/08/10/hdu-4782-beautiful-soup/">HDU 4782 Beautiful Soup</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/10/javazi-fu-chuan-fan-zhuan/">JAVA字符串反转</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/10/bing-cha-ji-mo-ban/">并查集模板</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/10/xuan-zhuan-qia-ke-zong-jie/">旋转卡壳总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/10/hdu4986-tong-fen-da-biao-da-fa-di-er-dan/">HDU4986 桶分打表大法第二弹</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tags</h1>
+  <ul class="tag-cloud">
+    <a style="font-size: 70%" href="/tags/0-1bei-bao/">0-1背包</a> &nbsp 
+<a style="font-size: 70%" href="/tags/2-sat/">2-sat</a> &nbsp 
+<a style="font-size: 70%" href="/tags/every-sg/">Every-sg</a> &nbsp 
+<a style="font-size: 70%" href="/tags/java/">JAVA</a> &nbsp 
+<a style="font-size: 103%" href="/tags/hash/">hash</a> &nbsp 
+<a style="font-size: 70%" href="/tags/luan-gao/">乱搞</a> &nbsp 
+<a style="font-size: 70%" href="/tags/luan-gao-fa/">乱搞法</a> &nbsp 
+<a style="font-size: 103%" href="/tags/er-fen/">二分</a> &nbsp 
+<a style="font-size: 70%" href="/tags/er-fen-tu-pi-pei/">二分图匹配</a> &nbsp 
+<a style="font-size: 70%" href="/tags/er-jin-zhi/">二进制</a> &nbsp 
+<a style="font-size: 70%" href="/tags/wei-yun-suan/">位运算</a> &nbsp 
+<a style="font-size: 70%" href="/tags/ji-he/">几何</a> &nbsp 
+<a style="font-size: 122%" href="/tags/tu-bao/">凸包</a> &nbsp 
+<a style="font-size: 70%" href="/tags/tu-bao-,ji-he-chu-li/">凸包，几何处理</a> &nbsp 
+<a style="font-size: 163%" href="/tags/dong-tai-gui-hua/">动态规划</a> &nbsp 
+<a style="font-size: 70%" href="/tags/dan-diao-dui-lie/">单调队列</a> &nbsp 
+<a style="font-size: 70%" href="/tags/bo-yi/">博弈</a> &nbsp 
+<a style="font-size: 70%" href="/tags/bo-yi-lun/">博弈论</a> &nbsp 
+<a style="font-size: 70%" href="/tags/fan-zhuan-wen-ti/">反转问题</a> &nbsp 
+<a style="font-size: 70%" href="/tags/hou-zhui-shu-zu/">后缀数组</a> &nbsp 
+<a style="font-size: 180%" href="/tags/tu-lun/">图论</a> &nbsp 
+<a style="font-size: 70%" href="/tags/da-mo-ni/">大模拟</a> &nbsp 
+<a style="font-size: 70%" href="/tags/zi-fu-chuan/">字符串</a> &nbsp 
+<a style="font-size: 70%" href="/tags/zi-fu-chuan-pi-pei/">字符串匹配</a> &nbsp 
+<a style="font-size: 70%" href="/tags/zi-fu-chuan-chu-li/">字符串处理</a> &nbsp 
+<a style="font-size: 70%" href="/tags/xiao-mo-ni/">小模拟</a> &nbsp 
+<a style="font-size: 70%" href="/tags/chi-qu-fa/">尺取法</a> &nbsp 
+<a style="font-size: 122%" href="/tags/bing-cha-ji/">并查集</a> &nbsp 
+<a style="font-size: 70%" href="/tags/dan-xing-peng-zhuang/">弹性碰撞</a> &nbsp 
+<a style="font-size: 103%" href="/tags/qiang-lian-tong-fen-liang/">强连通分量</a> &nbsp 
+<a style="font-size: 70%" href="/tags/kuai-su-mi/">快速幂</a> &nbsp 
+<a style="font-size: 163%" href="/tags/ji-qiao-fang-fa/">技巧方法</a> &nbsp 
+<a style="font-size: 70%" href="/tags/zhe-ban-mei-ju/">折半枚举</a> &nbsp 
+<a style="font-size: 103%" href="/tags/shu-ju-jie-gou/">数据结构</a> &nbsp 
+<a style="font-size: 70%" href="/tags/xuan-zhuan-qia-ke/">旋转卡壳</a> &nbsp 
+<a style="font-size: 122%" href="/tags/zui-da-liu/">最大流</a> &nbsp 
+<a style="font-size: 70%" href="/tags/zui-xiao-ge/">最小割</a> &nbsp 
+<a style="font-size: 103%" href="/tags/zui-xiao-sheng-cheng-shu/">最小生成树</a> &nbsp 
+<a style="font-size: 70%" href="/tags/zui-xiao-fei-yong-liu/">最小费用流</a> &nbsp 
+<a style="font-size: 103%" href="/tags/zui-duan-lu/">最短路</a> &nbsp 
+<a style="font-size: 122%" href="/tags/shu-zhuang-shu-zu/">树状数组</a> &nbsp 
+<a style="font-size: 70%" href="/tags/tong-fen-da-biao/">桶分打表</a> &nbsp 
+<a style="font-size: 70%" href="/tags/tong-pai-xu/">桶排序</a> &nbsp 
+<a style="font-size: 70%" href="/tags/gai-lu-dp/">概率dp</a> &nbsp 
+<a style="font-size: 70%" href="/tags/mo-ni-,dong-tai-gui-hua-,/">模拟，动态规划，</a> &nbsp 
+<a style="font-size: 70%" href="/tags/zhuang-tai-ya-suo-dp/">状态压缩DP</a> &nbsp 
+<a style="font-size: 70%" href="/tags/ju-zhen-kuai-su-mi/">矩阵快速幂</a> &nbsp 
+<a style="font-size: 70%" href="/tags/chi-san-hua/">离散化</a> &nbsp 
+<a style="font-size: 70%" href="/tags/xian-duan-shu/">线段书</a> &nbsp 
+<a style="font-size: 122%" href="/tags/xian-duan-shu/">线段树</a> &nbsp 
+<a style="font-size: 136%" href="/tags/wang-luo-liu/">网络流</a> &nbsp 
+<a style="font-size: 163%" href="/tags/ji-suan-ji-he/">计算几何</a> &nbsp 
+<a style="font-size: 70%" href="/tags/tan-xin/">谈心</a> &nbsp 
+<a style="font-size: 70%" href="/tags/tan-xin/">贪心</a> &nbsp 
+<a style="font-size: 70%" href="/tags/lian-tong-du/">连通度</a> &nbsp 
+<a style="font-size: 122%" href="/tags/gao-jing-du/">高精度</a>
+
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+<p>
+  Copyright &copy; 2015 - hnnwang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Design by <a href="http://octopressthemes.com">Octopress Themes</a>. Background image by <a href="http://www.flickr.com/photos/rhysasplundh/">Rhys Asplundh</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

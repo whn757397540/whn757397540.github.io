@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 线段树 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/tags/xian-duan-shu/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-08-10T13:04:28+08:00</updated>
+  <updated>2015-08-10T18:00:30+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -12,6 +12,142 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[线段树简单模板]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/xian-duan-shu-jian-dan-mo-ban/"/>
+    <updated>2015-08-10T16:53:34+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/xian-duan-shu-jian-dan-mo-ban</id>
+    <content type="html"><![CDATA[<h2>Codeforces Round #262 (Div. 2)</h2>
+
+<p><a href="http://codeforces.com/contest/460/problem/C">C题</a></p>
+
+<p>这场CF，拿新号稀里糊涂的做了2题，竟然直接紫名了0.0！！A题大水题，B题直接以各个位数的和进行枚举，常数级的复杂度。下面借助C题挂一个自己写的简单的懒标记线段树模板0.0</p>
+
+<!--more-->
+
+
+<p>C题，一种方法是二分答案查找，我用的是线段树+贪心。</p>
+
+<p>贪心的策略，每次查询最左侧的最小数的位置，然后以那个位置为起始位置，给接下來的w个花浇水（如果不够w个就浇到最后就好） 证明很简单，对于每个最矮的花，是肯定要浇水的，那么要浇的话，由于目的是让最矮的花最小，所以在你要浇的花比前面的花矮的情况下，浇前面的花是没有意义的（可以等长齐了之后再浇），所以，每次只需要浇最左侧的最矮的花（因为要让所有最矮的花都长高，这个最矮的花是必须要浇的）以及他之后的w长度的区间就好（自然是浇的越多越好），这写操作，查询或者修改，都能用线段树来实现，不过要加懒标记，想清楚了之后，就是一道最简单的懒标记线段树，代码如下。</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cmath&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+const int N =100005;
+
+struct Tree
+{
+    int l,r;//记录区间的左右端点
+    int data;//记录要求的数据的值（和，最小值之类的）；
+}a[4*N];
+int lazy[4*N] = {0};//懒标记
+int b[N];
+void BuildTree(int now, int l, int r)
+//建树，还有一种建树方式，是直接建一个空树，就是初始化所有的data为0（当然，也看情况，总之不要影响以后插入就行）
+//我在注释里标明那种树怎么建
+{
+    int lson = 2*now, rson = 2*now+1;
+    a[now].l = l;
+    a[now].r = r;
+//如果是 直接建一个空树的话，那么这里应该加一句a[now].data = 0;
+    if (l == r)
+    {
+        a[now].data = b[l];//如果建一个空树的话，这里只有一个return就行，也就是不要这句。
+        return;
+    }
+    int mid = (l + r) &gt;&gt; 1;
+    BuildTree(lson, l, mid);
+    BuildTree(rson, mid+1, r);
+    a[now].data = min(a[lson].data, a[rson].data);//建空树不要这句
+}
+//附一个Insert操作，单点插入操作，这题里我没用。
+//如果用这个的话，就不用b数组了，建空树完了之后读入，在对应点插入就好
+void Insert(int now, int aim, int det)
+{
+    int lson = 2*now, rson = 2*now + 1;
+    if (a[now].l == aim &amp;&amp; a[now].r == aim)
+    {
+        a[now].data = det;//插入点，单点修改（比如增加det）的操作也跟此类似，就是改成+=就好
+        return;
+    }
+    int mid = (a[now].l + a[now].r) &gt;&gt; 1;
+    if (aim &lt;= mid)//目标点在左边
+        Insert(lson, aim, det);
+    else//目标点在右边
+        Insert(rson, aim, det);
+    a[now].data = min(a[lson].data, a[rson].data);//由于下面的点更新了，所以一定要记得当前点的数据
+}
+
+int Search(int now)//这个Search不是线段树的常用操作，常用的是有一个目标的，比如加个区间之类的。
+{
+    int lson = 2*now, rson = 2*now + 1;
+    if (a[now].l == a[now].r)
+        return a[now].l;
+    lazy[lson] += lazy[now];
+    lazy[rson] += lazy[now];
+    a[now].data += lazy[now];
+    lazy[now] = 0;
+    //这里说下懒标记，因为不管你是找左边，还是找右边，还是两边都找，懒标记下传一定是左右都传的，所以直接
+    //在前面下传了就行，如果后面的区间没有被修改，那么就像这样修改下当前的值就好，
+    //如果修改了，记得在下面更新当前点的data值，具体参考Update；
+    if (a[lson].data + lazy[lson] &lt;= a[rson].data + lazy[rson])//因为你懒标记下传的时候才更新当前点的值，所以在比较左右儿子的时候要考虑到懒标记
+        return Search(lson);
+    else
+        return Search(rson);
+
+}
+
+void Update(int now, int l, int r)//一般很多Search都是酱紫的，这也算是一个区间修改的标准模板了吧！
+//说下，Search一般是为了求结果，比如询问[l,r]区间的最大最小值之类的，更改值的一般不取名为Search。
+{
+    int lson = 2*now, rson = 2*now + 1;
+    if (a[now].l == l &amp;&amp; r == a[now].r )
+    {
+        lazy[now]++;// 找到区间，懒标记增加
+        return ;
+    }
+    int mid = (a[now].l + a[now].r) &gt;&gt; 1;
+    lazy[lson] += lazy[now];
+    lazy[rson] += lazy[now];
+    //与上面同理，懒标记下传，左右儿子都得得到，不能说你搜左边就不要右边了，刚才的错误主要是在这里
+    lazy[now] = 0;
+    //记得释放标记，就在这个位置的，下传后立刻释放，没用了就立马不要他了，省的出错
+    if (r &lt;= mid)
+        Update(lson, l, r);
+    else if(l &gt; mid)
+        Update(rson, l, r);
+    else
+    {
+        Update(lson, l, mid);
+        Update(rson, mid+1, r);
+    }
+    a[now].data = min(a[lson].data + lazy[lson], a[rson].data + lazy[rson]);//由于是值的更改，所以必须要更新当前节点
+}
+// 强调一点，切记，使用懒标记，无论你是要查询，还是要修改，只要走到了懒标记以下的区间，当前的懒标记就必须下传，而且必须下传到两个儿子节点，不能落掉一个，切记。
+int main()//线段树写完了，主程序就简单的1B了0.0；
+{
+    int n,m,w;
+    scanf("%d%d%d", &amp;n, &amp;m, &amp;w);
+    for (int i = 1; i &lt;= n; i ++)
+        scanf("%d",&amp;b[i]);
+    BuildTree(1,1,n);
+    for (int i = 0; i &lt; m; i ++)
+    {
+        int l = Search(1);
+        Update(1,l,min(l+w-1,n));
+    }
+    printf("%d\n", a[1].data + lazy[1]);
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[树状数组以及线段树总结]]></title>
@@ -613,6 +749,201 @@ main()
 <p>还有，《统计的力量》中也有提到这个，不过我没太看懂怎么去敲！</p>
 
 <p>好了，这次就到这里吧！</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Codeforces Round #261 (Div. 2)]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/16/codeforces-round-number-261-div-2/"/>
+    <updated>2014-08-16T14:32:37+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/16/codeforces-round-number-261-div-2</id>
+    <content type="html"><![CDATA[<p>悲剧呀，这场CF差点被AK了，犯了两个小错误。。。T_T,整理下A-D题。</p>
+
+<!--more-->
+
+
+<p><a href="http://codeforces.com/contest/459">比赛链接</a></p>
+
+<p>A题 Pashmak and Garden</p>
+
+<p>水题，忘记了加绝对值，好多人因为这个WA了，吃一堑长一志吧！以后小心点儿（其实刚开始想到了，后来码代码的时候给忘了T_T）</p>
+
+<p>我的代码写的比较麻烦，没什么参考价值。</p>
+
+<p>B题 Pashmak and Flowers</p>
+
+<p>昨天硕果仅存的一题，排个序，然后用最大数的个数乘最小数的个数就好，如果二者相等的话，种数为C2n,即(n-1)*n/2，记得用long long就好。 代码也不是什么好的姿势，没什么值得学习的地方，不用再挂出来</p>
+
+<p>C题 Pashmak and Buses</p>
+
+<p>这题可以说一说，其实算是有些贪心的思想吧，就是每次把在同一辆车上的所有人分开，比如，刚开始看作所有人都在第0辆车上，然后在第一天把他们分到对应编号的车上（我是取得人标号对k的余数，0当作k），判断多少天能把所有人分开，就看多少天之后，原来在同一辆车上的人都变成了了一个就好。而方案的花，就是每次对同一辆车上的人进行重新编号，然后按照跟第一次相同的规则来分，这样一直分d天就可以了。这个策略是可以证明是正确的，并不只是根据感觉。证明我就不写了。</p>
+
+<p>需要说一下的是，如果 k >= n的话，直接一人一辆车就好；如果k == 1并且 n > 1的话，永远也不可能分开，这种情况如果按照之前的输出，会陷入死循环，我就错在了这里。</p>
+
+<p>代码有点奇葩。</p>
+
+<pre><code class="c++">include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+using namespace std;
+const int N=1005;
+vector &lt;int&gt; bus[2][N];
+int ans[N][N];
+int main()
+{
+    int n,k,d;
+    cin&gt;&gt;n&gt;&gt;k&gt;&gt;d;
+    if (k &gt;= n)
+        for (int i =1; i &lt;= d ; i++)
+            for (int j =1; j &lt;= n; j++)
+                printf("%d%c",j,(j == n ? '\n' : ' '));
+    else if (k == 1) printf("-1\n");
+    else
+    {
+        int m = n;
+        int cntd=1;
+        while (m / k + ( m % k == 0 ? 0 : 1) &gt; 1)
+        {
+           cntd++;
+           m = m / k + (m % k == 0 ? 0 : 1);
+        }
+        if (cntd &gt; d)
+            printf("-1\n");
+        else
+        {
+            int now = 0;
+            for (int i = 1; i &lt;= n; i ++)
+            {
+                bus[now][i%k == 0 ? k : i%k].push_back(i);
+                ans[1][i] = (i%k == 0 ? k : i%k);
+            }
+            for (int i = 2; i &lt;= d ; i++)
+            {
+                for (int j = 1; j &lt;= k; j++)
+                    bus[now^1][j].clear();
+                for (int j = 1; j &lt;= k; j++)
+                {
+                    for (int t = 0; t &lt; bus[now][j].size(); t++)
+                    {
+                        int student = bus[now][j][t];
+                        bus[now^1][(t+1)%k == 0 ? k : (t+1)%k].push_back(student);
+                        ans[i][student] = ((t+1)%k == 0 ? k : (t+1)%k);
+                    }
+                }
+                now ^= 1;
+            }
+            for (int i = 1; i &lt;= d; i++)
+            {
+                for (int j = 1; j &lt; n; j++)
+                    printf("%d ",ans[i][j]);
+                printf("%d\n",ans[i][n]);
+            }
+        }
+    }
+
+    return 0;
+}
+</code></pre>
+
+<p>D题 Pashmak and Parmida’s proble</p>
+
+<p>先说说这题的思路吧。</p>
+
+<p>首先把坐标离散化，方便计数，记录每一位上的左边跟他相等的数的个数L[i]，和右边跟他相等的数的个数R[i]，这个用O（n）的复杂度就能处理出来。</p>
+
+<p>然后，开一个树状数组来记录R[i]的和，之后倒着扫，边扫边更新树状数组和答案，由于你从第n个数扫到地i个数的时候，前一半都还没有记录进去，所以树状数组记录的是后一部分R[i]的和，所以对于i位的时候就能求出它后面总共有多少个满足条件的位置。说的不是特别清楚，自己看代码想一下吧</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+using namespace std;
+const int N = 1000006;
+
+int lowbit(int n)
+{
+    return n&amp;(-n);
+}
+
+int n;
+int Update(int k,int det,int a[])
+{
+    for (int i = k; i &lt;= n; i += lowbit(i))
+        a[i] += det;
+}
+
+int GetSum(int k,int a[])
+{
+    int res = 0;
+    for (int i = k; i &gt; 0 ; i -= lowbit(i))
+        res += a[i];
+    return res;
+}
+struct data{
+    int dat;
+    int num;
+}a[N];
+
+bool cmp(data a,data b)
+{
+    return a.dat &lt; b.dat;
+}
+int b[N],c[N] = {0};
+int cnt[N]={0};
+int L[N];
+int main()
+{
+    scanf("%d",&amp;n);
+    for (int i = 0; i &lt; n; i++)
+    {
+        scanf("%d",&amp;a[i].dat);
+        a[i].num = i;
+    }
+    sort(a,a+n,cmp);
+    int cc = 1;
+    b[a[0].num] = 1;
+    for (int i = 1; i &lt; n; i++)
+    {
+        if (a[i].dat == a[i-1].dat)
+            b[a[i].num] = cc;
+        else
+            b[a[i].num] = ++cc;
+    }
+    for (int i = 0; i &lt; n; i++)
+    {
+        cnt[b[i]]++;
+        L[i] = cnt[b[i]];
+    }
+    memset(cnt,0,sizeof(cnt));
+    long long ans = 0;
+    for (int i = n-1; i &gt;= 0; i--)
+    {
+        cnt[b[i]]++;
+        ans += GetSum(L[i]-1,c);
+        Update(cnt[b[i]],1,c);
+    }
+    printf("%I64d\n",ans);
+}
+</code></pre>
+
+<p>有关L，R的计数，看别人代码发现一种神奇的map法,这里挂个L部分的。</p>
+
+<pre><code class="c++">map &lt;int, int&gt; hash;
+for (int i = 0; i &lt; n; i++)
+{
+    scanf("%d",&amp;a[i]);
+    L[i] = ++hash[a[i]];
+}
+</code></pre>
+
+<p>其实就相当于用map代替了之前的离散化操作，在这里是可以用的，我这对map不怎么熟悉的小白是想不出这种方法来，不过好在有sort函数，离散化也不是很复杂的，而且，很多情况下，是不能用这种东西代替离散化的。</p>
+
+<p>根据我的理解简单说一下，因为这里离散化的目的是为了方便计数，而用map映射很容易实现这种计数.但是在有些情况下，比如poj2299用树状数组来记录各个大小的数的个数来求和的话，就显然不能用了。</p>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
 ]]></content>
   </entry>
   

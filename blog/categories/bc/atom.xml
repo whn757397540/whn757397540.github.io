@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: bc | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/blog/categories/bc/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T18:00:30+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BestCoder Round #5]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/17/bestcoder-round-number-5/"/>
+    <updated>2014-08-17T14:40:33+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/17/bestcoder-round-number-5</id>
+    <content type="html"><![CDATA[<p>打的第二场bestcoder，再一次被AK了，T_T.我只写写了的A，B题.</p>
+
+<p>A题 <a href="http://acm.hdu.edu.cn/showproblem.php?pid=4956">HDU 4956 Poor Hanamichi</a></p>
+
+<p>这题，暴力就好，观察他的公式，ans = (r + 8) / 11 + ( l -1 + 8) / 11;由于l是不变的，所以后一半是个定值，前一半，每逢r % 11 == 3 就直接加1，也就是从第一个r % 11 == 3开始，每隔11个数 +1，只需要找到他公式的ans +1但是正常的答案却没有 +1的数就好,也就是如果在 [l,r]之间存在一个数 k % 11 == 3 且不满足题目条件，就能证明他那个算法是错误的。事实上，题目中的证明是一个必要条件，而不是充分条件。也就是说，只有满足 k % 11 == 3的数才有可能符合题目的条件，所以这样子做是对的。</p>
+
+<p>附上我的代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+
+
+bool getAns(long long n)
+{
+    int a[100];
+    int i = 0;
+
+    while (n &gt; 0)
+    {
+        a[i++] = n % 10;
+        n /= 10;
+    }
+    int sum[2] = {0};
+    for (int j = 0; j &lt; i; j++)
+    {
+        sum[j&amp;1] += a[j];
+    }
+    if (sum[0] - sum[1] == 3) return true;
+    else return false;
+}
+int main()
+{
+    long long l,r;
+    long long ans1,ans2;
+    long long ans;
+    int t;
+    cin&gt;&gt;t;
+    while (t--)
+    {
+        ans1=ans2=0;
+        ans = -1;
+        scanf("%I64d%I64d", &amp;l, &amp;r);
+        while (l % 11 != 3) l++;
+        for (long long i = l; i &lt;= r; i +=11)
+        {
+            ans2 =(i + 8) / 11 -(l - 1 + 8) / 11;
+            if (getAns(i)) ans1++;
+            if (ans1!=ans2)
+            {
+                ans = i;
+                break;
+            }
+        }
+        printf("%I64d\n",ans);
+    }
+}
+</code></pre>
+
+<p>B题 <a href="http://acm.hdu.edu.cn/showproblem.php?pid=4957">HDU 4957 Poor Mitsui</a></p>
+
+<p>此题，0A，没有人过，因为谁也没有想到，要用到高精度浮点数，包括出题人自己。。。（事实上，有人想到了，不过想到的也没有过的！因为他题目中有提示用%.0f输出，就让别人不会想去用高精度出发）</p>
+
+<p>搞了一整天，最后用java过了，这里说下思路吧。</p>
+
+<p>贪心，倒序，这就是这道题的核心思想。先挂个<a href="http://beegerous.diandian.com/post/2014-07-08/40062168095">链接</a>,这题跟那里里的模型其实是一样的。我接下来只分析为什么一样。</p>
+
+<p>首先我们先假设接水的顺序已经排好了，那么我们要计算总的时间，肯定要从最后一桶水开始计算，因为前面接水的时间是受后面影响的.那么我们时间也就不按常理出牌，时间也倒着算.</p>
+
+<p>设接最后一桶水之前倒着算的时间tot = 0.那么接最后一桶水就用t = b[n] / (v – a[n]),然后更新tot,tot = tot + t;</p>
+
+<p>那么接之前一桶水时，就需要多接出足够之前一个桶流tot时间的水，也就是要多接tot * a[n-1]的水， 那么接满这桶水（指的是接水到刚好满足要求）用的时间就应该是t1 = (b[n-1] + tot * a[n-1])/(v – a[i]); …………</p>
+
+<p>依次这样类推，我们就能得到这样一个公式，假设接满第i桶后面的水要用tot的时间，那么接满当前这桶水所用的时间应该就是 ti = (b[i] + tot * a[i])/(v – a[i]). 而a[i],b[i]是题目给定的，所以，我们对比bee学长博客里写的，就会发现，</p>
+
+<p>这里的b[i]/(v – a[i]) 就相当于他那里的b[i],</p>
+
+<p>a[i]/(v – a[i]) 就相当于他那里的a[i]，</p>
+
+<p>tot就相当于是t。</p>
+
+<p>那么这就好说了，通过他的证明，我们知道只要按照(b[i]/(v – a[i]))/(a[i]/(v – a[i])) = b[i] / a[i] 来排序就好了.之后就是一个贪心的过程了。</p>
+
+<p><strong>注意一个坑，就是如果b[i]为0的话，那么a[i]无论多大，都是可以满足题目要求的，而且i号桶也不用接水的，就是不用多接足够流tot时间的水了</strong></p>
+
+<p>刚刚A的JAVA代码，由于不怎么会java，所以排序手写了冒泡（只有40个数，这个用冒泡也无所谓了）这回应该是 30A了！T_T 0.0</p>
+
+<pre><code class="java">import java.io.*;
+import java.math.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner cin = new Scanner(new BufferedInputStream(System.in));
+        int T,n,v;
+        int[] a = new int[50];
+        int[] b = new int[50];
+        T = cin.nextInt();
+        while (T &gt; 0)
+        {
+            T--;
+            n = cin.nextInt();
+            v = cin.nextInt();
+            int maxa = 0;
+            for (int i = 1; i &lt;= n; i ++)
+                a[i] = cin.nextInt();
+            for (int i = 1; i &lt;= n; i ++)
+            {
+                b[i] = cin.nextInt();
+                if (b[i]!=0 &amp;&amp; maxa &lt; a[i])
+                    maxa = a[i];
+            }
+            if (maxa &gt;= v) System.out.println(-1);
+            else
+            {
+                for (int i = 1; i &lt;= n; i ++)
+                    for (int j = n; j &gt; i; j --)
+                    {
+                        if (a[j] * b[j-1] &gt;= a[j-1] * b[j])
+                        {
+                            int mid = a[j];
+                            a[j] = a[j-1];
+                            a[j-1] = mid;
+                            mid = b[j];
+                            b[j] = b[j-1];
+                            b[j-1] = mid;
+                        }
+                    }
+                BigDecimal ans = BigDecimal.ZERO;
+                BigDecimal V = BigDecimal.valueOf(v);
+                for (int i = 1; i &lt;= n; i ++)
+                {
+                    BigDecimal aa = BigDecimal.valueOf(a[i]);
+                    BigDecimal bb = BigDecimal.valueOf(b[i]);
+                    if (b[i] != 0)
+                        ans = ans.add((bb.add(ans.multiply(aa))).divide(V.subtract(aa),200,BigDecimal.ROUND_HALF_UP));
+                }
+                ans = ans.setScale(0,BigDecimal.ROUND_HALF_UP);
+                System.out.println(ans);
+            }
+        }
+    }
+}
+</code></pre>
+
+<p><strong>写代码过程中学到了一点，就是有关BigDecimal的除法，如果除法的结果是无限小数的话，是会报错的，可以酱紫来写</strong></p>
+
+<pre><code class="java">a.divide(b,k,Decimal.ROUND_HALF_UP);//k表示小数点后多少位
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
+  
+</feed>

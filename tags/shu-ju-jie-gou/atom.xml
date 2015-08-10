@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 数据结构 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/tags/shu-ju-jie-gou/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-08-10T13:04:28+08:00</updated>
+  <updated>2015-08-10T18:00:30+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -12,6 +12,142 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[线段树简单模板]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/xian-duan-shu-jian-dan-mo-ban/"/>
+    <updated>2015-08-10T16:53:34+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/xian-duan-shu-jian-dan-mo-ban</id>
+    <content type="html"><![CDATA[<h2>Codeforces Round #262 (Div. 2)</h2>
+
+<p><a href="http://codeforces.com/contest/460/problem/C">C题</a></p>
+
+<p>这场CF，拿新号稀里糊涂的做了2题，竟然直接紫名了0.0！！A题大水题，B题直接以各个位数的和进行枚举，常数级的复杂度。下面借助C题挂一个自己写的简单的懒标记线段树模板0.0</p>
+
+<!--more-->
+
+
+<p>C题，一种方法是二分答案查找，我用的是线段树+贪心。</p>
+
+<p>贪心的策略，每次查询最左侧的最小数的位置，然后以那个位置为起始位置，给接下來的w个花浇水（如果不够w个就浇到最后就好） 证明很简单，对于每个最矮的花，是肯定要浇水的，那么要浇的话，由于目的是让最矮的花最小，所以在你要浇的花比前面的花矮的情况下，浇前面的花是没有意义的（可以等长齐了之后再浇），所以，每次只需要浇最左侧的最矮的花（因为要让所有最矮的花都长高，这个最矮的花是必须要浇的）以及他之后的w长度的区间就好（自然是浇的越多越好），这写操作，查询或者修改，都能用线段树来实现，不过要加懒标记，想清楚了之后，就是一道最简单的懒标记线段树，代码如下。</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cmath&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+const int N =100005;
+
+struct Tree
+{
+    int l,r;//记录区间的左右端点
+    int data;//记录要求的数据的值（和，最小值之类的）；
+}a[4*N];
+int lazy[4*N] = {0};//懒标记
+int b[N];
+void BuildTree(int now, int l, int r)
+//建树，还有一种建树方式，是直接建一个空树，就是初始化所有的data为0（当然，也看情况，总之不要影响以后插入就行）
+//我在注释里标明那种树怎么建
+{
+    int lson = 2*now, rson = 2*now+1;
+    a[now].l = l;
+    a[now].r = r;
+//如果是 直接建一个空树的话，那么这里应该加一句a[now].data = 0;
+    if (l == r)
+    {
+        a[now].data = b[l];//如果建一个空树的话，这里只有一个return就行，也就是不要这句。
+        return;
+    }
+    int mid = (l + r) &gt;&gt; 1;
+    BuildTree(lson, l, mid);
+    BuildTree(rson, mid+1, r);
+    a[now].data = min(a[lson].data, a[rson].data);//建空树不要这句
+}
+//附一个Insert操作，单点插入操作，这题里我没用。
+//如果用这个的话，就不用b数组了，建空树完了之后读入，在对应点插入就好
+void Insert(int now, int aim, int det)
+{
+    int lson = 2*now, rson = 2*now + 1;
+    if (a[now].l == aim &amp;&amp; a[now].r == aim)
+    {
+        a[now].data = det;//插入点，单点修改（比如增加det）的操作也跟此类似，就是改成+=就好
+        return;
+    }
+    int mid = (a[now].l + a[now].r) &gt;&gt; 1;
+    if (aim &lt;= mid)//目标点在左边
+        Insert(lson, aim, det);
+    else//目标点在右边
+        Insert(rson, aim, det);
+    a[now].data = min(a[lson].data, a[rson].data);//由于下面的点更新了，所以一定要记得当前点的数据
+}
+
+int Search(int now)//这个Search不是线段树的常用操作，常用的是有一个目标的，比如加个区间之类的。
+{
+    int lson = 2*now, rson = 2*now + 1;
+    if (a[now].l == a[now].r)
+        return a[now].l;
+    lazy[lson] += lazy[now];
+    lazy[rson] += lazy[now];
+    a[now].data += lazy[now];
+    lazy[now] = 0;
+    //这里说下懒标记，因为不管你是找左边，还是找右边，还是两边都找，懒标记下传一定是左右都传的，所以直接
+    //在前面下传了就行，如果后面的区间没有被修改，那么就像这样修改下当前的值就好，
+    //如果修改了，记得在下面更新当前点的data值，具体参考Update；
+    if (a[lson].data + lazy[lson] &lt;= a[rson].data + lazy[rson])//因为你懒标记下传的时候才更新当前点的值，所以在比较左右儿子的时候要考虑到懒标记
+        return Search(lson);
+    else
+        return Search(rson);
+
+}
+
+void Update(int now, int l, int r)//一般很多Search都是酱紫的，这也算是一个区间修改的标准模板了吧！
+//说下，Search一般是为了求结果，比如询问[l,r]区间的最大最小值之类的，更改值的一般不取名为Search。
+{
+    int lson = 2*now, rson = 2*now + 1;
+    if (a[now].l == l &amp;&amp; r == a[now].r )
+    {
+        lazy[now]++;// 找到区间，懒标记增加
+        return ;
+    }
+    int mid = (a[now].l + a[now].r) &gt;&gt; 1;
+    lazy[lson] += lazy[now];
+    lazy[rson] += lazy[now];
+    //与上面同理，懒标记下传，左右儿子都得得到，不能说你搜左边就不要右边了，刚才的错误主要是在这里
+    lazy[now] = 0;
+    //记得释放标记，就在这个位置的，下传后立刻释放，没用了就立马不要他了，省的出错
+    if (r &lt;= mid)
+        Update(lson, l, r);
+    else if(l &gt; mid)
+        Update(rson, l, r);
+    else
+    {
+        Update(lson, l, mid);
+        Update(rson, mid+1, r);
+    }
+    a[now].data = min(a[lson].data + lazy[lson], a[rson].data + lazy[rson]);//由于是值的更改，所以必须要更新当前节点
+}
+// 强调一点，切记，使用懒标记，无论你是要查询，还是要修改，只要走到了懒标记以下的区间，当前的懒标记就必须下传，而且必须下传到两个儿子节点，不能落掉一个，切记。
+int main()//线段树写完了，主程序就简单的1B了0.0；
+{
+    int n,m,w;
+    scanf("%d%d%d", &amp;n, &amp;m, &amp;w);
+    for (int i = 1; i &lt;= n; i ++)
+        scanf("%d",&amp;b[i]);
+    BuildTree(1,1,n);
+    for (int i = 0; i &lt; m; i ++)
+    {
+        int l = Search(1);
+        Update(1,l,min(l+w-1,n));
+    }
+    printf("%d\n", a[1].data + lazy[1]);
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[树状数组以及线段树总结]]></title>

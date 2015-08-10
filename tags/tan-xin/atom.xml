@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Tag: 谈心 | hnnwang's Blog]]></title>
+  <title><![CDATA[Tag: 贪心 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/tags/tan-xin/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-08-10T13:04:28+08:00</updated>
+  <updated>2015-08-10T18:00:30+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -14,363 +14,197 @@
 
   
   <entry>
-    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
-    <link href="http://whn757397540.github.io/blog/2014/07/24/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-5/"/>
-    <updated>2014-07-24T09:16:07+08:00</updated>
-    <id>http://whn757397540.github.io/blog/2014/07/24/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-5</id>
-    <content type="html"><![CDATA[<h2>第五场</h2>
+    <title type="html"><![CDATA[Codeforces Round #261 (Div. 2)]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/16/codeforces-round-number-261-div-2/"/>
+    <updated>2014-08-16T14:32:37+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/16/codeforces-round-number-261-div-2</id>
+    <content type="html"><![CDATA[<p>悲剧呀，这场CF差点被AK了，犯了两个小错误。。。T_T,整理下A-D题。</p>
 
 <!--more-->
 
 
-<p>这场比赛，学到了以前没有接触过的矩阵快速幂。不过E题实在是太恶心了，我是没有写下去的耐心了。。。。</p>
+<p><a href="http://codeforces.com/contest/459">比赛链接</a></p>
 
-<p>A题 <a href="http://code.bupt.edu.cn/problem/p/442/">BOJ 442. 平方的平均值</a></p>
+<p>A题 Pashmak and Garden</p>
 
-<p>水题一个，注意负数的问题就行了。（不过在XP下等long long 用的还真是蛋疼。。）附代码</p>
+<p>水题，忘记了加绝对值，好多人因为这个WA了，吃一堑长一志吧！以后小心点儿（其实刚开始想到了，后来码代码的时候给忘了T_T）</p>
 
-<pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;cstdio&gt;
+<p>我的代码写的比较麻烦，没什么参考价值。</p>
+
+<p>B题 Pashmak and Flowers</p>
+
+<p>昨天硕果仅存的一题，排个序，然后用最大数的个数乘最小数的个数就好，如果二者相等的话，种数为C2n,即(n-1)*n/2，记得用long long就好。 代码也不是什么好的姿势，没什么值得学习的地方，不用再挂出来</p>
+
+<p>C题 Pashmak and Buses</p>
+
+<p>这题可以说一说，其实算是有些贪心的思想吧，就是每次把在同一辆车上的所有人分开，比如，刚开始看作所有人都在第0辆车上，然后在第一天把他们分到对应编号的车上（我是取得人标号对k的余数，0当作k），判断多少天能把所有人分开，就看多少天之后，原来在同一辆车上的人都变成了了一个就好。而方案的花，就是每次对同一辆车上的人进行重新编号，然后按照跟第一次相同的规则来分，这样一直分d天就可以了。这个策略是可以证明是正确的，并不只是根据感觉。证明我就不写了。</p>
+
+<p>需要说一下的是，如果 k >= n的话，直接一人一辆车就好；如果k == 1并且 n > 1的话，永远也不可能分开，这种情况如果按照之前的输出，会陷入死循环，我就错在了这里。</p>
+
+<p>代码有点奇葩。</p>
+
+<pre><code class="c++">include &lt;cstdio&gt;
+#include &lt;iostream&gt;
 #include &lt;cstring&gt;
-#include &lt;cstdlib&gt;
-#include &lt;cmath&gt;
-#include &lt;algorithm&gt;
 #include &lt;vector&gt;
-
+#include &lt;algorithm&gt;
 using namespace std;
-
-long long MIN=11111111111;
-long long num;
-
+const int N=1005;
+vector &lt;int&gt; bus[2][N];
+int ans[N][N];
 int main()
 {
-    int n;
-
-    while (scanf("%d",&amp;n)!=EOF)
+    int n,k,d;
+    cin&gt;&gt;n&gt;&gt;k&gt;&gt;d;
+    if (k &gt;= n)
+        for (int i =1; i &lt;= d ; i++)
+            for (int j =1; j &lt;= n; j++)
+                printf("%d%c",j,(j == n ? '\n' : ' '));
+    else if (k == 1) printf("-1\n");
+    else
     {
-        MIN=11111111111;
-        for (int i=1;i&lt;=n;i++)
+        int m = n;
+        int cntd=1;
+        while (m / k + ( m % k == 0 ? 0 : 1) &gt; 1)
         {
-            scanf("%lld",&amp;num);
-            if (MIN&gt;(num*num))
-                MIN=num*num;
+           cntd++;
+           m = m / k + (m % k == 0 ? 0 : 1);
         }
-        cout&lt;&lt;MIN&lt;&lt;endl;
-    }
-}
-</code></pre>
-
-<p>B题 <a href="http://code.bupt.edu.cn/problem/p/431/">BOJ 431. 立方体</a></p>
-
-<p>又是一道比较水的题，直接暴力就可以了，当然，LJ学长还有一种姿势优美的解法。</p>
-
-<p>先说下我的暴力的方法：需要用到向量的知识，先随便选一个点，以它为基点，算出其他6个点跟它形成的向量，然后按照向量的模长排序，分别记录最短的，中等的，最长的向量都有多少个，如果是完整的正方体，这三种向量应该分别有3,3,1个，看哪个缺，就能知道缺少哪种类型的点。如果缺少最长的，就直接用三个最短的向量坐标相加即可，如果缺少最短的或者中等的(只可能缺一个），分别用最长的向量减去三个中等的或者最短的（按顺序跟前一句对应），判断得到的向量是否已经存在，如果不存在，就得到了结果；如果存在，继续找。附代码</p>
-
-<pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-#include &lt;cstdlib&gt;
-#include &lt;cmath&gt;
-#include &lt;algorithm&gt;
-#include &lt;vector&gt;
-
-using namespace std;
-
-struct data
-{
-    int x,y,z;
-    double d;
-}dat[10];
-
-int cnt[5]={0};
-
-bool cmp (data a,data b)
-{
-    return a.d&lt;b.d;
-}
-main()
-{
-    int t;
-    data ans;
-    cin&gt;&gt;t;
-    while(t--)
-    {
-        memset(cnt,0,sizeof(cnt));
-        memset(dat,0,sizeof(dat));
-
-        scanf("%d%d%d",&amp;dat[0].x,&amp;dat[0].y,&amp;dat[0].z);
-        dat[0].d=0;
-
-        for (int i=1;i&lt;=6;i++)
+        if (cntd &gt; d)
+            printf("-1\n");
+        else
         {
-
-            double d;
-            scanf("%d%d%d",&amp;dat[i].x,&amp;dat[i].y,&amp;dat[i].z);
-            dat[i].x=dat[i].x-dat[0].x;
-            dat[i].y=dat[i].y-dat[0].y;
-            dat[i].z=dat[i].z-dat[0].z;
-            dat[i].d=sqrt(pow(dat[i].x,2)+pow(dat[i].y,2)+pow(dat[i].z,2));
-        }
-        sort(dat,dat+7,cmp);
-
-        int n=1;
-        cnt[n]=1;
-        for (int i=2;i&lt;7;i++)
-            if(abs(dat[i].d-dat[i-1].d)&lt;=1e-5)
-                cnt[n]++;
-            else
-                cnt[++n]++;
-        if (cnt[3]==0)
-        {
-            ans.x=dat[1].x+dat[2].x+dat[3].x;
-            ans.y=dat[1].y+dat[2].y+dat[3].y;
-            ans.z=dat[1].z+dat[2].z+dat[3].z;
-        }
-        else if (cnt[2]==2)
-        {
-            ans.x=ans.y=ans.z=0;
-            int mm=1;
-            while(ans.x==0&amp;&amp;ans.y==0&amp;&amp;ans.z==0)
+            int now = 0;
+            for (int i = 1; i &lt;= n; i ++)
             {
-                ans.x=dat[6].x-dat[mm].x;
-                ans.y=dat[6].y-dat[mm].y;
-                ans.z=dat[6].z-dat[mm].z;
-                bool judge=false;
-                for (int i=4;i&lt;=5;i++)
-                    if (dat[i].x==ans.x&amp;&amp;dat[i].y==ans.y&amp;&amp;dat[i].z==ans.z)
-                        judge=true;
-                if (judge)
+                bus[now][i%k == 0 ? k : i%k].push_back(i);
+                ans[1][i] = (i%k == 0 ? k : i%k);
+            }
+            for (int i = 2; i &lt;= d ; i++)
+            {
+                for (int j = 1; j &lt;= k; j++)
+                    bus[now^1][j].clear();
+                for (int j = 1; j &lt;= k; j++)
                 {
-                    ans.x=ans.y=ans.z=0;
-                    mm++;
+                    for (int t = 0; t &lt; bus[now][j].size(); t++)
+                    {
+                        int student = bus[now][j][t];
+                        bus[now^1][(t+1)%k == 0 ? k : (t+1)%k].push_back(student);
+                        ans[i][student] = ((t+1)%k == 0 ? k : (t+1)%k);
+                    }
                 }
+                now ^= 1;
+            }
+            for (int i = 1; i &lt;= d; i++)
+            {
+                for (int j = 1; j &lt; n; j++)
+                    printf("%d ",ans[i][j]);
+                printf("%d\n",ans[i][n]);
             }
         }
-        else if (cnt[1]==2)
-        {
-            ans.x=ans.y=ans.z=0;
-            int mm=3;
-            while(ans.x==0&amp;&amp;ans.y==0&amp;&amp;ans.z==0)
-            {
-                ans.x=dat[6].x-dat[mm].x;
-                ans.y=dat[6].y-dat[mm].y;
-                ans.z=dat[6].z-dat[mm].z;
-                bool judge=false;
-                for (int i=1;i&lt;=2;i++)
-                    if (dat[i].x==ans.x&amp;&amp;dat[i].y==ans.y&amp;&amp;dat[i].z==ans.z)
-                        judge=true;
-                if (judge)
-                {
-                    ans.x=ans.y=ans.z=0;
-                    mm++;
-                }
-            }
-        }
-        printf("%d %d %d\n",dat[0].x+ans.x,dat[0].y+ans.y,dat[0].z+ans.z);
     }
-}
-</code></pre>
 
-<p>接下来说下学习长姿势优美的方法，求出所有点坐标的平均值，得到一个点视为伪重心，根据对称性很容易知道，这个伪重心肯定在一条对角线的3/7处，且这个对角线有一个角是缺少的（如果是完整的，重心应该在对角线中点），找到这个点以后，在找到其他点中距离他最近的那个点(这个点就是那条对角线中的点)，然后就可以得到缺少的那个点的坐标了。附代码</p>
-
-<pre><code class="c++">#include&lt;bits/stdc++.h&gt;
-using namespace std;
-int x[8],y[8],z[8];
-int main()
-{
-    int t,i;
-    scanf("%d",&amp;t);
-    while(t--) {
-        long long sx=0,sy=0,sz=0,ss=0x7fffffffffffffff,ti;
-        for(i=1; i&lt;=7; i++) {
-            scanf("%d%d%d",&amp;x[i],&amp;y[i],&amp;z[i]);
-            sx+=x[i],sy+=y[i],sz+=z[i];
-        }
-        for(i=1; i&lt;=7; i++) {
-            long long tmp=(x[i]*7-sx)*(x[i]*7-sx)+(y[i]*7-sy)*(y[i]*7-sy)+(z[i]*7-sz)*(z[i]*7-sz);
-            if(tmp&lt;ss)  ss=tmp,ti=i;
-        }
-        printf("%lld %lld %lld\n",(sx-4*x[ti])/3,(sy-4*y[ti])/3,(sz-4*z[ti])/3);
-
-    }
     return 0;
 }
 </code></pre>
 
-<p>C题 <a href="http://code.bupt.edu.cn/problem/p/432/">BOJ 432. 字符串重排</a></p>
+<p>D题 Pashmak and Parmida’s proble</p>
 
-<p>一道贪心，比赛时虽然过了，但是过得很迷糊，代码姿势不能看，估计没几个人能看懂，所以我又重新写了一份。</p>
+<p>先说说这题的思路吧。</p>
 
-<p>这个题不是特别难，能找到贪心时要注意的地方，并且把逻辑关系思考清楚，就能搞定。废话不多说了，说说方法吧。</p>
+<p>首先把坐标离散化，方便计数，记录每一位上的左边跟他相等的数的个数L[i]，和右边跟他相等的数的个数R[i]，这个用O（n）的复杂度就能处理出来。</p>
 
-<p>首先，开一个数组来记录字符串中每个字母出现的次数，然后判断有没有一个字母出现的次数超过字符串长度的一半的（PS：假如字符串长度为4,一半指的是2;假如字符串长度为5，一半指的是3)，如果有，那么就不可能重排成符合题目要求的字符串，如果没有，就肯定能够重排成符合题目要求的字符串。在前面判断好以后，后面就是重组字符串了，贪心的原则是，能用字典序小的，就用字典序小的。问题是怎么判断能不能用呢？首先，先判断前一个字符是不是跟你要放的字符重复了；然后，找到最小的不与前一个字符重复的字符以后，判断这个字符之后的字符是否存在必须得放的情况（一个字符必须得放当且仅剩下的字符总数目为奇数n且该字符的数目为(n+1)/2,请自行证明）；这两种情况考虑好，结果就出来了。附代码</p>
+<p>然后，开一个树状数组来记录R[i]的和，之后倒着扫，边扫边更新树状数组和答案，由于你从第n个数扫到地i个数的时候，前一半都还没有记录进去，所以树状数组记录的是后一部分R[i]的和，所以对于i位的时候就能求出它后面总共有多少个满足条件的位置。说的不是特别清楚，自己看代码想一下吧</p>
 
-<pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;cstdio&gt;
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
 #include &lt;cstring&gt;
-#include &lt;cstdlib&gt;
-#include &lt;cmath&gt;
-#include &lt;algorithm&gt;
 #include &lt;vector&gt;
-
-#define MOD 1000000007
+#include &lt;algorithm&gt;
 using namespace std;
+const int N = 1000006;
 
-int a[30]={0};
-char s[111111];
-char ans[111111];//记录重排后的数组。
+int lowbit(int n)
+{
+    return n&amp;(-n);
+}
+
+int n;
+int Update(int k,int det,int a[])
+{
+    for (int i = k; i &lt;= n; i += lowbit(i))
+        a[i] += det;
+}
+
+int GetSum(int k,int a[])
+{
+    int res = 0;
+    for (int i = k; i &gt; 0 ; i -= lowbit(i))
+        res += a[i];
+    return res;
+}
+struct data{
+    int dat;
+    int num;
+}a[N];
+
+bool cmp(data a,data b)
+{
+    return a.dat &lt; b.dat;
+}
+int b[N],c[N] = {0};
+int cnt[N]={0};
+int L[N];
 int main()
 {
-    int t;
-    scanf("%d",&amp;t);
-    while (t--)
+    scanf("%d",&amp;n);
+    for (int i = 0; i &lt; n; i++)
     {
-        memset(a,0,sizeof(a));//对字母进行计数的数组
-        scanf("%s",s);
-        int total=strlen(s);
-        for (int i=0;i&lt;total;i++)
-            a[s[i]-'a']++;
-        int MAX=0;
-        for (int i=0;i&lt;=25;i++)
-            MAX=max(MAX,a[i]);
-        if (MAX&gt;(total+1)/2) printf("-1\n");//在这种情况下不可能存在
+        scanf("%d",&amp;a[i].dat);
+        a[i].num = i;
+    }
+    sort(a,a+n,cmp);
+    int cc = 1;
+    b[a[0].num] = 1;
+    for (int i = 1; i &lt; n; i++)
+    {
+        if (a[i].dat == a[i-1].dat)
+            b[a[i].num] = cc;
         else
-        {
-            int rec=-1;
-            int now=0;
-            int cnt=0;
-            while (a[now]==0) now++;
-
-            for (int i=now+1;i&lt;=25;i++)
-                if (a[i]==(total+1)/2)
-                {
-                    rec=i;
-                    break;
-                }
-
-             if (rec!=-1&amp;&amp;total%2==1)
-            {
-                ans[cnt++]='a'+rec;
-                a[rec]--;
-            }
-            else
-            {
-                ans[cnt++]='a'+now;
-                a[now]--;
-            }
-
-            total--;
-
-            while (total&gt;0)
-            {
-                now=0;
-                rec=-1;
-                while (a[now]==0) now++;//找还存在的最小的字母
-                if (ans[cnt-1]=='a'+now)
-                {
-                    now++;
-                    while (a[now]==0) now++;
-                }
-
-                for (int i=now+1;i&lt;=25;i++)
-                    if (a[i]==(total+1)/2)
-                    {
-                        rec=i;
-                        break;
-                    }
-
-                if (rec!=-1&amp;&amp;total%2==1)
-                {
-                    ans[cnt++]='a'+rec;
-                    a[rec]--;
-                }
-
-                else
-                {
-                    ans[cnt++]='a'+now;
-                    a[now]--;
-                }
-                total--;
-            }
-            ans[cnt]=0;
-            printf("%s\n",ans);
-        }
+            b[a[i].num] = ++cc;
     }
+    for (int i = 0; i &lt; n; i++)
+    {
+        cnt[b[i]]++;
+        L[i] = cnt[b[i]];
+    }
+    memset(cnt,0,sizeof(cnt));
+    long long ans = 0;
+    for (int i = n-1; i &gt;= 0; i--)
+    {
+        cnt[b[i]]++;
+        ans += GetSum(L[i]-1,c);
+        Update(cnt[b[i]],1,c);
+    }
+    printf("%I64d\n",ans);
 }
 </code></pre>
 
-<p>D题 <a href="http://code.bupt.edu.cn/problem/p/433/">BOJ 433. Fibnacci</a></p>
+<p>有关L，R的计数，看别人代码发现一种神奇的map法,这里挂个L部分的。</p>
 
-<p>一个裸的矩阵快速幂，由于以前没有接触过，比赛时完全没有思路，今天算是学了学。说下我构造的矩阵。暂时还不会用linux下的公式编辑器（找都找不到T_T）所以没有办法写出来，口头描述吧。构造的矩阵式4<em>1的，从上往下依次是（f[ n ] f[ n-1 ] n 1) 常数矩阵是 4</em>4的从上往下，每行依次是{ {1 1 1 1} {1 0 0 0} {0 0 1 1} {0 0 0 1} }。结合代码来看吧</p>
-
-<pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-#include &lt;cstdlib&gt;
-#include &lt;algorithm&gt;
-#include &lt;vector&gt;
-
-using namespace std;
-
-typedef long long ll;
-typedef vector&lt;ll&gt; vec;
-typedef vector&lt;vec&gt; mat;
-
-#define M 1000000007
-mat mul(mat &amp;A,mat &amp;B)
+<pre><code class="c++">map &lt;int, int&gt; hash;
+for (int i = 0; i &lt; n; i++)
 {
-    mat C(A.size(),vec(B[0].size()));
-    for (int i=0;i&lt;A.size();i++)
-        for (int k=0;k&lt;B.size();k++)
-            for (int j=0;j&lt;B[0].size();j++)
-                C[i][j]=(C[i][j]+A[i][k]*B[k][j])%M;
-    return C;
-}
-
-mat pow(mat A,ll n)
-{
-    mat B(A.size(),vec(A.size()));
-    for (int i=0;i&lt;A.size();i++)
-        B[i][i]=1;
-    while (n&gt;0)
-    {
-        if (n &amp; 1) B = mul(B,A);
-        A = mul(A,A);
-        n &gt;&gt;= 1;
-    }
-    return B;
-}
-
-int main()
-{
-    ll n;
-    int t;
-    mat A(4,vec(4));
-    mat B(4,vec(1));
-    mat C(4,vec(4));
-    mat ANS(4,vec(1));
-
-
-    B[0][0]=B[1][0]=B[3][0]=B[2][0]=1;
-    A[0][0]=A[0][1]=A[0][2]=A[0][3]=A[1][0]=A[2][2]=A[2][3]=A[3][3]=1;
-    A[1][1]=A[1][2]=A[1][3]=A[2][0]=A[2][1]=A[3][0]=A[3][1]=A[3][2]=0;
-
-    cin&gt;&gt;t;
-    while (t--)
-    {
-        scanf("%lld",&amp;n);
-        C=pow(A,n-1);
-        ANS=mul(C,B);
-        printf("%lld\n",ANS[0][0]);
-    }
+    scanf("%d",&amp;a[i]);
+    L[i] = ++hash[a[i]];
 }
 </code></pre>
 
-<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
+<p>其实就相当于用map代替了之前的离散化操作，在这里是可以用的，我这对map不怎么熟悉的小白是想不出这种方法来，不过好在有sort函数，离散化也不是很复杂的，而且，很多情况下，是不能用这种东西代替离散化的。</p>
+
+<p>根据我的理解简单说一下，因为这里离散化的目的是为了方便计数，而用map映射很容易实现这种计数.但是在有些情况下，比如poj2299用树状数组来记录各个大小的数的个数来求和的话，就显然不能用了。</p>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
 ]]></content>
   </entry>
   

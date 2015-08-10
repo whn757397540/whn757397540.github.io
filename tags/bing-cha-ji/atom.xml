@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 并查集 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/tags/bing-cha-ji/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-08-10T13:04:28+08:00</updated>
+  <updated>2015-08-10T18:00:30+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -12,6 +12,167 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[并查集模板]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/bing-cha-ji-mo-ban/"/>
+    <updated>2015-08-10T17:32:15+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/bing-cha-ji-mo-ban</id>
+    <content type="html"><![CDATA[<p>ZOJ 3811 Untrusted Patrol</p>
+
+<!--more-->
+
+
+<p>2014牡丹江赛区网络赛C题<a href="http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=3811">题目链接在这里</a> 其实我的主要目的是放一下自己的并查集模板！</p>
+
+<p>昨天，因为并查集模板的问题跟队友争论了一翻，其实，也是一些没有必要的争论，不管什么模板的，能用就行！</p>
+
+<p>从刚一开始接触并查集，我就是这样敲的</p>
+
+<p>首先，需要用到父亲数组father[]（个人习惯用father）;初始化father[i] = i；</p>
+
+<p>然后，找祖宗函数</p>
+
+<pre><code class="c++">int getfather(int i)
+{
+    if (father[i] != i) father[i] = getfather(father[i]);
+    return father[i];
+}
+</code></pre>
+
+<p>这样在每次getfather找祖宗的时候，就把所有的儿子节点的父亲都设为了祖宗节点，所以只要找过一次，那么找的这条链的长度(也可以看作是树的深度）就会变成2;</p>
+
+<p>之后，联合判断（判断两个点是否在同一个集合）</p>
+
+<pre><code class="c++">bool UnionJudge(int i, int j)
+{
+    reutrn getfather(i) == getfather(j);
+}
+</code></pre>
+
+<p>这个函数有些时候是要用到的</p>
+
+<p>之后，联合函数</p>
+
+<pre><code class="c++">void GetUnion(int i, int j)
+{
+    int a = getfather(i);
+    int b = getfather(j);
+    father[b] = a;
+}
+</code></pre>
+
+<p>一般情况下，树的深度是非常小的，所以基本可以视为是在常数级的时间案复杂度完成的！</p>
+
+<p>接下来，是这道题的思路！</p>
+
+<p>首先吧所有跟有监视器的点相连的边去掉，跑一遍并查集，把其他所有的边都连上；之后按照题目中给的顺序，分别联合有监视器的点，连某一个有监视器的点的时候，这个点之后的有监视器的点都不要被连进去（也就是跟他们相连的边依然是被去掉的）；按照顺序操作，在此过程中如果发现有不能跟第一个有监视器的点连通的点的话，那么说明操作不合法，答案就该输出No了！（当然，如果L&lt;k的话，就是肯定没有遍历完所有的点，输出也是No）</p>
+
+<p>如果所有的带监视器的点都能按照顺序连进去的花，那么，这个人肯定有可能是按照正常的步骤来检查的！但是，题目中给的图可能不是连通图，在这样的情况下，用正常步骤肯定是不能检查完所有的点的，所以还要判断图是不是连通图，昨天就被坑在了这里。</p>
+
+<p>题目大致思路说完了，结下来就是代码了</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdio&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+const int maxv = 110000;
+
+vector&lt;int&gt; edge[maxv];
+int father[maxv];
+
+int getfather(int i)
+{
+    if (father[i] != i) father[i] = getfather(father[i]);
+    return father[i];
+}
+
+bool PlusJudge(int i, int j)
+{
+    return getfather(i) == getfather(j);
+}
+
+void getPlus(int i, int j)
+{
+    int a = getfather(i);
+    int b = getfather(j);
+    father[b] = a;
+}
+
+int a[maxv];
+bool no[maxv];
+int main()
+{
+    int T;
+/*    freopen("in.txt","r",stdin);
+    freopen("out.txt","w",stdout);
+*/    scanf("%d", &amp;T);
+    while (T--)
+    {
+        int n,m,k;
+        scanf("%d%d%d", &amp;n, &amp;m, &amp;k);
+        memset(no, 0, sizeof(no));
+        for (int i = 0; i &lt; k; i++)
+        {
+            int pp;
+            scanf("%d", &amp;pp);
+            no[pp] = true;
+        }
+        for (int i = 1 ; i &lt;= n; i ++)
+        {
+            edge[i].clear();
+            father[i] = i;
+        }
+        for (int i = 0; i &lt; m; i++)
+        {
+            int u,v;
+            scanf("%d%d", &amp;u, &amp;v);
+            edge[u].push_back(v);
+            edge[v].push_back(u);
+            if (!no[u] &amp;&amp; !no[v])
+                getPlus(u,v);
+        }
+        int L;
+        scanf("%d", &amp;L);
+        for (int i = 0 ; i &lt; L; i++)
+            scanf("%d",&amp;a[i]);
+        if (L &lt; k ||  m &lt; n-1) printf("No\n");
+        else
+        {
+            bool flag = true;
+            for (int i = 0; i &lt; L; i++)
+            {
+                no[a[i]] = false;
+                for (int j = 0; j &lt; edge[a[i]].size(); j++)
+                {
+                    int son = edge[a[i]][j];
+                    if (!no[son])
+                        getPlus(a[i],son);
+                }
+                flag = PlusJudge(a[0], a[i]);
+                if (!flag)
+                    break;
+            }
+            for (int i = 1; i &lt;= n &amp;&amp; flag; i++)
+              if (!PlusJudge(i, a[0]))
+              {
+                  flag = false;
+                  break;
+              }
+            printf("%s\n", flag ? "Yes":"No");
+        }
+    }
+
+    return 0;
+}
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>

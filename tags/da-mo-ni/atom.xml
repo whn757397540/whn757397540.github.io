@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 大模拟 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/da-mo-ni/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T18:00:30+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[HDU 4782 Beautiful Soup]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/hdu-4782-beautiful-soup/"/>
+    <updated>2015-08-10T17:32:46+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/hdu-4782-beautiful-soup</id>
+    <content type="html"><![CDATA[<p>2013 ACM/ICPC 成都赛区现场赛B题</p>
+
+<!--more-->
+
+
+<p>一道模拟题，敲吐了！其实，只不过是因为做的少，细节考虑不周全！另外，对于字符串的相关操作不太熟悉！</p>
+
+<p>有关要注意的事项，我感觉这个<a href="http://www.cnblogs.com/GBRgbr/p/3428291.html">博客</a>里说的很全面，最终是根据这个博客过的！</p>
+
+<p>下面只是简单说下我是调到了哪些坑里；</p>
+
+<p>第一，模拟比赛时，这个题我没看（题目太长了），只是听队友说的，而队友没有看到you shouldn’t change anything of any tag.这一句（我问过这个问题，队友说是要去空格的，显然没看到这一句，也正常，毕竟那么长的题目嘛！）</p>
+
+<p>第二，由于我是半路接手，代码的读入部分是队友敲的，用的整行读入，结果在处理这样的这两个标签在一行的时候出现了点问题，后来改了一些东西才解决了，改成getchar()来单个字符读入也是可以的，这个是我疏忽了，没想到还会有这种数据；</p>
+
+<p>第三，处理内容后面的空格之类的东西的时候出现了一点问题！</p>
+
+<p>以上大概就是代码过了样例之后找到的所有问题了，这种题就是要耐心加细心，这个东西还是需要练一练的，这种题所有人都会，但是确很少有人能够又快又准地做对，如果能做到这种大模拟又快又准地做对的话，一旦遇到绝对能够占到很大的便宜，可能就是铜奖和银奖之间的差距！总之，以后找一些时间练一练吧，练练耐心和细心，也不是什么坏事儿！至于具体的细节就不说了，我的代码放在这里，仅供参考！至于需要注意的细节，去那个博客里看看吧！</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;set&gt;
+#include &lt;map&gt;
+
+using namespace std;
+
+string line;
+
+int main()
+{
+    //freopen("inpout.txt", "r", stdin);
+    int T;
+    scanf("%d", &amp;T);
+    getchar();
+    bool tagflag = false;
+    int kase = 1;
+    int depth = 0;
+    line = "";
+    printf("Case #%d:\n", kase);
+    bool beg = true;
+    string s = "";
+    while(kase &lt;= T)
+    {
+            char ch = getchar();
+            //cout&lt;&lt;ch;
+            if(ch == '&lt;')
+            {
+                if (beg||line.length() == 0&amp;&amp; s.length() ==0)
+                {
+                    line = "&lt;";
+                    beg = false;
+                }
+                else
+                {
+                    int l = line.length();
+                    if (s.length()!=0)
+                         line = line + (l==0? "":" ")+s;
+                    s = "";
+                    for (int i = 0; i &lt; depth; i++)
+                        printf(" ");
+                    cout&lt;&lt;line&lt;&lt;endl;
+                    line = "&lt;";
+                }
+                tagflag = true;
+            }
+            else if(ch == '&gt;')
+            {
+                line += "&gt;";
+                int l = line.length();
+                if (line[1] == '/')
+                {
+                    depth--;
+                    for (int i = 0; i &lt; depth; i++)
+                        printf(" ");
+                    cout&lt;&lt;line&lt;&lt;endl;
+                    if (line == "&lt;/html&gt;")
+                    {
+                        kase++;
+                        if (kase &gt; T)
+                            break;
+                        printf("Case #%d:\n", kase);
+                        line = "";
+                        depth = 0;
+                        beg = true;
+                    }
+                    line = "";
+                }
+                else if (line[l-2] == '/')
+                {
+                    for (int i = 0; i &lt; depth; i++)
+                        printf(" ");
+                    cout&lt;&lt;line&lt;&lt;endl;
+                    line = "";
+                }
+                else
+                {
+                    for (int i = 0; i &lt; depth; i++)
+                        printf(" ");
+                    cout&lt;&lt;line&lt;&lt;endl;
+                    line = "";
+                    depth++;
+                }
+                tagflag = false;
+            }
+            else if (tagflag)
+                line += ch;
+            else if (s.length()!=0&amp;&amp;(ch == ' '||ch == '\n' || ch == '\t'))
+            {
+                int l = line.length();
+                line = line + (l==0? "":" ")+s;
+                s = "";
+            }
+            else if(ch != ' '&amp;&amp;ch != '\n' &amp;&amp; ch != '\t')
+                s = s + ch;
+    }
+    return 0;
+}
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

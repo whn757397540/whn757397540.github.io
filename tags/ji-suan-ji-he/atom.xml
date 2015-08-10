@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 计算几何 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/tags/ji-suan-ji-he/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-08-10T13:04:28+08:00</updated>
+  <updated>2015-08-10T18:00:30+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -14,815 +14,1132 @@
 
   
   <entry>
-    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
-    <link href="http://whn757397540.github.io/blog/2014/07/26/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-6/"/>
-    <updated>2014-07-26T09:16:10+08:00</updated>
-    <id>http://whn757397540.github.io/blog/2014/07/26/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-6</id>
-    <content type="html"><![CDATA[<h2>第六场</h2>
+    <title type="html"><![CDATA[旋转卡壳总结]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/xuan-zhuan-qia-ke-zong-jie/"/>
+    <updated>2015-08-10T17:31:57+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/xuan-zhuan-qia-ke-zong-jie</id>
+    <content type="html"><![CDATA[<h2>POJ 2187 and POJ 3608</h2>
+
+<p>这些天刷了几道旋转卡壳的题，被卡了一些时间，现在先就两道题对旋转卡壳的两个用法进行一个总结</p>
 
 <!--more-->
 
 
-<p>又被精度问题恶心了一天。。。T_T</p>
+<p>有关旋转卡壳的介绍，<a href="http://hnnwang.github.io/blog/2014/09/06/xuan-zhuan-qia-ke-1/">这里</a>说的挺全的.所以题解里就不去解释这种思想了</p>
 
-<p>A题 <a href="http://code.bupt.edu.cn/problem/p/447/">BOJ 447. 修路</a></p>
+<p>这里我说2道旋转卡壳的基础题！</p>
 
-<p>很裸的一个生成树问题（由于没有权值，所以不是最小生成树），或者说，就是一个并查集。（可悲的是我竟然忘了写EOF而T了一次T_T）。附代码</p>
+<p><a href="http://poj.org/problem?id=2187">POJ 2187 Beauty Contest</a></p>
 
-<pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-#include &lt;cstdlib&gt;
-#include &lt;cmath&gt;
-#include &lt;algorithm&gt;
-#include &lt;vector&gt;
-
-#define MOD 1000000007
-#define N 10005
-
-using namespace std;
-
-int father[N];
-int u[200005],v[200005];
-
-int getfather(int x)
-{
-    if (x!=father[x]) father[x]=getfather(father[x]);
-    return father[x];
-}
-
-bool PlusJudge(int x,int y)
-{
-    int a=getfather(x);
-    int b=getfather(y);
-    if (a==b) return true;
-    else return false;
-}
-
-void getPlus(int x,int y)
-{
-    int a=getfather(x);
-    int b=getfather(y);
-    father[b]=a;
-}
-
-int main()
-{
-    int n,m;
-
-    while (~scanf("%d%d",&amp;n,&amp;m))
-    {
-        int cnt=0;
-        memset(father,0,sizeof(father));
-        memset(u,0,sizeof(u));
-        memset(v,0,sizeof(v));
-        for (int i=1;i&lt;=n;i++)
-            father[i]=i;
-        for (int i=1;i&lt;=m;i++)
-        {
-            int s;
-            scanf("%d%d%d",&amp;u[i],&amp;v[i],&amp;s);
-            if (s==0)
-                getPlus(u[i],v[i]);
-        }
-        for (int i=1;i&lt;=m;i++)
-        {
-            if (!PlusJudge(u[i],v[i]))
-            {
-                getPlus(u[i],v[i]);
-                cnt++;
-            }
-        }
-        printf("%d\n",cnt);
-    }
-}
-</code></pre>
-
-<p>B题 <a href="http://code.bupt.edu.cn/problem/p/445/">BOJ 445. 高兴</a></p>
-
-<p>学长讲了之后才发现是一个旅行商问题，用状压DP就可以了。 具体请看代码,代码里解释地挺详细的。不过如果不懂什么是状压DP的话，还是可能会看不懂。关于状态压缩DP，其实百度一下可以看到好多，这里我挂个<a href="http://godfrey90.iteye.com/blog/725562">链接</a>.不懂的可以去看看。</p>
+<p>一道基础的旋转卡壳题，求凸包直径，很简单的一道题，直接套板子就好（一个凸凸包模板，一个旋转卡壳模板）。这里说下，在求直径的时候，由于是一个凸多边形，所以求三角形面积（事实上，求平行四边形面积就好，因为只比较大小）。这题的题目都是整点，可以用int，其实，求出凸包来以后直接暴力枚举来判断就能过（而且，竟然会比旋转卡壳还快），不过最好是用旋转卡壳来过吧，毕竟如果凸包上点多的花，暴力还是很慢的！暴力的代码就不挂了，旋转卡壳代码在这里</p>
 
 <pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-#include &lt;cstdlib&gt;
 #include &lt;cmath&gt;
-#include &lt;algorithm&gt;
-#include &lt;vector&gt;
-
-using namespace std;
-
-#define INF 200000
-#define N 20
-
-int dp[N][ 1&lt;&lt;18 ]={0};//dp[i][j],i代表当前最右边是哪个玩具，j代表当前状态，数组存储这种状态的高兴值的最大值
-int h[N][N]={0};
-
-int main()
-{
-    int n;
-
-    while (~scanf("%d",&amp;n))
-    {
-        for (int i=1 ; i&lt;=n ; i++)
-            for (int j=1 ; j&lt;(1&lt;&lt;n) ; j++)
-                dp[i][j]=-INF;//没到到过的状态初始化为最小值
-        for (int i=1; i&lt;=n ; i++)
-            dp[i][1&lt;&lt;(i-1)]=0;//只有一个的设置为0；
-
-        for ( int i=1 ; i&lt;=n ; i++ )
-            for (int j=1 ; j&lt;=n ; j++)
-                scanf("%d",&amp;h[i][j]);
-
-        int lim= 1&lt;&lt; n ;
-        for ( int j=1 ; j&lt;lim ; j++ )//枚举所有状态
-            for (int i=1 ; i&lt;=n ; i++)//枚举所有最右边的点
-            {
-                if ( (j&amp;(1&lt;&lt;(i-1)))==0 )
-                    continue;           //如果当前状态没有到过最右侧的点，不符合，跳过。
-                if ( dp[i][j]==-INF )
-                    continue;           //如果当前点的状态还没有被改变（保持初始化的状态)，不符合，跳过。
-                for ( int k=1 ; k&lt;=n ; k++ )//枚举所有玩具，作为下一个放的玩具
-                {
-                    if ( j&amp;(1&lt;&lt;(k-1)) )
-                        continue;       //如果当前状态已经包含这个玩具，跳过。
-                    dp[k][j|(1&lt;&lt;(k-1))]=max(dp[k][j|(1&lt;&lt;(k-1))],dp[i][j]+h[i][k]);//维护更新状态
-                }
-            }
-        int ans=-INF;
-        for (int i=1;i&lt;=n;i++)
-            ans=max(ans,dp[i][lim-1]);
-        printf("%d\n",ans);
-    }
-    return 0;
-}
-</code></pre>
-
-<p>C题 <a href="http://code.bupt.edu.cn/problem/p/449/">BOJ 449. 排序</a></p>
-
-<p>这题，偶只想说一句呵呵。嘛也不想说了。思路，计数排序。丧心病狂的一点是测试数据，非常多组，90%是小数据，如果你每组都计术排序，并且都用到memset，机会卡到你超时。分情况讨论就行，再在计数排序时间上做一些小优化（我是设了一个数组来记录出现的量）就行了。我后来想了想，不用分情况也行，计数排序输出的之后顺便把用过的数组重置为0就可以了，两个代码放在一起了。</p>
-
-<p>第一次提交代码</p>
-
-<pre><code class="c++">#include &lt;cstring&gt;
-#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;algorithm&gt;
-#include &lt;cstdio&gt;
-
-#define N 10005
-using namespace std;
-
-int a[N],b[N];
-int main()
-{
-    int n;
-    while (scanf("%d",&amp;n)!=EOF)
-    {
-        if (n&lt;10000)
-        {
-            for (int i=1;i&lt;=n;i++)
-                scanf("%d",&amp;a[i]);
-            sort(&amp;a[1],&amp;a[1]+n);
-            for (int i=1;i&lt;n;i++)
-                printf("%d ",a[i]);
-            printf("%d\n",a[n]);
-        }
-        else
-        {
-            memset(a,0,sizeof(a));
-            memset(b,0,sizeof(b));
-            int cnt=0;
-            for (int i=1;i&lt;=n;i++)
-            {
-                int m;
-                scanf("%d",&amp;m);
-                a[m]++;
-                if (a[m]==1) b[cnt++]=m;
-            }
-            //这里少个sort(b,b+cnt);
-            printf("%d",b[0]);
-            a[b[0]]--;
-            for (int i=0;i&lt;cnt;i++)
-                for (int j=1;j&lt;=a[b[i]];j++)
-                    printf(" %d",b[i]);
-            printf("\n");
-
-
-        }
-    }
-}
-</code></pre>
-
-<p>第二次AC代码(PS:在我打第二次AC代码的时候，竟然发现第一个代码的else后面竟然忘了给b排序。。。T_T,这都能过，充分说明了大数据是多么的少，而且还都是顺序的！！！大数据直接输出就能过。第一个代码中已经标出了这个错误的位置，为了保存现场，我就不改了。汗。。）</p>
-
-<pre><code class="c++">#include &lt;cstring&gt;
-#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;algorithm&gt;
-#include &lt;cstdio&gt;
-
-#define N 10005
-using namespace std;
-
-int a[N]={0},b[N];
-int main()
-{
-    int n;
-    while (scanf("%d",&amp;n)!=EOF)
-    {
-
-            int cnt=0;
-            for (int i=1;i&lt;=n;i++)
-            {
-                int m;
-                scanf("%d",&amp;m);
-                a[m]++;
-                if (a[m]==1) b[cnt++]=m;
-            }
-            sort(b,b+cnt);
-            printf("%d",b[0]);
-            a[b[0]]--;
-            for (int i=0;i&lt;cnt;i++)
-            {
-                for (int j=1;j&lt;=a[b[i]];j++)
-                    printf(" %d",b[i]);
-                a[b[i]]=0;
-            }
-            printf("\n");
-
-
-        }
-}
-</code></pre>
-
-<p>不过学长讲题的时候说到了桶排序，俺不清楚具体是个什么东东，后来去百度了一下（算法导论上的看不懂），在此总结一下吧。</p>
-
-<p>桶排序就是把你想要排序的范围分成n等份存在一个数组中，数组的每个元素是一个桶（这个桶你可以用链表来实现，也可以用vector来实现，实在不行，也可用二维数组，不过十分不推荐），比如10000分成1000，就是0—9为第一个桶，10—19为第二个桶，……依次类推，把元素分到对应的桶中，然后再对每个桶中的元素进行排序（方法随意），最后按照桶的次序输出。这种排序方法在元素分布比较均匀的时候排序会比较快，复杂度可以接近O（n）。具体的请看<a href="http://blog.csdn.net/houapple/article/details/6480100">这里</a>，讲的挺清楚的，不过不推荐看他的代码，看分析就可以了。</p>
-
-<p>根据我的理解，计数排序就是在整数范围内的一种特殊的桶排序（长度为1的），时间复杂度是O（n），不过当元素的值特别大或者元素不是整数的时候的时候，就不能用计数排序了，但是可以用桶排序。写起来也不是很复杂，有必要的时候其实可以用到，算是学到了一点吧。</p>
-
-<p>D题 <a href="http://code.bupt.edu.cn/problem/p/444/">BOJ 444. 爱好和平</a></p>
-
-<p>这题，说是树形dp，我不太清楚，或许是吧。T_T 我就说下思路了。</p>
-
-<p>首先分析清楚，这必定是一个树。用dfs遍历所有节点，记录每个节点的总子孙节点数sum（包括他本身），和他的子节点中总子孙节点数maxSon（也包括那个子节点）最多的节点。记录完毕以后，枚举每个节点，找每个节点的特征值rec=max（maxson,n-sum）中最小的，然后记录那个行星编号就行。代码</p>
-
-<pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
 #include &lt;cstdlib&gt;
-#include &lt;cmath&gt;
+#include &lt;cstdio&gt;
 #include &lt;algorithm&gt;
-#include &lt;vector&gt;
-
+#include &lt;cstring&gt;
+#define next (i+1)%n
+const double eps = 1e-10;
 using namespace std;
-
-#define  N 100005
-
-vector&lt;int&gt; tree[N];
-
-struct data
+int dcmp(double x)//精度比较
 {
-    int sum;
-    int MAX;
+    if (x &lt; -eps) return -1;
+    else if (x &gt; eps) return 1;
+    else return 0;
+}
+
+
+double add(double a, double b)//考虑到精度的加法
+{
+    if (dcmp(a+b) == 0) return 0;
+    return a + b;
+}
+
+
+struct Point//也可看做向量
+{
+    int x,y;
+    Point() {}
+    Point(int x,int y) : x(x),y(y){}
+    Point operator + (Point p) {return Point(x + p.x, y + p.y); }//向量 + 向量 = 向量
+    Point operator - (Point p) {return Point(x - p.x, y - p.y); } // 向量 - 向量 = 向量
+    bool operator &lt; (const Point p) const {return x &lt; p.x  || x == p.x &amp;&amp; y &lt; p.y; } //字典序比较，重定义&lt;
+    bool operator == (const Point p) const {return x == p.x &amp;&amp; y == p.y; }//重定义 ==
+    int dot(Point p) {return x * p.x + y * p.y; }//点积
+    int det(Point p) {return x * p.y - y * p.x; }//叉积,旋转方向取逆时针
+    int sqrDis(Point p){return (x - p.x)*(x - p.x) + (y - p.y)*(y - p.y);}
 };
-
-data g[N];
-int n,m;
-
-void init()
+typedef Point Vector;
+int u;
+int ConvexHull(Point* p,int n, Point* ch)
 {
-    memset(g,0,sizeof(g));
-    for (int i=1;i&lt;=n;i++)
-        tree[i].clear();
+    sort(p,p+n);
+    int m = 0;
+    for (int i = 0; i &lt; n ; i ++)
+    {
+        while (m &gt; 1 &amp;&amp; (ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m --;
+        ch[m++] = p[i];
+    }
+    int k = m;
+    for (int i = n-2; i &gt;= 0; i--)
+    {
+        while (m &gt; k &amp;&amp;(ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m--;
+        ch[m++] = p[i];
+    }
+    if (n &gt; 1) m--;
+    return m;
 }
 
-void dfs(int now,int father)
+int Area(Point a, Point b, Point c)
 {
-    if (tree[now].size()==1&amp;&amp;father!=0)
-    {
-        g[now].sum=1;
-        g[now].MAX=0;
-        return;
-    }
-    int MA=0,SU=0;
-    for (int i=0;i&lt;tree[now].size();i++)
-    {
-        if (tree[now][i]==father) continue;
-        int son=tree[now][i];
-        dfs(son,now);
-        MA=max(MA,g[son].sum);
-        SU+=g[son].sum;
-    }
-    g[now].MAX=MA;
-    g[now].sum=SU+1;
+  Vector v = b - a;
+  return abs(v.det(c - a));
 }
+
+int RotatingCalipers(Point *ch, int n, int s)
+{
+  int q = s;
+  int ans = ch[0].sqrDis(ch[s]);
+  for (int i = 0; i &lt; n; i ++)
+  {
+      while (Area(ch[i], ch[next], ch[(q+1)%n]) &gt; Area(ch[i], ch[next], ch[q]))
+          q = (q+1) % n;
+      ans = max(ans,max(ch[i].sqrDis(ch[q]), ch[next].sqrDis(ch[(q+1)%n])));
+  }
+  return ans;
+}
+Point a[55555],Hull[100000];
 int main()
 {
-    while (~scanf("%d%d",&amp;n,&amp;m))
-    {
-        init();
-        for (int i=1;i&lt;=m;i++)
-        {
-            int u,v;
-            scanf("%d%d",&amp;u,&amp;v);
-            tree[u].push_back(v);
-            tree[v].push_back(u);
-        }
-        dfs(1,0);
-        int ans=111111,res;
-        for (int i=1;i&lt;=n;i++)
-        {
-            if (ans&gt;max(g[i].MAX,n-g[i].sum))
-            {
-                ans=max(g[i].MAX,n-g[i].sum);
-                res=i;
-            }
-        }
-        printf("%d\n",res);
-    }
+  int n;
+  scanf("%d", &amp;n);
+  for (int i = 0; i &lt; n; i++)
+      scanf("%d%d", &amp;a[i].x, &amp;a[i].y);
+  int m = ConvexHull(a, n, Hull);
+  int u = 0;
+  for (int i = 1; i &lt; m; i++)
+      if (Hull[u].x &lt; Hull[i].x || Hull[u].x == Hull[i].x &amp;&amp; Hull[u].y &lt; Hull[i].y)
+          u = i;
+  int ans = RotatingCalipers(Hull, m, u);
+  printf("%d\n", ans);
+  // system("pause");
+  return 0;
 }
 </code></pre>
 
-<p>E题 <a href="http://code.bupt.edu.cn/problem/p/450/">BOJ 450. 萌学妹的手机</a></p>
+<p>另外，还有就是求多边形宽度的，暂时没有找到题，不过看起来貌似挺简单的！</p>
 
-<p>这题原型是北师校赛的一题。</p>
+<p><a href="http://poj.org/problem?id=3608">POJ 3608 Bridge Across Islands</a></p>
 
-<p>一下午，一直在被精度问题虐，中间改了几处错误，还是弄不对结果，要么多1.要么少1,也有相等的。我确信思路是没有问题的，不过在实现上，可能用了过多的浮点运算以及sqrt，导致精度出现问题，有些有那么一个数的误差。具体的思路还是去看<a href="http://blog.csdn.net/u013007900/article/details/38130625">男哥博客</a>吧，思路是一样的，不过实现上他在转化坐标系的时候就直接把坐标变换成整数了(PS:。我也懒得改了，要改的话改的东西太多了。还有就是直接用直角坐标做的，详见<a href="http://blog.csdn.net/ylasce/article/details/38145745">A神博客</a>)</p>
-
-<p>这题今天（27日）中午又做了做，到底还是过了，思路跟男哥的思路是一样的，有一点不一样的是，他求距离是把斜坐标转化成直角坐标来求的，而我是直接用斜坐标求的距离，公式也很简单，这里就说下求坐标轴夹角为a的斜坐标系下向量(x,y)的模长公式，x2+y2+2xy*cos(a);推导也很简单，把向量分解成两个坐标轴方向的向量相加，再平方就是了。放我的代码吧</p>
+<p>这道题就稍微复杂一点了，求两个凸包的最近距离，不过同样也是用旋转卡壳很容易解决，只不过这次必须得用有向面积了，因为旋转的基点是不同的2个多边形，所以会出现负面积，把逻辑捣清楚就好。跟那个博客里说到的一样的方法，判断平行的时候，只求得对应平行四边形的面积为相等就行了，不平行的时候，用点到线段的距离来更新就行了，平行的时候，我的方法就跟那里说到的不太一样，我是为了省事儿，直接用4个顶点和对应线段之间的距离最短的来更新答案，其他就没什么不同了。还有就是这个题可以不求凸包，只需要选一个内部的点，然后根据其他点跟这个点连线的极角按照逆时针方向来排序就好。具体的看看代码来理解下吧</p>
 
 <pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;fstream&gt;
-#include &lt;string&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-#include &lt;cstdlib&gt;
 #include &lt;cmath&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cstdio&gt;
 #include &lt;algorithm&gt;
-#include &lt;vector&gt;
-
+#include &lt;cstring&gt;
+const double eps = 1e-9;
 using namespace std;
-
-const double INF=1000000;
-const double PI=acos(-1.0);
-
-double DisSqr(double x1,double y1,double x2,double y2)//斜坐标求距离，自己推导就能出来
+const int N=10005;
+int dcmp(double x)//精度比较
 {
-    return pow(x1-x2,2)+pow(y1-y2,2)+2*(x1-x2)*(y1-y2)*cos(PI/3);
+    if (x &lt; -eps) return -1;
+    else if (x &gt; eps) return 1;
+    else return 0;
 }
 
-void changeXY(double &amp;x,double &amp;y)//转化为斜坐标系
+
+double add(double a, double b)//考虑到精度的加法
 {
-    x=x-y/tan(PI/3);
-    y=y/sin(PI/3);
- }
+    if (abs(a + b) &lt; eps * (abs(a) + abs(b))) return 0;
+    return a + b;
+}
 
- void makeXY(double x,double y,int &amp;nx,int &amp;ny)//把给的坐标转化为横\纵方向上的第几个基站。
- {
-     int a=(int)(x/sqrt(3)+1e-8),b=(int)(y/sqrt(3)+1e-8);
 
-     int d[9][2]={ {-1,-1},{-1,0},{-1,1},{0,-1},{0,0},{0,1},{1,-1},{1,0},{1,1} };
-     //这里，本来按道理只需要4个点就够了，不过由于精度问题，还是直接把范围扩大了一倍。
-     double rec=INF;
-     for(int i=0;i&lt;=8;i++)
-        if (rec&gt;DisSqr((a+d[i][0])*sqrt(3),(b+d[i][1])*sqrt(3),x,y))
-        {
-            rec=DisSqr((a+d[i][0])*sqrt(3),(b+d[i][1])*sqrt(3),x,y);
-            nx=a+d[i][0];
-            ny=b+d[i][1];
-        }
+struct Point//也可看做向量
+{
+    double x,y;
+    Point() {}
+    Point(double x,double y) : x(x),y(y){}
+    Point operator + (Point p) {return Point(add(x, p.x),add(y, p.y)); }//向量 + 向量 = 向量
+    Point operator - (Point p) {return Point(add(x, -p.x),add(y, -p.y)); } // 向量 - 向量 = 向量
+    Point operator / (double d) {return Point(x/d, y/d);}
+    bool operator &lt; (const Point p) const {return dcmp(x - p.x) &lt; 0 || dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y) &lt; 0; } //字典序比较，重定义&lt;
+    bool operator == (const Point p) const {return dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y) == 0; }//重定义 ==
+    bool operator &gt; (const Point p) const {return dcmp(x - p.x) &gt; 0 || dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y) &gt; 0;}
+    double dot(Point p) {return add(x * p.x, y * p.y); }//点积
+    double det(Point p) {return add(x * p.y, -y * p.x); }//叉积,旋转方向取逆时针
+    double length() {return sqrt(x*x + y*y); }//向量长度
+    double Angle() {return atan2(y, x);}//极角
+    Point Rotate(double rad) {return Point(add(x * cos(rad),- y * sin(rad)), add(x * sin(rad), y * cos(rad))); }//逆时针旋转rad
+    Point Normal() {return Point(-y / length(), x / length()); }//求单位法向量
+};
+typedef Point Vector;
+Point a1[N],a2[N],p;
+double Area(Point a, Point b, Point c)
+{
+  return (b-a).det(c-a);
+}
 
- }
+double DisToSeg(Point A, Point B, Point P)
+{
+  if (A == B) return (P-A).length();
+    Vector v1 = B - A, v2 = P - A, v3 = P - B;
+    if (dcmp(v1.dot(v2)) &lt; 0) return v2.length();
+    else if (dcmp(v1.dot(v3)) &gt; 0) return v3.length();
+    else return fabs(v1.det(v2) / v1.length()) ;
+}
+double RotatingJam(int p0, int q0, int n, int m,Point a[], Point b[])
+{
+  int p = p0, q = q0;
+  double ans = (a[p] - b[q]).length();
+  while (dcmp(Area(a[p], a[(p+1)%n], b[q]) - Area(a[p], a[(p+1)%n], b[(q+1)%m])) &lt; 0)
+  {
+      int next = (q+1)%m;
+      ans = min(ans,min(DisToSeg(b[q], b[next], a[(p+1)%n]), DisToSeg(b[q], b[next], a[p])));
+      q = next;
+  }
+  int next = (p+1)%n;
+  ans =  min(ans, DisToSeg(a[p], a[next], b[q]));
+  if (dcmp(Area(a[p], a[next], b[q]) -Area(a[p], a[next], b[(q+1)%m])) == 0)
+  {
+      ans = min(ans, min(DisToSeg(b[q], b[(q+1)%m], a[p]),min(DisToSeg(b[q], b[(q+1)%m], a[next]),DisToSeg(a[p], a[next], b[(q+1)%m]))));
+  }
+  p = next;
+  while (p!=p0)
+  {
+      while (dcmp(Area(a[p], a[(p+1)%n], b[q]) - Area(a[p], a[(p+1)%n], b[(q+1)%m])) &lt; 0)
+      {
+          int next = (q+1)%m;
+          ans = min(ans,min(DisToSeg(b[q], b[next], a[(p+1)%n]), DisToSeg(b[q], b[next], a[p])));
+          q = next;
+      }
+      int next = (p+1)%n;
+      ans =  min(ans, DisToSeg(a[p], a[next], b[q]));
+      if (dcmp(Area(a[p], a[next], b[q]) -Area(a[p], a[next], b[(q+1)%m])) == 0)
+      {
+          ans = min(ans, min(DisToSeg(b[q], b[(q+1)%m], a[p]),min(DisToSeg(b[q], b[(q+1)%m], a[next]),DisToSeg(a[p], a[next], b[(q+1)%m]))));
+      }
+      p = next;
+  }
+  return ans;
+}
+int ConvexHull(Point* p,int n, Point* ch)
+{
+    sort(p,p+n);
+    int m = 0;
+    for (int i = 0; i &lt; n ; i ++)
+    {
+        while (m &gt; 1 &amp;&amp; (ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m --;
+        ch[m++] = p[i];
+    }
+    int k = m;
+    for (int i = n-2; i &gt;= 0; i--)
+    {
+        while (m &gt; k &amp;&amp;(ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m--;
+        ch[m++] = p[i];
+    }
+    if (n &gt; 1) m--;
+    return m;
+}
+Point Hulla[N],Hullb[N];
 int main()
 {
-    int T;
-    double Sx,Sy,Dx,Dy;
-    int nSx,nSy,nDx,nDy;
-    double L;
-
-    scanf("%d",&amp;T);
-    while (T--)
-    {
-        scanf("%lf",&amp;L);
-        scanf("%lf%lf",&amp;Sx,&amp;Sy);
-        scanf("%lf%lf",&amp;Dx,&amp;Dy);
-        changeXY(Sx,Sy);
-        changeXY(Dx,Dy);
-        makeXY(Sx/L,Sy/L,nSx,nSy);
-        makeXY(Dx/L,Dy/L,nDx,nDy);
-
-        int ans;
-        int x=nDx-nSx,y=nDy-nSy;
-
-        if (x&gt;=0&amp;&amp;y&gt;=0||x&lt;=0&amp;&amp;y&lt;=0)
-            ans=abs(x)+abs(y);
-        else
-            ans=max(abs(x),abs(y));
-        printf("%d\n",ans);
-    }
+  int n,m;
+  while (scanf("%d%d", &amp;n, &amp;m))
+  {
+      if (n==0 &amp;&amp; m==0) break;
+      p = Point(0,0);
+      for (int i = 0; i &lt; n; i++)
+      {
+          scanf("%lf%lf", &amp;a1[i].x, &amp;a1[i].y);
+          p = p + a1[i];
+      }
+      for (int i = 0; i &lt; m; i++)
+      {
+          scanf("%lf%lf", &amp;a2[i].x, &amp;a2[i].y);
+          p = p + a2[i];
+      }
+      int nn = ConvexHull(a1, n, Hulla);
+      int mm = ConvexHull(a2, m, Hullb);
+      int min1 = 0,max2 = 0;
+      for (int i = 1; i &lt; nn; i++)
+          if (Hulla[min1] &lt; Hulla[i])
+              min1 = i;
+      for (int i = 1; i &lt; mm; i++)
+          if (Hullb[max2] &gt; Hullb[i])
+              max2 = i;
+      double ans = RotatingJam(min1, max2, nn, mm, Hulla, Hullb);
+      printf("%.5f\n",ans);
+  }
+  return 0;
 }
 </code></pre>
 
-<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
 ]]></content>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[BUPT暑假训练 2013级个人排位赛]]></title>
-    <link href="http://whn757397540.github.io/blog/2014/07/19/suan-fa-she-ji-yu-fen-xi-qi-mo-fu-xi-zong-jie/"/>
-    <updated>2014-07-19T15:50:30+08:00</updated>
-    <id>http://whn757397540.github.io/blog/2014/07/19/suan-fa-she-ji-yu-fen-xi-qi-mo-fu-xi-zong-jie</id>
-    <content type="html"><![CDATA[<h2>第二场</h2>
+    <title type="html"><![CDATA[POJ1912 a Highway and the Seven Dwarfs]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/poj1912-a-highway-and-the-seven-dwarfs/"/>
+    <updated>2015-08-10T16:56:06+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/poj1912-a-highway-and-the-seven-dwarfs</id>
+    <content type="html"><![CDATA[<p>又被卡了一整天，实在是弱爆了！计算几何的问题，虽然过了，不过感觉还是有点问题，不管了，先写题解，之后想到再改！</p>
 
 <!--more-->
 
 
-<p>PS：这是我的第一篇octopress博客，是把CSDN上的第二场个人排位赛的题解搬了过来，并加上了第五题的题解，以后还会陆续写其他场次，好了，开始）</p>
+<p><a href="http://poj.org/problem?id=1912">题目链接</a></p>
 
-<p>这次训练的题目，两道水题（卡数据类型，有好多人不能1A，我也在内），还有3道题，不是很容易。</p>
+<p>题意：给你n个点，然后输入直线（用2个点来表示），对于输入的每一条直线，判断所有点是否在直线的一侧。是就输出GOOD，否则输出BAD；</p>
 
-<p>A题 <a href="http://code.bupt.edu.cn/problem/p/416/">BOJ 416丁神去谷歌</a></p>
+<p>首先，先求一个凸包，然后求凸包上的点是不是都在直线的一侧！（这个自己去证明一下就好！）</p>
 
-<p>一道很水的题，因为我刚开始用了sort，T了一次，后来又忘了是什么原因RE了2次尴尬，最后，就直接读入的时候比较的，很水，想多了。</p>
+<p>然后，我刚开始是直接暴力判断直线是不是穿过其中某一个边的！最次的情况是O(询问数*n)的复杂度，T掉了！然后我就想，怎么样优化下。就想到了二分法！但是二分需要有一个有序的序列，什么是有序的呢？角度，沿一个方向的边的极角是有序的！</p>
 
-<p>下面简单分析一下吧，由于是要求b/a的最大值，所以只需要把当前的b/a与之前最大的b/a比较就行，如果相同的话（在这了需要注意，如果你用的是交叉相乘来比较，记得用long long，如果你用的是b/a来比较，在判断是否相等的时候记得浮点型的精度问题，可以用abs(max-(double)b/a)&lt;=1e-9 之类的式子来判断，不要直接用等号），再去比较a的大小，由于本身序号就是从小到大的，所以也不用担心这个了（只要a相等的时候别更新答案就行），说的有点多了，附代码吧(C++)</p>
+<p>之后，我们假设一种特殊情况，假如所询问的直线是跟x轴平行的，那么我们只需要找凸包的最高点和最低点，判断这两点是不是在直线的两侧就行了（我的判断方法是求有向距离，看是否是异号就行了！),而最高点和最低点也很好找，找第一个极角大于0(因为x轴正方向的极角就是0)的点就是最低点，反过来，找第一个大于PI的点就是最高点。那么我们把这个方法一般化，其他的直线不就相当于把凸包旋转了一下吗？所以，就能类比到一般的了。不过这样还存在一个问题，就是如何找大于PI的点？（其实，对于极角为a的直线，应该是如何找大于a+PI的点）。最终AC的代码是参考网上的，把极角的范围调整成了(-PI/2,3*PI/2),而实际上，这种方法也是不对的！只不过数据没有卡掉这个范围而已！至于正确的该如何去找，目前逻辑还没有理清楚，等理清楚了再改下吧，这里先把思路写出来。（PS：这题不卡精度）</p>
 
-<pre><code class="c++">#include &lt;iostream&gt;  
-#include &lt;string&gt;  
-#include &lt;cstdio&gt;  
-#include &lt;cstring&gt;  
-#include &lt;cstdlib&gt;  
-#include &lt;cmath&gt;  
-#include &lt;algorithm&gt;  
+<p>最后，注意n&lt;=1的情况。</p>
 
-#define N 100005  
-
-using namespace std;
-
-int main()
-{
-    int t;
-    double MAX=0;
-    cin&gt;&gt;t;
-    while (t--)
-    {
-        int n;
-        int ans,ansa;
-        MAX=0;
-        scanf("%d",&amp;n);
-        for (int i=1;i&lt;=n;i++)
-        {
-            int a,b;
-            scanf("%d%d",&amp;a,&amp;b);
-            double c=(double)b/a;
-            if (MAX&lt;c)
-            {
-                MAX=c;
-                ans=i;
-                ansa=a;
-            }
-            else if(abs(MAX-c)&lt;=1e-10)
-            {
-                if (a&lt;ansa)
-                {
-                ans=i;
-                ansa=a;
-                }
-            }
-        }
-        printf("%d\n",ans);
-    }
-return 0;
-}
-</code></pre>
-
-<p>B题 <a href="http://code.bupt.edu.cn/problem/p/417/">BOJ 0417 丁神又去谷歌</a></p>
-
-<p>赤果果的一道0-1背包，记得要用long long 就行，直接附代码</p>
-
-<pre><code class="c++">#include &lt;iostream&gt;  
-#include &lt;string&gt;  
-#include &lt;cstdio&gt;  
-#include &lt;cstring&gt;  
-#include &lt;cstdlib&gt;  
-#include &lt;cmath&gt;  
-#include &lt;algorithm&gt;  
-
-#define N 1005  
-
-using namespace std;
-
-long long dp[N];
-
-int a[N],b[N];
-
-int main()
-{
-    int T;
-    cin&gt;&gt;T;
-    while (T--)
-    {
-        int n,t;
-        scanf("%d%d",&amp;t,&amp;n);
-        memset(dp,0,sizeof(dp));
-        for (int i=1;i&lt;=n;i++)
-            scanf("%d%d",&amp;a[i],&amp;b[i]);
-
-        for (int i=1;i&lt;=n;i++)
-            for (int j=t;j&gt;=a[i];j--)
-                dp[j]=max(dp[j],dp[j-a[i]]+b[i]);
-        printf("%lld\n",dp[t]);
-    }
-    return 0;
-}
-</code></pre>
-
-<p>C题 <a href="http://code.bupt.edu.cn/problem/p/426/">boj426 goblin</a></p>
-
-<p>这个题呀，昨天比赛时有思路（PS:今天想了一上午，发现我的思路是在是太难实现了），最终还是选择了lyz大神的思路。</p>
-
-<p>题意大概是求n以内（1—n）的数的全排列中，符合交叉排列的情况（即&lt;>&lt;>&lt;>&lt;>&lt;>,大于号小于号交叉出现的情况）总共有多少种，结果对p取余。</p>
-
-<p>我就来说说lyz大神的思路吧，用到了排列组合的思想。首先，为了方便叙述，我先来给交叉排列的两种情况命一下名, 假设：第一个数大于第二个数的情况叫做D情况，第一个数小于第二个数的情况叫做P情况，对于k个数的排列，我们记D情况共有D[k]种，P情况共有P[k]种,(记 P[0]=P[1]=P[2]=1 那么，就有D[k]=P[k]（至于怎么来证明，其实很简单）</p>
-
-<p>所有D情况都可以抽象成W型（第一个数第二个数大的情况），所有的P情况都可以抽象成M型（第一个比第二个数的情况）。对于D情况，可以抽出n个数中的最大数，分别放到各个凸起点，经过一些排列组合的运算，可以得到一个一个结果；同理，对于P情况，可以抽出n个数中的最小数，分别放到各个凹陷点，根据对称的特性，就可以得到跟D情况相同的结果。</p>
-
-<p>所以，我们只需考虑一种情况了，我选取的D情况，经过排列组合的运算，很容易得到如下的关系(sigma代表求和符号）</p>
-
-<p>D[k]=sigma(D[i[D[k-1-i]C[k-1][k-1-i]) （可能看这个式子看不懂，自己推导一下吧，分别把最大的数放到凸起点就可以了，很容易的）</p>
-
-<p>好了，下面附代码（PS:被memset坑了好久，也学到了一点，在程序中，你如果开了数组但是没有用到，提交交时内存是不算的，如果你用了memset（a,0,sizeof(a))来初始化数组，那么这个数组就算是全部被使用了。这题中，如果用memset来初始化组合数的存储数组，就会超出内存限制。算是学到了一点吧！还有就是，如果用动态数组来做的话，是擦边过得，我是第一次交1000ms, T了，第二次993ms过了。最后，注意D数组要用long long，即便不用，运算时也记得转化一下，否则会WA的）。</p>
-
-<pre><code class="c++">#include &lt;iostream&gt;  
-#include &lt;cstdio&gt;  
-#include &lt;cstring&gt;  
-
-#define N 4205  
-int C[N][N]={0};
-long long g[N]={0};
-int n,p;
-
-void init()
-{
-    memset(g,0,sizeof(g));
-    g[3]=2;
-    g[2]=1;
-    g[1]=1;
-    g[0]=1;
-
-    for (int i=1;i&lt;=n;i++)
-    {
-        C[i][0]=C[i][i]=1;
-        for (int j=1;j&lt;i;j++)
-            C[i][j]=(C[i-1][j-1]+C[i-1][j])%p;
-    }
-    for (int i=4;i&lt;=n;i++)
-        for (int j=0;j&lt;=i-1;j+=2)
-            g[i]=(g[i]+(g[j]*g[i-1-j]%p)*C[i-1][i-1-j])%p;
-}
-
-int main()
-{
-    while (~scanf("%d%d",&amp;n,&amp;p))
-    {
-        init();
-        printf("%d\n",2*g[n]%p);//输出不用lld是因为取余以后就在int的范围内了。  
-    }
-}
-</code></pre>
-
-<p>D题 <a href="http://code.bupt.edu.cn/problem/p/427/">BOJ 0427 学姐逗学弟</a></p>
-
-<p>一道博弈题目，比赛时看错题了。。。今天下午基本上全花在这个题上了，根源还是memset尴尬，通过个题我了解到：用memset来初始化数组也是要花O(n）的时间的，它比直接赋值快大约4倍，但是计算复杂度时还是要按照O（n）的复杂度考虑进去的。在此感谢zsp同学帮我找到这个错误。</p>
-
-<p>好了，进入正题。这是一个博弈问题，Every-Sg游戏，直接说思路吧，题目可以自己点开链接来看。</p>
-
-<p>首先，我们定义每个节点的高度为所有人都采取最优策略，一直到游戏结束所需要走的步数。思路很简单，对于必败点，走这一步的人必输，那么他肯定想尽快结束这一个游戏，所以他会选择它的所有子节点中高度最小的来走；对于必胜点，走这一步的人，想要胜利，就必须走到必败点上去，而他又想把游戏时间尽量拉长，所以他肯定会选择所有必败子节点中高度最大的那个节点来走。这样分析的话，就很容易递归的定义出一个点的高度了。然后再根据给的石子的位置来判断，比较高度最大的必胜点和高度最大的必败点的大小，就可以判断是不是学姐赢了。</p>
-
-<p>这个代码是有注释了（为了让zsp同学帮忙找下错误而标注的，再次进行感谢），贴代码</p>
-
-<pre><code class="c++">#include &lt;iostream&gt;  
-#include &lt;string&gt;  
-#include &lt;cstdio&gt;  
-#include &lt;cstring&gt;  
-#include &lt;cstdlib&gt;  
-#include &lt;cmath&gt;  
-#include &lt;algorithm&gt;  
-#include &lt;vector&gt;  
-#define N 100005  
-
-using namespace std;
-#define INF 10000000  
-vector &lt;int&gt; tree[N];
-
-bool judgeSg[N]={false};//判断子节点出现的sg值  
-int father[N]={0};//记录某个节电的父亲节点  
-int depth[N]={0};//记录“高度”（懒得改了）  
-int sg[N]={0};//对于单个游戏来说的每个节点的sg值。  
-int n,m;
-
-void init()//初始化  
-{
-    memset(father,0,sizeof(father));
-    memset(depth,0,sizeof(depth));
-    memset(sg,0,sizeof(sg));
-    for (int i=1;i&lt;=n;i++)
-        tree[i].clear();
-}
-
-void solveSg(int now)//now代表当前节点，dfs     
-{
-    int MAX=0,MIN=INF;
-
-    if (tree[now].size()==0)
-    {
-        sg[now]=0;
-        depth[now]=0;
-        return ;
-    }//搜到叶子节点，叶子节点对应的高度为0,sg值为0;  
-    for (int i=0;i&lt;tree[now].size();i++)
-    {
-        int son=tree[now][i];
-        solveSg(son);//dfs  
-
-        if (MIN&gt;depth[son])
-            MIN=depth[son];//记录所有子节点中的最小高度（如果当前节点是必败节点的话用得到）  
-        if (sg[son]==0)//子节点为必败态  
-            if (MAX&lt;depth[son])
-                MAX=depth[son];//记录所有必败子节点中的最大高度（如果当前节点是必胜节点用得到)  
-    }
-    memset(judgeSg,false,sizeof(tree[now].size()+10));//初始化sg判断数组  
-    for (int i=0;i&lt;tree[now].size();i++)
-    {
-        int son=tree[now][i];
-        judgeSg[sg[son]]=true;//记录出现的sg值  
-    }
-    int res=0;
-
-    while (judgeSg[res]) res++;
-
-    if (res==0)//此点为必败态  
-        depth[now]=MIN+1;
-    else //为必胜态  
-        depth[now]=MAX+1;
-
-    sg[now]=res;//当前节点的sg值  
-}
-int main()
-{
-    int T;
-    cin&gt;&gt;T;
-    while (T--)
-    {
-        int maxWin=0,maxFail=0;//分别记录必胜点和必败点的最大高度  
-
-        scanf("%d%d",&amp;n,&amp;m);
-        init();
-        for (int i=2;i&lt;=n;i++)
-        {
-            scanf("%d",&amp;father[i]);
-            tree[father[i]].push_back(i);
-        }//动态数组建树（单向的）  
-        solveSg(1);//dfs  
-        for (int i=1;i&lt;=m;i++)
-        {
-            int stone;
-            scanf("%d",&amp;stone);
-            if (sg[stone]==0)
-                maxFail=max(maxFail,depth[stone]);
-            else
-                maxWin=max(maxWin,depth[stone]);
-        }
-        if (maxWin&gt;maxFail)//必胜的游戏时间长，学姐赢  
-            printf("MengMengDa!\n");
-        else
-            printf("So sad...\n");
-    }
-    return 0;
-}
-</code></pre>
-
-<p>最后，是今天写的东西。</p>
-
-<p>E题 <a href="http://code.bupt.edu.cn/problem/p/425/">BOJ 0425 木头人足球赛</a></p>
-
-<p>是一道很恶心的几何题目。说简单，不简单；说难倒也不难，主要这题的测试数据不是很变态，有一种很恶心的状态，测试数据里没有，一会解释。（PS：学长说这个题的原型是个非常OP的题。。。）</p>
-
-<p>首先，求出球门的角度范围（我选的是以x轴负方向为0度，范围是-180到180，后同），记作gate；然后，求出每个个球员的拦截角度范围(求起来也很简单，求出圆心连线与x轴负方向的夹角，再求出圆心连线与切线的夹角，然后进行加减就行，求角时记得根据角度范围来决定用什么三角函数，这个逻辑关系要弄清楚），记作player[i];然后根据player[i]的下界进行排序。</p>
-
-<p>前面的准备工作做好了以后，接下来思路就很明确了。首先，判断上下界，就是是否存在球员，他的拦截上界大于球门上界并且他的拦截下界小于球门上界，下界最低的球员是否低于球门下界，其中任意一个条件不符合，就肯定能进球；然后，就是从下界小于球门上界的第一个球员开始，每次找上界大于或等于这个球员下界的，下界最低的球员（这样可以最地拉深区间），如果这个最低的下界大于或等于他所比较的那个球员的下界（事实上，从下界低的开始找，如果出现这种情况，只可能是那个球员本身），那就说明没有可以进球，如果这个下界球门下界低，那么说明防守很严，不能进球。</p>
-
-<p>根据上面的分析，就有了如下的代码：</p>
+<p>下面是AC的代码</p>
 
 <pre><code class="c++">#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;cstdio&gt;   
 #include &lt;cstring&gt;
+#include &lt;cstdio&gt;
 #include &lt;cstdlib&gt;
-#include &lt;cmath&gt;
 #include &lt;algorithm&gt;
+#include &lt;cmath&gt;
 #include &lt;vector&gt;
-#define N 12
+#define next (i+1)%m
+const double eps = 1e-8;
 using namespace std;
+const double PI = acos(-1.0);
 
-struct  ANGLE_SECTION
+int dcmp(double x)//精度比较
 {
-    double left;
-    double right;
-    int num;
-}gate,player[N];
-
-ANGLE_SECTION getGateSection(int x,int y)
-{
-    ANGLE_SECTION result;
-    if (x==0) return {(acos(-1))/2,(acos(-1))/2};
-    result.left=atan((double)(30-y)/x);
-    result.right=atan((double)(38-y)/x);
-    return result;
+    if (x &lt; -eps) return -1;
+    else if (x &gt; eps) return 1;
+    else return 0;
 }
 
-ANGLE_SECTION getPlayerSection(int x1,int y1,double r,int x0,int y0)
-{
-    ANGLE_SECTION result;
-    double length=sqrt(pow(x1-x0,2)+pow(y1-y0,2));//与圆心连线长度
-    double angle=asin(r/length);//连线与切线的夹角
-    double Angle;//连线与水平射线的夹角
 
-    if (y1&gt;=y0) Angle=acos((double)(x0-x1)/length);
-    else if(x1&lt;x0)
-        Angle=atan((double)(y1-y0)/(x0-x1));
-    else
-        Angle=-acos(-1)-asin((double)(y1-y0)/length);
-    result.left=Angle-angle;
-    result.right=Angle+angle;
-    return result;
+double add(double a, double b)//考虑到精度的加法
+{
+    if (abs(a + b) &lt; eps * (abs(a) + abs(b))) return 0;
+    return a + b;
 }
 
-bool cmp(ANGLE_SECTION a,ANGLE_SECTION b)
-{
-    return (a.left&lt;b.left);
-}
 
+struct Point//也可看做向量
+{
+    double x,y;
+    Point() {}
+    Point(double x,double y) : x(x),y(y){}
+    Point operator + (Point p) {return Point(add(x, p.x),add(y, p.y)); }//向量 + 向量 = 向量
+    Point operator - (Point p) {return Point(add(x, -p.x),add(y, -p.y)); } // 向量 - 向量 = 向量
+    Point operator * (double a) {return Point(x * a, y * a); }// 向量 * 数 = 向量
+    Point operator / (double a) {return Point(x / a, y / a); }//向量 / 数 = 向量
+    bool operator &lt; (const Point p) const {return dcmp(x - p.x) &lt; 0 || dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y)&lt;0; } //字典序比较，重定义&lt;
+    bool operator == (const Point p) const {return dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y) == 0; }//重定义 ==
+    double dot(Point p) {return add(x * p.x, y * p.y); }//点积
+    double det(Point p) {return add(x * p.y, -y * p.x); }//叉积,旋转方向取逆时针
+    double length() {return sqrt(x*x + y*y); }//向量长度
+    double Angle(){double A = atan2(y,x); if (A &lt; -PI/2) A+=2*PI; return A; }//极角
+    Point Rotate(double rad) {return Point(add(x * cos(rad),- y * sin(rad)), add(x * sin(rad), y * cos(rad))); }//逆时针旋转rad
+    Point Normal() {return Point(-y / length(), x / length()); }//求单位法向量
+};
+
+typedef Point Vector;
+int ConvexHull(Point* p,int n, Point* ch)
+{
+    sort(p,p+n);
+    int m = 0;
+    for (int i = 0; i &lt; n ; i ++)
+    {
+        while (m &gt; 1 &amp;&amp; (ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m --;
+        ch[m++] = p[i];
+    }
+    int k = m;
+    for (int i = n-2; i &gt;= 0; i--)
+    {
+        while (m &gt; k &amp;&amp;(ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m--;
+        ch[m++] = p[i];
+    }
+    if (n &gt; 1) m--;
+    return m;
+}
+double DistanceToLine(Point P, Point A, Point B)
+{
+    Vector v1 = B - A, v2 = P - A;
+    return v1.det(v2)/v1.length();
+}
+Point a[100005],Hull[200000];
+double Ang[100005];
+bool cmp(double a, double b)
+{
+    //if (a - b &gt; PI) b += 2*PI;
+   // else if (b - a &gt; PI) a += 2*PI;
+    return a &lt; b;
+}
 int main()
 {
-    int T;
-    int x0,y0;
-    cin&gt;&gt;T;
-    while (T--)
+   // freopen("in.txt","r",stdin);
+    int n;
+    scanf("%d", &amp;n);
+    for (int i = 0; i &lt; n; i++)
+        scanf("%lf%lf", &amp;a[i].x, &amp;a[i].y);
+    int m = ConvexHull(a, n, Hull);
+    for (int i = 0 ; i &lt; m; i ++)
+        Ang[i] = (Hull[next] - Hull[i]).Angle();
+    Point p1,p2;
+    while (scanf("%lf%lf%lf%lf", &amp;p1.x, &amp;p1.y, &amp;p2.x, &amp;p2.y) != EOF)
     {
-        bool ans=false;
-        memset(player,0,sizeof(player));
-        scanf("%d%d",&amp;x0,&amp;y0);
-        gate=getGateSection(x0,y0);
-        for (int i=1;i&lt;=11;i++)
-        {
-            int x,y;
-            double r;
-            scanf("%d%d%lf",&amp;x,&amp;y,&amp;r);
-            player[i]=getPlayerSection(x,y,r,x0,y0);
-        }
-        sort(&amp;player[1],&amp;player[1]+11,cmp);
-        int n=11;
-        if (player[1].left&gt;gate.left) ans=true;
-        else
-        {
-            while (player[n].left&gt;gate.right) n--;
-            double MAX=-100;
-            for (int i=1;i&lt;=n;i++)
-                MAX=max(player[i].right,MAX);
-            if (MAX&lt;gate.right)
-                ans=true;
-            else
-            {
-                while (1)
-                {
-                    int i=1;
-                    while (player[i].right&lt;player[n].left)
-                        i++;
-                    if (i==n)
-                    {
-                        ans=true;
-                        break;
-                    }
-                    while (i&gt;=1&amp;&amp;player[i].right&gt;=player[n].left) i--;
-                    i++;
-                    if (i&lt;=1||player[i].left&lt;=gate.left) break;
-                    n=i;
-                }
-            }
-        }
-        if (ans) printf("Shoot!\n");
-        else printf("Poor Mays!\n");
+        bool flag = true;
+        int aa = upper_bound(Ang, Ang+m, (p2-p1).Angle(), cmp) - Ang;
+        int bb = upper_bound(Ang, Ang+m, (p1-p2).Angle(), cmp) - Ang;
+        double d1 = DistanceToLine(Hull[aa], p1, p2);
+        double d2 = DistanceToLine(Hull[bb], p1, p2);
+        if (n &gt; 1 &amp;&amp; dcmp(d1*d2) &lt; 0) flag = false;
+        if (flag) printf("GOOD\n");
+        else printf("BAD\n");
     }
 }
 </code></pre>
 
-<p>接下来，我来谈谈那种很恶心的情况，题目数据中没有出现，如果出现了我的代码应该是A不了的。 就是那种球员的防守范围跟球场边界有交点的情况（你们可以自己画一下），在这种情况下，可能出现实际防守范围小于你根据上述方法求出来的防守范围的情况(也可能不小于）。这样求防守范围就很麻烦了。我的想法是先根据几何知识求切点，然后看切点是否在球场内，最后根据切点状态来求范围，很麻烦是不是？如果你们谁有好的办法的话记得告诉我一声，谢谢！！ （PS：到此，这篇博客算是写完了，这样粘代码太难受了，下次我也直接附代码的链接了）</p>
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[POJ1133]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/poj1133/"/>
+    <updated>2015-08-10T16:55:42+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/poj1133</id>
+    <content type="html"><![CDATA[<p>这次被%lf卡了，学乖了，查了一下！</p>
+
+<p>先说查到的东西。</p>
+
+<!--more-->
+
+
+<blockquote><blockquote><p>printf的%f说明符的确既可以输出float型又可以输出double型。根据“默认参数提升”规则（在printf这样的函数的可变参数列表中，不论作用域内有没有原型，都适用这一规则）float型会被提升为double型。因此printf()只会看到双精度数。（严格地讲，%lf在printf下是未定义的，但是很多系统可能会接受它。要确保可移植性，就要坚持使用%f。）</p></blockquote></blockquote>
+
+<p>对于scanf，情况就完全不同了，它接受指针，这里没有类似的类型提升。（通过指针）向float存储和向double存储大不一样，因此，scanf区别%f和%lf。（以上摘自poj1113讨论区）</p>
+
+<p>总的来说，就是输入的时候，float用%f,double用%lf，输出都用%f；</p>
+
+<p>至于这道题，就是一道很简单的凸包问题，求一个凸包，然后求凸包周长，加上一个半径为L的圆的周长！至于证明，简单说一下，题目其实就是要求转角为弧线，而这个弧线的圆心角应该是凸包的外角，而凸包的外角就是凸多边形的外角，多边形外角和为360度，所以必定要增加的是一个圆的周长。</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;cstring&gt;
+#include &lt;algorithm&gt;
+#define next (i+1)%m
+const double eps = 1e-8;
+int dcmp(double a)
+{
+    if (fabs(a) &lt; eps) return 0;
+    return a &lt; 0 ? -1 : 1;
+}
+double add(double a, double b)
+{
+    if (fabs(a+b) &lt; eps * (fabs(a) + fabs(b)))
+        return 0;
+    return a+b;
+}
+struct Point{
+    double x,y;
+    Point(){}
+    Point(double x, double y) : x(x),y(y){}
+    bool operator &lt; (const Point p) const{return dcmp(x-p.x) &lt; 0 || dcmp(x-p.x) == 0 &amp;&amp; dcmp(y-p.y) &lt; 0;}
+    bool operator == (const Point p) const{return dcmp(x-p.x) == 0 &amp;&amp; dcmp(y-p.y) == 0;}
+    Point operator + (Point p) {return Point(add(x, p.x), add(y, p.y));}
+    Point operator - (Point p) {return Point(add(x, -p.x), add(y, -p.y));}
+    double dot(Point p) {return add(x*p.x, y*p.y);}
+    double det(Point p) {return add(x*p.y, -y*p.x);}
+    double length() {return sqrt(add(x*x, y*y));}
+    double Angle(Point p) {return acos(add(x*p.x, y*p.y)/length()/p.length());}
+};
+
+int ConverHull(Point *a, int n, Point *res)
+{
+    std::sort(a,a+n);
+    int m = 0;
+    for (int i = 0; i &lt; n; i ++)
+    {
+        while (m &gt; 1 &amp;&amp; (res[m-1] - res[m-2]).det(a[i] - res[m-1]) &lt;= 0) m--;
+        res[m++] = a[i];
+    }
+    int k = m;
+    for (int i = n-2; i &gt;= 0 ; i --)
+    {
+        while (k &gt; m &amp;&amp; (res[k-1] - res[k-2]).det(a[i] - res[k-1]) &lt;= 0) k--;
+        res[k++] = a[i];
+    }
+    if (n &gt; 1) k--;
+    return k;
+}
+
+Point a[1005],Hull[2000];
+int main()
+{
+    int n,r;
+    scanf("%d%d",&amp;n, &amp;r);
+    const double PI = acos(-1);
+    const double L = 2*acos(-1)*r;
+    for (int i = 0; i &lt; n ; i ++)
+        scanf("%lf%lf", &amp;a[i].x, &amp;a[i].y);
+    int m = ConverHull(a,n,Hull);
+    double ans = 0;
+    for (int i = 0; i &lt; m; i ++)
+    {
+        Point now = Hull[next] - Hull[i];
+        ans += now.length();
+    }
+    ans += L;
+    printf("%.0f\n",ans);
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[HDU 4977 a Simple Problem From ZOJ.]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/hdu-4977-a-simple-problem-from-zoj/"/>
+    <updated>2015-08-10T16:53:56+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/hdu-4977-a-simple-problem-from-zoj</id>
+    <content type="html"><![CDATA[<p>2014多校联合训练十——1007</p>
+
+<!--more-->
+
+
+<p>这道题，如果只说搞这道题的时间的话，大概一整天吧，最后在题解的帮助下过了！</p>
+
+<p>思路，先求一个凸包，因为直接如果有包含不了的点，肯定是在凸包上，（因为凸包内的点如果不能包含，凸包上绝对有不能包含的点；凸包上的点被全部被包含，凸包内的点也肯定会被包含。我用的是Andrew算法来求凸包的，需要注意的一点是（被这点坑了好久），由于酱紫求凸包的时候，可能扫描到已经放入凸包的点，所以数组的下标可能超过点的个数，也就是说如果你的数组开小了的话，可能会越界。解决方法很简单，把数组开到原来的二倍，或者，把点放进凸包的时候判断下之前是否放了进去，第一种节省代码量，第二种节省空间</p>
+
+<p>求出凸包上的点之后，就根据凸包上相邻的两个点与六角星的限制关系来求出对应的旋转区间就行，当然，需要选取一个初始方向，我是设六角星的一个角与x轴平行时的极角为0的！如果其中一个点到中心的比六角星的一个角到中心的距离还要远的话，就必定不能覆盖了！如果在此之内，有以下几种情况。</p>
+
+<p>1.两点均不在六角星内圆外</p>
+
+<p><img src="/pictures/hdu4977/allinside.png" alt="" /></p>
+
+<p>（PS：上图如果点在边上也是可以的，只要不在圆外就好） 在这种情况下，所有的区间是都符合的，所以他对求交的结果没有影响的！不用去管他了就！</p>
+
+<p>2.两点均在六角星内圆外</p>
+
+<p>而在这种情况下，又有以下几种情况：</p>
+
+<p>(1) 线段与圆没有交点</p>
+
+<p><img src="/pictures/hdu4977/alloutside.png" alt="" /></p>
+
+<p>在这种情况下，求出对应于这个线段的旋转区间就好</p>
+
+<p>(2) 线段与圆有一个交点</p>
+
+<p><img src="/pictures/hdu4977/tangency1.png" alt="" /></p>
+
+<p>这种情况下，必然是想切线段交点为sol[0] = sol[1]，只需要求出对应的两段线段的旋转区间就好</p>
+
+<p>(3) 线段与圆有两个交点</p>
+
+<p><img src="/pictures/hdu4977/intersection.png" alt="" /></p>
+
+<p>这种情况下，求对应两段在外面的线段的旋转区间就好！</p>
+
+<p>3.其中一点不在圆外，另一点在圆外</p>
+
+<p><img src="/pictures/hdu4977/InsideOutside.png" alt="" />
+<img src="/pictures/hdu4977/tangency2.png" alt="" /></p>
+
+<p>这种情况只要求出跟圆的一个交点就行了，然后求对应在外面的线段的旋转区间！</p>
+
+<p>通过上面的处理，我们就能把这个问题转化成求对应一个线段的旋转区间，最后看对应的区间的交集是否为空的问题！</p>
+
+<p>简单说下怎么求对应一个线段的旋转区间，首先假设某个点P跟中心的距离为l，如果这个点在六角星的边上，可以求出一个对应的中心角，这个用正弦定理或者余弦定理都能求出来。那么角度的旋转范围就是向量OP的极角加减对应的求出来的中心角（想想，为什么？）。有关求极角有点需要强调对向量（x,y）求极角，用atan2(y,x)返回的值是（-PI,PI)的，开区间闭区间不重要，浮点数本身就是不精确的，所以需要注意范围</p>
+
+<p>接下里是从标程中学到的求不同区间的对应的交集的方法！</p>
+
+<p>具体请结合后来给的代码来体味下，我可能说不很清楚，需要自己来理解！</p>
+
+<p>有一个cnt，来记录总共有多少组区间被放到了ans中去（注意，是“组”，不是“个”），ans是一个pair&lt;double,int>类的数组，其中double记录角度，int记录这个角度是记录的每个区间的l还是r，让代表l的int小于代表r的int就好，然后按照字典序来排序！而标程中选取的计算区间为-PI到PI，所以如果有一个超过了PI，他会减去2*PI，但是，这样可能出现r超过了PI，但是l却没有超过PI，这样就会出现l>r的情况，cnt要减1,为什么要减一呢？这得从他是如何来利用这个cnt来说起！cnt记录的是符合条件的组数，所以只要碰到不少于cnt个不被封闭的l（不被封闭就是没有碰到自己对应的r）就好（当然，是按照字典序排序了之后的），自己捣一下逻辑想想为什么吧！而之前如果出现一个r会让计数少1,所以cnt要减1,不知道有没有解释清楚！这是我主要的参考标程的地方！</p>
+
+<p>下面挂两个代码，一个是我自己参考标程的cnt做法后改的自己的代码,另一个是按照标程的方法改的自己的代码，其实就是求区间时的分类标准不一样而已！</p>
+
+<p>代码1</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;algorithm&gt;
+#include &lt;cmath&gt;
+#include &lt;vector&gt;
+#define next (i+1)%n
+const double eps = 1e-8;
+using namespace std;
+const double PI = acos(-1.0);
+const double sqrt3 = sqrt(3.0);
+
+int dcmp(double x)//精度比较
+{
+    if (x &lt; -eps) return -1;
+    else if (x &gt; eps) return 1;
+    else return 0;
+}
+
+
+double add(double a, double b)//考虑到精度的加法
+{
+    if (abs(a + b) &lt; eps * (abs(a) + abs(b))) return 0;
+    return a + b;
+}
+
+
+struct Point//也可看做向量
+{
+    double x,y;
+    Point() {}
+    Point(double x,double y) : x(x),y(y){}
+    Point operator + (Point p) {return Point(add(x, p.x),add(y, p.y)); }//向量 + 向量 = 向量
+    Point operator - (Point p) {return Point(add(x, -p.x),add(y, -p.y)); } // 向量 - 向量 = 向量
+    Point operator * (double a) {return Point(x * a, y * a); }// 向量 * 数 = 向量
+    Point operator / (double a) {return Point(x / a, y / a); }//向量 / 数 = 向量
+    bool operator &lt; (const Point p) const {return dcmp(x - p.x) &lt; 0 || dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y)&lt;0; } //字典序比较，重定义&lt;
+    bool operator == (const Point p) const {return dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y) == 0; }//重定义 ==
+    double dot(Point p) {return add(x * p.x, y * p.y); }//点积
+    double det(Point p) {return add(x * p.y, -y * p.x); }//叉积,旋转方向取逆时针
+    double length() {return sqrt(x*x + y*y); }//向量长度
+    double Angle() {return atan2(y,x);}//两向量夹角
+    Point Rotate(double rad) {return Point(add(x * cos(rad),- y * sin(rad)), add(x * sin(rad), y * cos(rad))); }//逆时针旋转rad
+    Point Normal() {return Point(-y / length(), x / length()); }//求单位法向量
+};
+
+typedef Point Vector;
+int ConvexHull(Point* p,int n, Point* ch)
+{
+    sort(p,p+n);
+    int m = 0;
+    for (int i = 0; i &lt; n ; i ++)
+    {
+        while (m &gt; 1 &amp;&amp; (ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m --;
+        ch[m++] = p[i];
+    }
+    int k = m;
+    for (int i = n-2; i &gt;= 0; i--)
+    {
+        while (m &gt; k &amp;&amp;(ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m--;
+        ch[m++] = p[i];
+    }
+    if (n &gt; 1) m--;
+    return m;
+}
+struct Circle
+{
+    Point c;
+    double r;
+    Circle(){}
+    Circle(Point c, double r): c(c),r(r){}
+    Point point(double a)
+    {
+        return Point(c.x + cos(a)*r, c.y + sin(a)*r);
+    }
+}C;
+
+int getLineCircleIntersection(Point p,Vector v,Circle C,Point sol[])
+{
+    double t1,t2;
+    double a= v.x, b = p.x - C.c.x, c = v.y, d = p.y - C.c.y;
+    double e = a*a + c*c, f = 2*(a*b + c*d), g = b*b + d*d -C.r*C.r;
+    double delta = f*f - 4*e*g;
+    if (dcmp(delta) &lt; 0) return 0;
+    if (dcmp(delta) == 0)
+    {
+        t1 = t2 = -f / (2 * e); sol[0] = p + v*t1;
+        return 1;
+    }
+    t1 = (-f - sqrt(delta)) / (2*e); sol[0] = p + v*t1;
+    t2 = (-f + sqrt(delta)) / (2*e); sol[1] = p + v*t2;
+    return 2;
+}
+
+double getAngle(double R, double l)//得到一点对应的角度
+{
+    return asin(R * sin( PI/6 ) / l) - PI/6;
+}
+int cnt;
+vector &lt;pair&lt;double,int&gt; &gt; ans;
+bool Section(Point a,Point b,double R)
+{
+    double da = getAngle(R, a.length()), db = getAngle(R, b.length());
+    double aa = a.Angle(), bb = b.Angle();
+    if (dcmp(aa-bb-PI) &gt; 0) aa-=2*PI;
+    else if(dcmp(bb-aa-PI) &gt; 0) bb-=2*PI;
+    double l=max(aa-da,bb-db), r = min(aa+da,bb+db);
+    if (r&lt;l)
+        return false;
+    cnt++;
+    for(int i=0;i&lt;6;i++)
+    {
+        l+=PI/3,r+=PI/3;
+        if(l&gt;=PI) l -= 2*PI;
+        if(r&gt;=PI) r -= 2*PI;
+        ans.push_back(make_pair(l,-1));
+        ans.push_back(make_pair(r,1) );
+        if(r &lt; l) cnt--;
+    }
+    return true;
+}
+
+bool getSection(Point a, Point b, Circle C)
+{
+    if (dcmp(a.length()-C.r) &lt;= 0 &amp;&amp; dcmp(b.length()-C.r) &lt;= 0)
+        return true;
+    Point psol[2];
+    int n = getLineCircleIntersection(a, b-a, C, psol);
+    if(n == 0)
+        return Section(a, b, C.r*sqrt3);
+    else if (n == 1)
+    {
+        if ((a-b).length() &lt; max((a-psol[0]).length(), (b-psol[0]).length()))
+            return Section(a,b,C.r*sqrt3);
+        else
+            return Section(a,psol[0],C.r*sqrt3) &amp;&amp; Section(b,psol[0],C.r*sqrt3);
+    }
+    else if (n == 2)
+    {
+        Point p1,p2;
+        if (dcmp(a.length()-C.r) &lt;= 0)
+        {
+            p1 = b;
+            if ((b-psol[0]).length() &lt; (b-psol[1]).length())
+                p2 = psol[0];
+            else
+                p2 = psol[1];
+            return Section(p1, p2, C.r*sqrt3);
+        }
+        else if (dcmp(b.length()-C.r) &lt;= 0)
+        {
+            p1 = a;
+            if ((a-psol[0]).length() &lt; (a-psol[1]).length())
+                p2 = psol[0];
+            else
+                p2 = psol[1];
+            return Section(p1,p2,C.r*sqrt3);
+        }
+        else if (dcmp((b-psol[0]).length()+(a-psol[0]).length()-(a-b).length()) == 0)
+            return Section(a,psol[0], C.r*sqrt3) &amp;&amp; Section(b, psol[1], C.r*sqrt3);
+        else
+            return Section(a,b,C.r*sqrt3);
+
+    }
+}
+
+Point P[2000],Hull[2000];
+int main()
+{
+    int T;
+    freopen("1007.in","r",stdin);
+    scanf("%d",&amp;T);
+    for (int kase = 1; kase &lt;= T; kase ++)
+    {
+        int m,r;
+        Circle C = Circle(Point(0,0),0);
+        scanf("%d%lf", &amp;m, &amp;C.r);
+        const double R = C.r*sqrt3;
+        bool flag = true;
+        for (int i = 0; i &lt; m; i++)
+            scanf("%lf%lf", &amp;P[i].x, &amp;P[i].y);
+        int n = ConvexHull(P, m, Hull);
+        ans.clear();
+        cnt = 0;
+        for (int i = 0; i &lt; n; i++)
+        {
+
+            if (dcmp(Hull[i].length()-R) &gt; 0 || dcmp(Hull[next].length()-R) &gt; 0)
+            {
+                flag = false;
+                break;
+            }
+            flag = getSection(Hull[i],Hull[next],C);
+            if(!flag) break;
+        }
+
+        if (flag)
+        {
+            sort(ans.begin(), ans.end());
+            int now = 0,h = 0;
+            for (int i = 0; i &lt; ans.size(); i++)
+            {
+                now -= ans[i].second;
+                if (h == cnt)
+                    break;
+                h = max(h, now);
+            }
+            if (h!=cnt)
+                flag = false;
+        }
+        printf("Case #%d: ", kase);
+        if (flag) printf("Succeeded.\n");
+        else printf("Failed.\n");
+    }
+}
+</code></pre>
+
+<p>代码2</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;algorithm&gt;
+#include &lt;cmath&gt;
+#include &lt;vector&gt;
+#define next (i+1)%n
+const double eps = 1e-8;
+using namespace std;
+const double PI = acos(-1);
+const double sqrt3 = sqrt(3);
+
+int dcmp(double x)//精度比较
+{
+    if (x &lt; -eps) return -1;
+    else if (x &gt; eps) return 1;
+    else return 0;
+}
+
+
+double add(double a, double b)//考虑到精度的加法
+{
+    if (abs(a + b) &lt; eps * (abs(a) + abs(b))) return 0;
+    return a + b;
+}
+
+
+struct Point//也可看做向量
+{
+    double x,y;
+    Point() {}
+    Point(double x,double y) : x(x),y(y){}
+    Point operator + (Point p) {return Point(add(x, p.x),add(y, p.y)); }//向量 + 向量 = 向量
+    Point operator - (Point p) {return Point(add(x, -p.x),add(y, -p.y)); } // 向量 - 向量 = 向量
+    Point operator * (double a) {return Point(x * a, y * a); }// 向量 * 数 = 向量
+    Point operator / (double a) {return Point(x / a, y / a); }//向量 / 数 = 向量
+    bool operator &lt; (const Point p) const {return dcmp(x - p.x) &lt; 0 || dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y)&lt;0; } //字典序比较，重定义&lt;
+    bool operator == (const Point p) const {return dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y) == 0; }//重定义 ==
+    double dot(Point p) {return add(x * p.x, y * p.y); }//点积
+    double det(Point p) {return add(x * p.y, -y * p.x); }//叉积,旋转方向取逆时针
+    double length() {return sqrt(x*x + y*y); }//向量长度
+    double Angle() {return atan2(y,x);}//两向量夹角
+    Point Rotate(double rad) {return Point(add(x * cos(rad),- y * sin(rad)), add(x * sin(rad), y * cos(rad))); }//逆时针旋转rad
+    Point Normal() {return Point(-y / length(), x / length()); }//求单位法向量
+};
+
+typedef Point Vector;
+int ConvexHull(Point* p,int n, Point* ch)//求凸包，凸包的点按照逆时针保存在*ch中。
+{
+    sort(p,p+n);
+    int m = 0;
+    for (int i = 0; i &lt; n ; i ++)
+    {
+        while (m &gt; 1 &amp;&amp; (ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m --;
+        ch[m++] = p[i];
+    }
+    int k = m;
+    for (int i = n-2; i &gt;= 0; i--)
+    {
+        while (m &gt; k &amp;&amp;(ch[m-1] - ch[m-2]).det(p[i] - ch[m-2]) &lt;= 0) m--;
+        ch[m++] = p[i];
+    }
+    if (n &gt; 1) m--;
+    return m;
+}
+struct Circle//圆的定义，其中定义了求圆上与极轴成a度角的点的坐标
+{
+    Point c;
+    double r;
+    Circle(){}
+    Circle(Point c, double r): c(c),r(r){}
+    Point point(double a)
+    {
+        return Point(c.x + cos(a)*r, c.y + sin(a)*r);
+    }
+}C;
+
+int getLineCircleIntersection(Point p,Vector v,Circle C,Point sol[])//求圆与直线的交点，返回交点个数并将交点按顺序放在sol[]离
+{
+    double t1,t2;
+    double a= v.x, b = p.x - C.c.x, c = v.y, d = p.y - C.c.y;
+    double e = a*a + c*c, f = 2*(a*b + c*d), g = b*b + d*d -C.r*C.r;
+    double delta = f*f - 4*e*g;
+    if (dcmp(delta) &lt; 0) return 0;
+    if (dcmp(delta) == 0)
+    {
+        t1 = t2 = -f / (2 * e); sol[0] = sol[1] = p + v*t1;
+        return 1;
+    }
+    t1 = (-f - sqrt(delta)) / (2*e); sol[0] = p + v*t1;
+    t2 = (-f + sqrt(delta)) / (2*e); sol[1] = p + v*t2;
+    return 2;
+}
+
+double getAngle(double R, double l)//得到一点对应的角度
+{
+    return asin(R * sin( PI/6 ) / l) - PI/6;
+}
+
+bool OnSegment(Point p, Point a1, Point a2)//判断点是否在线段上,如果是不包括两端点的线段，把后面的相等去掉即可。
+{
+    return dcmp((a1 - p).det(a2 - p)) == 0 &amp;&amp; dcmp((a1 - p).dot(a2 - p)) &lt; 0;
+}
+
+int cnt;
+vector &lt;pair&lt;double,int&gt; &gt; ans;
+bool Section(Point a,Point b,double R)//给出求出的圆外线段两点a,b,R（六角星中心到六角星一个角顶点的距离），求对应的区间，放在ans中
+{
+    double aa = a.Angle(), bb = b.Angle();
+    double da = getAngle(R, a.length()), db = getAngle(R, b.length());
+    if (dcmp(aa-bb-PI) &gt; 0) aa-=2*PI;
+    else if(dcmp(bb-aa-PI) &gt; 0) bb-=2*PI;
+    double l=max(aa-da,bb-db), r = min(aa+da,bb+db);
+    if (dcmp(r-l)&lt;0)
+        return false;
+    cnt++;//题解中有解释
+    for(int i=0;i&lt;6;i++)
+    {
+        l+=PI/3,r+=PI/3;
+        if(dcmp(l-PI)&gt;=0) l -= 2*PI;
+        if(dcmp(r-PI)&gt;=0) r -= 2*PI;
+        ans.push_back(make_pair(l,-1));
+        ans.push_back(make_pair(r,1) );
+        if(r &lt; l) cnt--;//如果发生这种情况，说明在刚开始多出来一个r区间，应该减去一个计数
+    }
+    return true;
+}
+bool getSection(Point a, Point b, Circle C)//给定两点，分情况求解
+{
+    double lena = a.length(),lenb = b.length();
+    if (dcmp(lena-C.r) &lt;= 0 &amp;&amp; dcmp(lenb-C.r) &lt;= 0)//都在圆内，肯定满足，相当于全区间满足，所以不用计数，也不用放进ans去
+        return true;
+    Point sol[2];
+    int n = getLineCircleIntersection(a,b-a,C,sol);
+    double R = C.r*sqrt3;
+    if (dcmp(lena-C.r) &gt; 0 &amp;&amp; dcmp(lenb - C.r) &gt; 0)//都在圆外
+    {
+        if (n == 0) return Section(a,b,R);
+        bool judge0 = OnSegment(sol[0],a,b);//与圆的第一个交点在线段上
+        bool judge1 = OnSegment(sol[1],a,b);//与圆的第二个交点在线段上
+        if (judge0 || judge1)//一个交点相当于两个交点重合，两个交点就是两个交点，所以对应的代码是一样的
+            return Section(a,sol[0],R) &amp;&amp; Section(sol[1],b,R);
+        return Section(a, b, R);//没有交点的话，就是整个线段在圆外
+    }
+    if (dcmp(lena - C.r) &gt; 0)//a点在圆内
+        return Section(a,sol[0],R);
+    return Section(sol[1],b,R);//b点在圆内
+}
+
+Point P[2000],Hull[2000];//这个不明白，明明题目中说的最多有1000个镜像，为毛开1005会TLE T_T
+int main()
+{
+    int T;
+    scanf("%d",&amp;T);
+    for (int kase = 1; kase &lt;= T; kase ++)
+    {
+        int m,r;
+        Circle C = Circle(Point(0,0),0);
+        scanf("%d%lf", &amp;m, &amp;C.r);
+        const double R = C.r*sqrt3;
+        bool flag = true;
+        for (int i = 0; i &lt; m; i++)
+            scanf("%lf%lf", &amp;P[i].x, &amp;P[i].y);
+        int n = ConvexHull(P, m, Hull);
+        ans.clear();
+        cnt = 0;
+        for (int i = 0; i &lt; n &amp;&amp; flag; i++)
+        {
+
+            if (dcmp(Hull[i].length()-R) &gt; 0 || dcmp(Hull[next].length()-R) &gt; 0)
+            {
+                flag = false;
+                break;
+            }
+            flag = getSection(Hull[i],Hull[next],C);
+        }
+
+        if (flag)//这个过程会在题解里解释
+        {
+            sort(ans.begin(), ans.end());
+            int now = 0,h = 0;
+            for (int i = 0; i &lt; ans.size(); i++)
+            {
+                now -= ans[i].second;
+                if (h == cnt)
+                    break;
+                h = max(h, now);
+            }
+            if (h!=cnt)
+                flag = false;
+        }
+        printf("Case #%d: ", kase);
+        if (flag) printf("Succeeded.\n");
+        else printf("Failed.\n");
+    }
+}
+</code></pre>
+
+<p>最后说下在标程中学到的一种小技巧，就是便利整个凸包的所有的边可以这样</p>
+
+<pre><code class="c++">for (int i = 0 ; i &lt; n ; i ++)
+    Vector edge = Hull[(i+1)%n] - Hull[i];
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[平面几何点与线段相关总结]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/ping-mian-ji-he-dian-yu-xian-duan-xiang-guan-zong-jie/"/>
+    <updated>2015-08-10T16:53:06+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/ping-mian-ji-he-dian-yu-xian-duan-xiang-guan-zong-jie</id>
+    <content type="html"><![CDATA[<p>今天，也算是搞了一天的这个东西吧，不过效率有点低了，只弄了弄平面几何中点与线的关系和多边形的面积。我把刘汝佳的白书和日本人的白书上的东西整合了下，当作自己的模板吧！</p>
+
+<!--more-->
+
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+const double eps = 1e-10;
+using namespace std;
+
+
+int dcmp(double x)//精度比较
+{
+    if (x &lt; -eps) return -1;
+    else if (x &gt; eps) return 1;
+    else return 0;
+}
+
+
+double add(double a, double b)//考虑到精度的加法
+{
+    if (abs(a + b) &lt; eps * (abs(a) + abs(b))) return 0;
+    return a + b;
+}
+
+
+struct Point//也可看做向量
+{
+    double x,y;
+    Point() {}
+    Point(double x,double y) : x(x),y(y){}
+    Point operator + (Point p) {return Point(add(x, p.x),add(y, p.y)); }//向量 + 向量 = 向量
+    Point operator - (Point p) {return Point(add(x, -p.x),add(y, -p.y)); } // 向量 - 向量 = 向量
+    Point operator * (double a) {return Point(x * a, y * a); }// 向量 * 数 = 向量
+    Point operator / (double a) {return Point(x / a, y / a); }//向量 / 数 = 向量
+    bool operator &lt; (const Point p) const {return dcmp(x - p.x) &lt; 0 || dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y)&lt;0; } //字典序比较，重定义&lt;
+    bool operator == (const Point p) const {return dcmp(x - p.x) == 0 &amp;&amp; dcmp(y - p.y) == 0; }//重定义 ==
+    double dot(Point p) {return add(x * p.x, y * p.y); }//点积
+    double det(Point p) {return add(x * p.y, -y * p.x); }//叉积,旋转方向取逆时针
+    double length() {return sqrt(x*x + y*y); }//向量长度
+    double Angle(Point p) {return acos(add(x * p.x, y * p.y)/ length() / p.length() );}//两向量夹角
+    Point Rotate(double rad) {return Point(add(x * cos(rad),- y * sin(rad)), add(x * sin(rad), y * cos(rad))); }//逆时针旋转rad
+    Point Normal() {return Point(-y / length(), x / length()); }//求单位法向量
+};
+
+
+typedef Point Vector;//向量跟点的表示方法一样
+//点与直线相关操作。
+
+
+Point GetLineIntersection(Point P, Vector v, Point Q, Vector w)//找两直线交点，用点加向量的表示方法来表示直线。参数表示直线P + t*v和 Q + t*w；
+{
+    Vector u = P - Q;
+    return P + v*(w.det(u) / v.det(w));
+}
+
+
+double DistanceToLine(Point P, Point A, Point B)//点到直线距离
+{
+    Vector v1 = B - A, v2 = P - A;
+    return fabs(v1.det(v2) / v1.length());
+}
+
+
+double DistanceToSegment(Point P, Point A, Point B)//点到线段距离
+{
+    if (A == B) return (P-A).length();
+    Vector v1 = B - A, v2 = P - A, v3 = P - B;
+    if (dcmp(v1.dot(v2)) &lt; 0) return v2.length();
+    else if (dcmp(v1.dot(v3)) &gt; 0) return v3.length();
+    else return fabs(v1.det(v2) / v1.length()) ;
+}
+
+
+Point GetLineProjection(Point P, Point A, Point B)//点在直线上的投影点
+{
+    Vector v = B - A;
+    return A + v * ( v.dot(P-A) / v.dot(v));
+}
+
+
+bool SegmentProperIntersection(Point a1, Point a2, Point b1, Point b2)//判断两线段是否为“规范相交”。
+{
+    double c1 = (a2 - a1).det(b1 - a1), c2 = (a2 - a1).det(b2 - a1);
+    double c3 = (b2 - b1).det(a1 - b1), c4 = (b2 - b1).det(a2 - b1);
+    return dcmp(c1) * dcmp(c2) &lt; 0 &amp;&amp; dcmp(c3) * dcmp(c4) &lt; 0;
+}
+
+
+bool OnSegment(Point p, Point a1, Point a2)//判断点是否在线段上,如果是不包括两端点的线段，把后面的相等去掉即可。
+{
+    return dcmp((a1 - p).det(a2 - p)) == 0 &amp;&amp; dcmp((a1 - p).dot(a2 - p)) &lt; 0 || p == a1 || p ==a2;
+}
+
+
+double PolygonArea(Point* p,int n)//求多边形的有向面积，也就是求多边形面积啦，可以使凸多边形，也可以是凹多边形。
+{
+    double area = 0;
+    for(int i = 1; i &lt; n -1; i ++)
+        area += (p[i] - p[i-1]).det(p[i+1] - p[0]);
+    return area/2;
+}
+
+
+int main()
+{
+    Point a = Point(1,1),b = Point(-1,1),c = Point(-1,-1),d = Point(1,-1);
+    cout&lt;&lt;"a · b = "&lt;&lt;a.dot(b)&lt;&lt;endl;
+    cout&lt;&lt;"a x b = "&lt;&lt;a.det(b)&lt;&lt;endl;
+    cout&lt;&lt;"length of a is "&lt;&lt;a.length()&lt;&lt;endl;
+    cout&lt;&lt;"Angle of a and b is"&lt;&lt;a.Angle(b)&lt;&lt;endl;
+    cout&lt;&lt;"Rotate a by PI/4 ,then a will become ("&lt;&lt;(a.Rotate(acos(-1)/4)).x&lt;&lt;" , "&lt;&lt;(a.Rotate(acos(-1)/4)).y&lt;&lt;") "&lt;&lt;endl;
+    cout&lt;&lt;"Normal of a ("&lt;&lt;(a.Normal()).x&lt;&lt;" , "&lt;&lt;(a.Normal()).y&lt;&lt;") "&lt;&lt;endl;
+    Point ans;
+    ans = GetLineIntersection(a, a - b, b,c - b);
+    cout&lt;&lt;"Line Intersection of Line ab and Line cb is("&lt;&lt;ans.x&lt;&lt;" , "&lt;&lt;ans.y&lt;&lt;") "&lt;&lt;endl;
+    cout&lt;&lt;"Distance of a to Line bd is: "&lt;&lt;DistanceToLine(a,b,d)&lt;&lt;endl;
+    cout&lt;&lt;"Distance of a to Segment bc is: "&lt;&lt;DistanceToSegment(a,b,c)&lt;&lt;endl;
+    Point e = Point(0,1);
+    cout&lt;&lt;"DisTance of d to Segment be is:" &lt;&lt;DistanceToSegment(d,b,e)&lt;&lt;endl;
+    ans = GetLineProjection(b,a,d);
+    cout&lt;&lt;"The Projection of b to Line ad is: ("&lt;&lt;ans.x&lt;&lt;" , "&lt;&lt;ans.y&lt;&lt;") "&lt;&lt;endl;
+    ans = GetLineProjection(b,a,e);
+    cout&lt;&lt;"The projection of b to line ae is: ("&lt;&lt;ans.x&lt;&lt;" , "&lt;&lt;ans.y&lt;&lt;") "&lt;&lt;endl;
+    cout&lt;&lt;"Is segment ac and segment bd ProperIntersection?: "&lt;&lt;SegmentProperIntersection(a,c,b,d)&lt;&lt;endl;
+    cout&lt;&lt;"Is segment ab and segment bc ProperIntersection?: "&lt;&lt;SegmentProperIntersection(a,b,b,c)&lt;&lt;endl;
+    cout&lt;&lt;"Is b on segment ab?: "&lt;&lt;OnSegment(b,a,b)&lt;&lt;endl;
+    cout&lt;&lt;"Is b on segment cd?: "&lt;&lt;OnSegment(b,c,d)&lt;&lt;endl;
+}
+</code></pre>
 
 <p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
 ]]></content>
