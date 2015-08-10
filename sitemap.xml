@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://whn757397540.github.io/blog/2015/08/10/hdu-4923-room-and-moor/</loc>
+    <lastmod>2015-08-10T12:23:22+08:00</lastmod>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/blog/2015/08/10/shu-zhuang-shu-zu-zong-jie/</loc>
+    <lastmod>2015-08-10T12:22:53+08:00</lastmod>
+  </url>
+  <url>
     <loc>http://whn757397540.github.io/blog/2015/07/24/test/</loc>
     <lastmod>2015-07-24T05:57:05+08:00</lastmod>
   </url>
@@ -196,6 +204,9 @@
     <loc>http://whn757397540.github.io/blog/categories/duo-xiao/</loc>
   </url>
   <url>
+    <loc>http://whn757397540.github.io/blog/categories/duo-xiao-2014/</loc>
+  </url>
+  <url>
     <loc>http://whn757397540.github.io/tags/dong-tai-gui-hua/</loc>
   </url>
   <url>
@@ -338,5 +349,8 @@
   </url>
   <url>
     <loc>http://whn757397540.github.io/posts/3/</loc>
+  </url>
+  <url>
+    <loc>http://whn757397540.github.io/posts/4/</loc>
   </url>
 </urlset>

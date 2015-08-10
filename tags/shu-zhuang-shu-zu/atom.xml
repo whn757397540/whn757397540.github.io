@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 树状数组 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/tags/shu-zhuang-shu-zu/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-08-10T11:29:47+08:00</updated>
+  <updated>2015-08-10T13:04:28+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -12,6 +12,298 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[树状数组总结]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/08/10/shu-zhuang-shu-zu-zong-jie/"/>
+    <updated>2015-08-10T12:22:53+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/08/10/shu-zhuang-shu-zu-zong-jie</id>
+    <content type="html"><![CDATA[<p>一维树状数组应用的三种类型总结。</p>
+
+<ul>
+<li>点修改，区间查询</li>
+<li>区间修改，点查询</li>
+<li>区间修改，区间查询</li>
+</ul>
+
+
+<!--more-->
+
+
+<ul>
+<li>点修改，区间查询</li>
+</ul>
+
+
+<p>这是最基础的树状数组了，树状数组的定义就是这样的，不过一般出 题不会直接出裸的树状数组，这之中需要一些思考.树状数组我就不介绍了，直接上一个例题吧</p>
+
+<p><a href="http://code.bupt.edu.cn/problem/p/395/">BOJ 395. Tree</a></p>
+
+<p>题意大概是给你一棵树，并给每个节点一个value值（1=&lt;value &lt;= 109 ), 让你求从根节点开始，一直到某个节点（称为当前节点）的这条路中经过的所有节点，value值比当前节点大的（包括跟节点）总共有多少个。节点数100000以内，要求输出所有的节点的结果。</p>
+
+<p>废话不多说，直接说思路吧。</p>
+
+<p>首先，需要对value值进行离散化，因为你只需要知道各个点value值的大小关系，二者相差1跟相差10000没有什么区别。离散化时记得等于要按照相同的数来处理。</p>
+
+<p>然后，树状数组记录的是这样一个数组a[n]的和，其中a[i]代表搜索到当前节点时，离散化后的value值（以后称为v)为i的节点的个数。对于每个节点p，当搜索到当前节点的时候，维护树状数组的值，并求出比当前节点的v值大的总共有多少个（就是getSum(MAX)-getSum(v));搜索用的是dfs，当搜索到叶子节点后回溯时，要记得释放修改过的节点，重新维护更新树状数组。思路大概如此，如果理解了树状数组的话，结合代码应该很容易看懂</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+#include &lt;cmath&gt;
+
+#define N 100005
+
+using namespace std;
+
+vector&lt;int&gt; tree[N];
+
+
+struct data
+{
+    long long val;
+    int num;
+}value[N];
+
+int v[N],n;
+long long C[N];
+int ans[N]={0};//ans[k]´ú±í´ð°¸£»
+int MAX;
+
+int Lowbit(int n)
+{
+    return n&amp;(n^(n-1));
+}
+
+
+void Update(int k,int delta)
+{
+    while (k&lt;=n)
+    {
+        C[k]+=delta;
+        k+=Lowbit(k);
+    }
+}
+
+long long getSum(int i)
+{
+    long long result=0;
+    while (i&gt;=1)
+    {
+        result+=C[i];
+        i-=Lowbit(i);
+    }
+    return result;
+}
+
+
+void build(int i,int a)
+{
+    tree[i].push_back(a);
+}
+
+
+bool cmp(data a,data b)
+{
+    return a.val&lt;b.val;
+}
+
+void dfs(int now,int father)
+{
+    if (tree[now].size()==1&amp;&amp;now!=1)
+    {
+        ans[now]=getSum(MAX)-getSum(v[now]);
+        return;
+    }
+    for (int i=0;i&lt;tree[now].size();i++)
+    {
+        int son=tree[now][i];
+        if (son==father) continue;
+        ans[now]=getSum(MAX)-getSum(v[now]);
+        Update(v[now],1);
+        dfs(son,now);
+        Update(v[now],-1);
+    }
+}
+int main()
+{
+    int t;
+    cin&gt;&gt;t;
+    while (t--)
+    {
+        scanf("%d",&amp;n);
+        memset(v,0,sizeof(v));
+        memset(C,0,sizeof(C));
+        memset(value,0,sizeof(value));
+        MAX=0;
+        for (int i=1;i&lt;n;i++)
+        {
+            int u,v;
+            scanf("%d%d",&amp;u,&amp;v);
+            build(u,v);
+            build(v,u);
+        }
+        for (int i=0;i&lt;n;i++)
+        {
+            scanf("%d",&amp;value[i].val);
+            value[i].num=i+1;
+        }
+        sort(value,value+n,cmp);
+        int i=1,cnt=1;
+        v[value[0].num]=cnt;
+        while (i&lt;n)
+        {
+            if(value[i].val==value[i-1].val)
+                v[value[i].num]=cnt;
+            else
+                v[value[i].num]=++cnt;
+            i++;
+        }
+        MAX=cnt;
+        dfs(1,0);
+        for (int i=1;i&lt;=n;i++)
+            printf("%d\n",ans[i]);
+        for (int i=1;i&lt;=n;i++)
+            tree[i].clear();
+
+    }
+    return 0;
+}
+</code></pre>
+
+<p>另外，在放一道练习题，是我第一次接触树状数组时做的题，跟这道题一样，是一个很简单的有兴趣可以去做一做，<a href="http://poj.org/problem?id=2299">POJ 2299</a></p>
+
+<ul>
+<li>区间修改，点查询</li>
+</ul>
+
+
+<p>我目前做题还比较少，这种题还没有碰到过，就是实现对数组的区间修改，然后查询单点的值。看起来貌似是跟树状数组相反的，其实只要稍作变形，就很容易搞定。</p>
+
+<p>设a[n]为树状数组求和的数组，然后设b[n]=a[n]-a [n-1] (将a[0]设为0）;那么b[ 1 ]=a[ 1 ] ,数组b存储的就是数组a的相邻两项的差值；那么区间修改就很容易了，假如要修改[ l , r ]区间的值，那么只需要修改 b [ l ] (因为b[ l ] 存的是a[ l ]与a[ l-1 ]的差值，a[ l ]，变了，a[ l-1 ]没变，那么差值自然就变了)和b [ r+1 ] (跟前面同理)。所以这样很容易实现区间修改，那么单点查询呢？你可以试试吧b[1]到b[n]加起来，然后你就清楚了。</p>
+
+<p>至于这一部分的题嘛，我也没有见到过，毕竟做的题还不是很多。了解一下，知道想法，以后碰到了会做就行，其实树状数组更多的是作为一种中间的处理方法来用。</p>
+
+<ul>
+<li>区间修改，区间查询</li>
+</ul>
+
+
+<p>最后的这个，是最麻烦的，一般可以用线段树来实现，但这里我只说树状数组的方法（比一般的线段树要快一些）。</p>
+
+<p>这个是不能单单依靠一个树状数组来实现的，先来进行下推导吧！这个推导的时候请自行揣摩一下，要自己推出来才能记得住哦!</p>
+
+<p>首先，还是设树状数组存储的是a[ n ]的和，依然设b[ n ]=a[ n ]– a[ n – 1 ];通过上面的讨论，我们知道这样可以很容易进行区间修改和单点查询，但是呢，这里要求是是区间查询，该怎么办呢？得想办法再找到一个辅助数组。我们来进行一下推导（其中sigma代表i从1到n的求和符号）</p>
+
+<p>则sigma(a [ i ] )= a [ 1 ] + a [ 2 ] + a [ 3 ]+……+a [ n ],把a[ n ]=b [ n ] + a[ n-1 ] 代入，可以得到 原式= b [ n ] + 2 b [ n-1 ] + 3 b [ n-2 ]+……+ n b[ 1 ]= ( n+1 )sigma( b[ i ])– sigma ( i b[ i ])</p>
+
+<p>好了，推导完这些，你是不是发现了点什么？没错，数组a的前n项和可以用数组b和数组 c[ i ]=i b[ i ] 两个数组来表示，我们只需要分别设计 求 b[ i ]和求 c [ i ]的和的树状数组，就能够实现对a[ i ]的区间修改和区间查询啦！</p>
+
+<p>放一道例题，是赤果果的区间修改，区间查询， <a href="http://poj.org/problem?id=3468">POJ 3468</a>  再附上我的一个AC代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cstring&gt;
+
+#define N 100050
+using namespace std;
+
+long long a[N];
+long long B[N],C[N];
+
+int n,q;
+
+int Lowbit(int n)
+{
+  return n&amp;(n^(n-1));
+}
+
+
+void Update(int k,long long delta,long long C[])
+{
+  while (k&lt;=n)
+  {
+      C[k]+=delta;
+      k+=Lowbit(k);
+  }
+}
+
+long long getSum(int i,long long C[])
+{
+  long long result=0;
+  while (i&gt;=1)
+  {
+      result+=C[i];
+      i-=Lowbit(i);
+  }
+  return result;
+}
+
+long long getSumA(int i)
+{
+    return (i+1)*getSum(i,B)-getSum(i,C);
+}
+
+void UpdateA(int l,int r,long long det)
+{
+    Update(l,det,B);
+    Update(l,l*det,C);
+
+    Update(r+1,-det,B);
+    Update(r+1,-(r+1)*det,C);
+
+}
+int main()
+{
+    cin&gt;&gt;n&gt;&gt;q;
+    a[0]=0;
+    memset(B,0,sizeof(B));
+    memset(C,0,sizeof(C));
+
+    for (int i=1;i&lt;=n;i++)
+    {
+        scanf("%lld",&amp;a[i]);
+        long long b=a[i]-a[i-1];
+        Update(i,b,B);
+        Update(i,i*b,C);
+
+    }
+
+    for (int i=1;i&lt;=q;i++)
+    {
+        char ch;
+        scanf("%s",&amp;ch);
+
+        if (ch=='Q')
+        {
+            int l,r;
+            scanf("%d%d",&amp;l,&amp;r);
+            long long ans=getSumA(r)-getSumA(l-1);
+            printf("%lld\n",ans);
+        }
+
+        else if(ch=='C')
+        {
+            int l,r;
+            long long det;
+            scanf("%d%d%lld",&amp;l,&amp;r,&amp;det);
+            UpdateA(l,r,det);
+        }
+    }
+
+
+
+    return 0;
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[树状数组以及线段树总结]]></title>
