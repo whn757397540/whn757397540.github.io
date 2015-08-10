@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 乱搞 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/luan-gao/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T11:29:47+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/07/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-11/"/>
+    <updated>2014-08-07T10:47:56+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/07/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-11</id>
+    <content type="html"><![CDATA[<h2>第十一场</h2>
+
+<!--more-->
+
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/488/">BOJ 488. 小妹妹个数</a></p>
+
+<p>我感到了满满的恶意，这道题让我的世界观都颠覆了。。。说下收获：</p>
+
+<p>一种乱搞的方法———-打表。
+bool数组竟然可以开到10亿，惊呆了。。。</p>
+
+<p>B题 <a href="http://code.bupt.edu.cn/problem/p/480/">BOJ 480. 田田背课文递</a></p>
+
+<p>没什么说的，跟第九场地3题一样，不过数据范围大了点，不过时限也给的很宽。后缀数组加高度数组。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+const int N=100005;
+int n,k;
+int Rank[N];
+int lcp[N];
+int tmp[N];
+int sa[N];
+bool compare_sa(int i,int j)
+{
+    if (Rank[i]!=Rank[j])
+        return Rank[i]&lt;Rank[j];
+    else
+    {
+        int ri = i+k&lt;=n?Rank[i+k]:-1;
+        int rj = j+k&lt;=n?Rank[j+k]:-1;
+        return ri &lt; rj;
+    }
+}
+
+void construct_sa(string s,int sa[])
+{
+    n=s.length();
+
+    for (int i=0;i&lt;=n;i++)
+    {
+        sa[i]=i;
+        Rank[i]=i&lt;n ? s[i]:-1;
+    }
+    for (k=1;k&lt;=n;k*=2)
+    {
+        sort(sa,sa+n+1,compare_sa);
+
+        tmp[sa[0]]=0;
+        for (int i=1;i&lt;=n;i++)
+            tmp[sa[i]] = tmp[sa[i-1]] + (compare_sa(sa[i-1],sa[i])?1:0);
+        for (int i=0;i&lt;=n;i++)
+            Rank[i]=tmp[i];
+    }
+
+}
+
+void construct_lcp(string s,int sa[],int lcp[])
+{
+    n=s.length();
+    for (int i=0;i&lt;=n;i++)
+        Rank[sa[i]]=i;
+
+    int h=0;
+    lcp[0]=0;
+    for (int i=0;i&lt;n;i++)
+    {
+        int j=sa[Rank[i]-1];
+        if (h&gt;0) h--;
+        for (;j+h&lt;n&amp;&amp;i+h&lt;n;h++)
+            if (s[j+h]!=s[i+h]) break;
+        lcp[Rank[i]-1]=h;
+    }
+}
+
+int main()
+{
+    string s;
+    cin&gt;&gt;s;
+    memset(lcp,0,sizeof(lcp));
+    memset(sa,0,sizeof(sa));
+    construct_sa(s,sa);
+    construct_lcp(s,sa,lcp);
+    int ans=0;
+    for (int i=1 ;i&lt;=s.length(); i++)
+        ans=max(ans,lcp[i]);
+    printf("%d\n",ans+1);
+
+}
+</code></pre>
+
+<p>C题 <a href="http://code.bupt.edu.cn/problem/p/478/">BOJ 478. 小妹妹采蘑菇</a></p>
+
+<p>迄今为止做过的最简单的概率dp。。。思路如下。</p>
+
+<p>设dp[i]代表还有i种蘑菇没采时的步数的期望。那么显然，dp[n]=0,dp[0]就是我们要求的状态。</p>
+
+<p>在dp[i]这个状态时，可以通过再采一个蘑菇转移到下面两种状态:</p>
+
+<p>. dp[i],就是采的蘑菇是已经采到过的，概率是(n-i)/n;
+. dp[i+1],就是采的蘑菇是一种新的蘑菇，概率为i/n;
+这样的话，根据E(X+Y)=p(X)<em>E(X)+p(Y)</em>E(Y),就有dp[i]+1=(n-i)/n *dp[i] + i/n * dp[i-1];最终化简得到如下式子，dp[i-1]=dp[i]+n/i;（PS：因为采了一个蘑菇，所以前面应该是dp[i]+1，否则就与两个子状态的母状态不等价了。） 代码在这里。</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+const int N=105;
+
+double dp[N];
+
+int main()
+{
+    int n;
+    while (scanf("%d",&amp;n)!=EOF)
+    {
+        dp[n]=0;
+        for (int i=n-1;i&gt;=0;i--)
+            dp[i]=dp[i+1]+(double)n/(i+1);
+        printf("%.6lf\n",dp[0]);
+    }
+}
+</code></pre>
+
+<p>这种题有很多种思考方法，不过其核心是不变的，就是构造一个递推关系，一般这个递推关系都会用到当前状态本身，把它放到同一边就行。有关这方面，我建议去<a href="http://blog.csdn.net/morgan_xww/article/details/6775853">这个博客</a>看看。</p>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/482/">BOJ 482. 焦级长的激光炮</a></p>
+
+<p>这题暂时先算了吧，我打算搞一到两个星期的图论（图论这块太渣了T_T），打算搞完以后写个专题总结，到时候再来看这道题。是个匹配问题。</p>
+
+<p>E题 <a href="http://code.bupt.edu.cn/problem/p/489/">BOJ 489. 小妹妹去划船</a></p>
+
+<p>这题其实挺水的，估计没有人不会，思路就不写了。学到了一点，也是以前没有注意的一点，用指针必须申请内存，即便你是用指针来表示字符串。挂下代码吧！</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+const int MAXN=100005;
+const double esp=1e-9;
+int S[MAXN],N[MAXN],W[MAXN],E[MAXN];
+int t,cnts,cntn,cntw,cnte,sx,sy,ex,ey;
+int main()
+{
+    char s[MAXN];
+    while (~scanf("%d%d%d%d%d",&amp;t,&amp;sx,&amp;sy,&amp;ex,&amp;ey))
+    {
+        scanf("%s",s);
+        cnts=cntn=cntw=cnte=0;
+        int len=strlen(s);
+        for (int i=0;i&lt;len;i++)
+        {
+            switch (s[i])
+            {
+                case 'S': S[++cnts]=i+1; break;
+                case 'N': N[++cntn]=i+1; break;
+                case 'W': W[++cntw]=i+1; break;
+                case 'E': E[++cnte]=i+1; break;
+            }
+        }
+        int dx=ex-sx,dy=ey-sy;
+        int ans=0;
+        if (ex&gt;sx)
+        {
+            if (cnte&gt;=dx)
+                ans=max(ans,E[dx]);
+            else
+            {
+                printf("-1\n");
+                continue;
+            }
+        }
+        else if (ex&lt;sx)
+        {
+            if (cntw&gt;=(-dx))
+                ans=max(ans,W[-dx]);
+            else
+            {
+                printf("-1\n");
+                continue;
+            }
+        }
+
+        if (ey&gt;sy)
+        {
+            if (cntn&gt;=dy)
+                ans=max(ans,N[dy]);
+            else
+            {
+                printf("-1\n");
+                continue;
+            }
+        }
+        else if (ey&lt;sy)
+        {
+            if (cnts&gt;=(-dy))
+                ans=max(ans,S[-dy]);
+            else
+            {
+                printf("-1\n");
+                continue;
+            }
+        }
+        printf("%d\n",ans);
+    }
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
+]]></content>
+  </entry>
+  
+</feed>

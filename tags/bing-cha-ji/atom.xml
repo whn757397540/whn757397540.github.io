@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 并查集 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/bing-cha-ji/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T11:29:47+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/07/26/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-6/"/>
+    <updated>2014-07-26T09:16:10+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/07/26/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-6</id>
+    <content type="html"><![CDATA[<h2>第六场</h2>
+
+<!--more-->
+
+
+<p>又被精度问题恶心了一天。。。T_T</p>
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/447/">BOJ 447. 修路</a></p>
+
+<p>很裸的一个生成树问题（由于没有权值，所以不是最小生成树），或者说，就是一个并查集。（可悲的是我竟然忘了写EOF而T了一次T_T）。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+#define MOD 1000000007
+#define N 10005
+
+using namespace std;
+
+int father[N];
+int u[200005],v[200005];
+
+int getfather(int x)
+{
+    if (x!=father[x]) father[x]=getfather(father[x]);
+    return father[x];
+}
+
+bool PlusJudge(int x,int y)
+{
+    int a=getfather(x);
+    int b=getfather(y);
+    if (a==b) return true;
+    else return false;
+}
+
+void getPlus(int x,int y)
+{
+    int a=getfather(x);
+    int b=getfather(y);
+    father[b]=a;
+}
+
+int main()
+{
+    int n,m;
+
+    while (~scanf("%d%d",&amp;n,&amp;m))
+    {
+        int cnt=0;
+        memset(father,0,sizeof(father));
+        memset(u,0,sizeof(u));
+        memset(v,0,sizeof(v));
+        for (int i=1;i&lt;=n;i++)
+            father[i]=i;
+        for (int i=1;i&lt;=m;i++)
+        {
+            int s;
+            scanf("%d%d%d",&amp;u[i],&amp;v[i],&amp;s);
+            if (s==0)
+                getPlus(u[i],v[i]);
+        }
+        for (int i=1;i&lt;=m;i++)
+        {
+            if (!PlusJudge(u[i],v[i]))
+            {
+                getPlus(u[i],v[i]);
+                cnt++;
+            }
+        }
+        printf("%d\n",cnt);
+    }
+}
+</code></pre>
+
+<p>B题 <a href="http://code.bupt.edu.cn/problem/p/445/">BOJ 445. 高兴</a></p>
+
+<p>学长讲了之后才发现是一个旅行商问题，用状压DP就可以了。 具体请看代码,代码里解释地挺详细的。不过如果不懂什么是状压DP的话，还是可能会看不懂。关于状态压缩DP，其实百度一下可以看到好多，这里我挂个<a href="http://godfrey90.iteye.com/blog/725562">链接</a>.不懂的可以去看看。</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+#define INF 200000
+#define N 20
+
+int dp[N][ 1&lt;&lt;18 ]={0};//dp[i][j],i代表当前最右边是哪个玩具，j代表当前状态，数组存储这种状态的高兴值的最大值
+int h[N][N]={0};
+
+int main()
+{
+    int n;
+
+    while (~scanf("%d",&amp;n))
+    {
+        for (int i=1 ; i&lt;=n ; i++)
+            for (int j=1 ; j&lt;(1&lt;&lt;n) ; j++)
+                dp[i][j]=-INF;//没到到过的状态初始化为最小值
+        for (int i=1; i&lt;=n ; i++)
+            dp[i][1&lt;&lt;(i-1)]=0;//只有一个的设置为0；
+
+        for ( int i=1 ; i&lt;=n ; i++ )
+            for (int j=1 ; j&lt;=n ; j++)
+                scanf("%d",&amp;h[i][j]);
+
+        int lim= 1&lt;&lt; n ;
+        for ( int j=1 ; j&lt;lim ; j++ )//枚举所有状态
+            for (int i=1 ; i&lt;=n ; i++)//枚举所有最右边的点
+            {
+                if ( (j&amp;(1&lt;&lt;(i-1)))==0 )
+                    continue;           //如果当前状态没有到过最右侧的点，不符合，跳过。
+                if ( dp[i][j]==-INF )
+                    continue;           //如果当前点的状态还没有被改变（保持初始化的状态)，不符合，跳过。
+                for ( int k=1 ; k&lt;=n ; k++ )//枚举所有玩具，作为下一个放的玩具
+                {
+                    if ( j&amp;(1&lt;&lt;(k-1)) )
+                        continue;       //如果当前状态已经包含这个玩具，跳过。
+                    dp[k][j|(1&lt;&lt;(k-1))]=max(dp[k][j|(1&lt;&lt;(k-1))],dp[i][j]+h[i][k]);//维护更新状态
+                }
+            }
+        int ans=-INF;
+        for (int i=1;i&lt;=n;i++)
+            ans=max(ans,dp[i][lim-1]);
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+</code></pre>
+
+<p>C题 <a href="http://code.bupt.edu.cn/problem/p/449/">BOJ 449. 排序</a></p>
+
+<p>这题，偶只想说一句呵呵。嘛也不想说了。思路，计数排序。丧心病狂的一点是测试数据，非常多组，90%是小数据，如果你每组都计术排序，并且都用到memset，机会卡到你超时。分情况讨论就行，再在计数排序时间上做一些小优化（我是设了一个数组来记录出现的量）就行了。我后来想了想，不用分情况也行，计数排序输出的之后顺便把用过的数组重置为0就可以了，两个代码放在一起了。</p>
+
+<p>第一次提交代码</p>
+
+<pre><code class="c++">#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstdio&gt;
+
+#define N 10005
+using namespace std;
+
+int a[N],b[N];
+int main()
+{
+    int n;
+    while (scanf("%d",&amp;n)!=EOF)
+    {
+        if (n&lt;10000)
+        {
+            for (int i=1;i&lt;=n;i++)
+                scanf("%d",&amp;a[i]);
+            sort(&amp;a[1],&amp;a[1]+n);
+            for (int i=1;i&lt;n;i++)
+                printf("%d ",a[i]);
+            printf("%d\n",a[n]);
+        }
+        else
+        {
+            memset(a,0,sizeof(a));
+            memset(b,0,sizeof(b));
+            int cnt=0;
+            for (int i=1;i&lt;=n;i++)
+            {
+                int m;
+                scanf("%d",&amp;m);
+                a[m]++;
+                if (a[m]==1) b[cnt++]=m;
+            }
+            //这里少个sort(b,b+cnt);
+            printf("%d",b[0]);
+            a[b[0]]--;
+            for (int i=0;i&lt;cnt;i++)
+                for (int j=1;j&lt;=a[b[i]];j++)
+                    printf(" %d",b[i]);
+            printf("\n");
+
+
+        }
+    }
+}
+</code></pre>
+
+<p>第二次AC代码(PS:在我打第二次AC代码的时候，竟然发现第一个代码的else后面竟然忘了给b排序。。。T_T,这都能过，充分说明了大数据是多么的少，而且还都是顺序的！！！大数据直接输出就能过。第一个代码中已经标出了这个错误的位置，为了保存现场，我就不改了。汗。。）</p>
+
+<pre><code class="c++">#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstdio&gt;
+
+#define N 10005
+using namespace std;
+
+int a[N]={0},b[N];
+int main()
+{
+    int n;
+    while (scanf("%d",&amp;n)!=EOF)
+    {
+
+            int cnt=0;
+            for (int i=1;i&lt;=n;i++)
+            {
+                int m;
+                scanf("%d",&amp;m);
+                a[m]++;
+                if (a[m]==1) b[cnt++]=m;
+            }
+            sort(b,b+cnt);
+            printf("%d",b[0]);
+            a[b[0]]--;
+            for (int i=0;i&lt;cnt;i++)
+            {
+                for (int j=1;j&lt;=a[b[i]];j++)
+                    printf(" %d",b[i]);
+                a[b[i]]=0;
+            }
+            printf("\n");
+
+
+        }
+}
+</code></pre>
+
+<p>不过学长讲题的时候说到了桶排序，俺不清楚具体是个什么东东，后来去百度了一下（算法导论上的看不懂），在此总结一下吧。</p>
+
+<p>桶排序就是把你想要排序的范围分成n等份存在一个数组中，数组的每个元素是一个桶（这个桶你可以用链表来实现，也可以用vector来实现，实在不行，也可用二维数组，不过十分不推荐），比如10000分成1000，就是0—9为第一个桶，10—19为第二个桶，……依次类推，把元素分到对应的桶中，然后再对每个桶中的元素进行排序（方法随意），最后按照桶的次序输出。这种排序方法在元素分布比较均匀的时候排序会比较快，复杂度可以接近O（n）。具体的请看<a href="http://blog.csdn.net/houapple/article/details/6480100">这里</a>，讲的挺清楚的，不过不推荐看他的代码，看分析就可以了。</p>
+
+<p>根据我的理解，计数排序就是在整数范围内的一种特殊的桶排序（长度为1的），时间复杂度是O（n），不过当元素的值特别大或者元素不是整数的时候的时候，就不能用计数排序了，但是可以用桶排序。写起来也不是很复杂，有必要的时候其实可以用到，算是学到了一点吧。</p>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/444/">BOJ 444. 爱好和平</a></p>
+
+<p>这题，说是树形dp，我不太清楚，或许是吧。T_T 我就说下思路了。</p>
+
+<p>首先分析清楚，这必定是一个树。用dfs遍历所有节点，记录每个节点的总子孙节点数sum（包括他本身），和他的子节点中总子孙节点数maxSon（也包括那个子节点）最多的节点。记录完毕以后，枚举每个节点，找每个节点的特征值rec=max（maxson,n-sum）中最小的，然后记录那个行星编号就行。代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+#define  N 100005
+
+vector&lt;int&gt; tree[N];
+
+struct data
+{
+    int sum;
+    int MAX;
+};
+
+data g[N];
+int n,m;
+
+void init()
+{
+    memset(g,0,sizeof(g));
+    for (int i=1;i&lt;=n;i++)
+        tree[i].clear();
+}
+
+void dfs(int now,int father)
+{
+    if (tree[now].size()==1&amp;&amp;father!=0)
+    {
+        g[now].sum=1;
+        g[now].MAX=0;
+        return;
+    }
+    int MA=0,SU=0;
+    for (int i=0;i&lt;tree[now].size();i++)
+    {
+        if (tree[now][i]==father) continue;
+        int son=tree[now][i];
+        dfs(son,now);
+        MA=max(MA,g[son].sum);
+        SU+=g[son].sum;
+    }
+    g[now].MAX=MA;
+    g[now].sum=SU+1;
+}
+int main()
+{
+    while (~scanf("%d%d",&amp;n,&amp;m))
+    {
+        init();
+        for (int i=1;i&lt;=m;i++)
+        {
+            int u,v;
+            scanf("%d%d",&amp;u,&amp;v);
+            tree[u].push_back(v);
+            tree[v].push_back(u);
+        }
+        dfs(1,0);
+        int ans=111111,res;
+        for (int i=1;i&lt;=n;i++)
+        {
+            if (ans&gt;max(g[i].MAX,n-g[i].sum))
+            {
+                ans=max(g[i].MAX,n-g[i].sum);
+                res=i;
+            }
+        }
+        printf("%d\n",res);
+    }
+}
+</code></pre>
+
+<p>E题 <a href="http://code.bupt.edu.cn/problem/p/450/">BOJ 450. 萌学妹的手机</a></p>
+
+<p>这题原型是北师校赛的一题。</p>
+
+<p>一下午，一直在被精度问题虐，中间改了几处错误，还是弄不对结果，要么多1.要么少1,也有相等的。我确信思路是没有问题的，不过在实现上，可能用了过多的浮点运算以及sqrt，导致精度出现问题，有些有那么一个数的误差。具体的思路还是去看<a href="http://blog.csdn.net/u013007900/article/details/38130625">男哥博客</a>吧，思路是一样的，不过实现上他在转化坐标系的时候就直接把坐标变换成整数了(PS:。我也懒得改了，要改的话改的东西太多了。还有就是直接用直角坐标做的，详见<a href="http://blog.csdn.net/ylasce/article/details/38145745">A神博客</a>)</p>
+
+<p>这题今天（27日）中午又做了做，到底还是过了，思路跟男哥的思路是一样的，有一点不一样的是，他求距离是把斜坐标转化成直角坐标来求的，而我是直接用斜坐标求的距离，公式也很简单，这里就说下求坐标轴夹角为a的斜坐标系下向量(x,y)的模长公式，x2+y2+2xy*cos(a);推导也很简单，把向量分解成两个坐标轴方向的向量相加，再平方就是了。放我的代码吧</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+const double INF=1000000;
+const double PI=acos(-1.0);
+
+double DisSqr(double x1,double y1,double x2,double y2)//斜坐标求距离，自己推导就能出来
+{
+    return pow(x1-x2,2)+pow(y1-y2,2)+2*(x1-x2)*(y1-y2)*cos(PI/3);
+}
+
+void changeXY(double &amp;x,double &amp;y)//转化为斜坐标系
+{
+    x=x-y/tan(PI/3);
+    y=y/sin(PI/3);
+ }
+
+ void makeXY(double x,double y,int &amp;nx,int &amp;ny)//把给的坐标转化为横\纵方向上的第几个基站。
+ {
+     int a=(int)(x/sqrt(3)+1e-8),b=(int)(y/sqrt(3)+1e-8);
+
+     int d[9][2]={ {-1,-1},{-1,0},{-1,1},{0,-1},{0,0},{0,1},{1,-1},{1,0},{1,1} };
+     //这里，本来按道理只需要4个点就够了，不过由于精度问题，还是直接把范围扩大了一倍。
+     double rec=INF;
+     for(int i=0;i&lt;=8;i++)
+        if (rec&gt;DisSqr((a+d[i][0])*sqrt(3),(b+d[i][1])*sqrt(3),x,y))
+        {
+            rec=DisSqr((a+d[i][0])*sqrt(3),(b+d[i][1])*sqrt(3),x,y);
+            nx=a+d[i][0];
+            ny=b+d[i][1];
+        }
+
+ }
+int main()
+{
+    int T;
+    double Sx,Sy,Dx,Dy;
+    int nSx,nSy,nDx,nDy;
+    double L;
+
+    scanf("%d",&amp;T);
+    while (T--)
+    {
+        scanf("%lf",&amp;L);
+        scanf("%lf%lf",&amp;Sx,&amp;Sy);
+        scanf("%lf%lf",&amp;Dx,&amp;Dy);
+        changeXY(Sx,Sy);
+        changeXY(Dx,Dy);
+        makeXY(Sx/L,Sy/L,nSx,nSy);
+        makeXY(Dx/L,Dy/L,nDx,nDy);
+
+        int ans;
+        int x=nDx-nSx,y=nDy-nSy;
+
+        if (x&gt;=0&amp;&amp;y&gt;=0||x&lt;=0&amp;&amp;y&lt;=0)
+            ans=abs(x)+abs(y);
+        else
+            ans=max(abs(x),abs(y));
+        printf("%d\n",ans);
+    }
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/07/22/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-4/"/>
+    <updated>2014-07-22T09:16:02+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/07/22/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-4</id>
+    <content type="html"><![CDATA[<h2>第四场</h2>
+
+<!--more-->
+
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/437/">BOJ 437. 大家一起点外卖</a></p>
+
+<p>很简单的一题，由于题目数据给的有点问题，所以交了4次才过，事实上，第二次就应该过了。题面也写的有些蛋疼，需要和好好理解才行。</p>
+
+<p>思路也比较简单，就是设一个数组哪些费用的菜有人点过，每读入一个记录一个，然后判断价格能跟他点的菜凑成m的菜有没有人i点过，点过的话，比较他们的差值和当前最小差值，如果更小，则更新当前最小差值，并记录。需要注意不要让数组溢出，记得判断是否小于0或大于100W。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+#define N 500005
+#define INF 2222222
+using namespace std;
+
+bool judge[2000005]={false};
+int n,m;
+
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while (T--)
+    {
+        int ansless,ansbigger,MIN=INF;
+        scanf("%d%d",&amp;n,&amp;m);
+        memset(judge,false,sizeof(judge));
+        for (int i=1;i&lt;=n;i++)
+        {
+            int v;
+            scanf("%d",&amp;v);
+            int rest=m-v;
+            if (rest&gt;=0&amp;&amp;rest&lt;=1000000)
+                if (judge[rest])
+                {
+                    if (abs(rest-v)&lt;MIN)
+                    {
+                        MIN=abs(rest-v);
+                        ansless=min(rest,v);
+                        ansbigger=max(rest,v);
+                    }
+                }
+            judge[v]=true;
+        }
+        if (MIN==INF) printf("Sad\n");
+        else printf("%d %d\n",ansless,ansbigger);
+    }
+    return 0;
+}
+</code></pre>
+
+<p>B题 <a href="http://code.bupt.edu.cn/problem/p/438/">BOJ 438 田田的公司</a></p>
+
+<p>赤果果的一道并查集，没什么好说的，注意开long long的数组读的时候要用lld。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+#define N 100005
+#define INF 2222222
+using namespace std;
+
+int father[N];
+int n,m;
+long long sum[N];
+
+void init()
+{
+    for (int i=1;i&lt;=n;i++)
+        father[i]=i;
+}
+
+int getfather(int x)
+{
+    if (father[x]!=x) father[x]=getfather(father[x]);
+    return father[x];
+}
+
+bool judge(int x,int y)
+{
+    if (getfather(x)==getfather(y))
+        return true;
+    else
+        return false;
+}
+
+void getPlus(int x,int y)
+{
+    int a=getfather(x);
+    int b=getfather(y);
+    father[a]=b;
+    sum[b]=sum[a]+sum[b];
+}
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while (T--)
+    {
+        scanf("%d%d",&amp;n,&amp;m);
+        init();
+
+        for (int i=1;i&lt;=n;i++)
+        {
+            scanf("%lld",&amp;sum[i]);
+        }
+
+        for (int i=1;i&lt;=m;i++)
+        {
+            int order,x,y;
+            scanf("%d",&amp;order);
+            if (order==1)
+            {
+                scanf("%d%d",&amp;x,&amp;y);
+                if (!judge(x,y))
+                    getPlus(x,y);
+            }
+            else if (order==2)
+            {
+                scanf("%d",&amp;x);
+                int a=getfather(x);
+                printf("%lld\n",sum[a]);
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>C题 BOJ <a href="http://code.bupt.edu.cn/problem/p/439/">439. 崔逗逗的难题</a></p>
+
+<p>纯粹的数学几何题，推导出公式来就能出结果。如果不清楚精度的问题，那么这道题还是很难作对的。在此记录一下，double里存的数，14位是绝对准确的，15位不能保证，会有误差。long double 要用 %Lf 来读入和输出。代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+const double Pi=acos(-1.0000);
+double S3=1.000000-(Pi/6.0000+sqrt(3.000)/4.000);
+double S1=Pi-3.00000+4.0000*S3;
+double S2=4.00000-Pi-8.0000*S3;
+
+int main()
+{
+    double a;
+    while (scanf("%lf",&amp;a)!=EOF)
+    {
+        printf("%.6f %.6f %.6f\n",(acos(-1)-3.0000+4.0000*(1.0000-(acos(-1)/6.0000+sqrt(3.0000)/4.000)))*pow(a,2),
+               (4.0000-acos(-1)-8.0000000*(1.000000-(acos(-1)/6.0000+sqrt(3.000)/4.000)))*pow(a,2.0000),
+               4.000000*(1.0000-(acos(-1)/6.000+sqrt(3.00)/4.000))*pow(a,2.00000000));
+    }
+}
+</code></pre>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/435/">BOJ 435. 崔逗逗给你信心</a></p>
+
+<p>这题我是打表找到规律，符合条件的全都是二进制数中1都不相邻的。也可以证明，m ^ (2m) ^ (3m) = 0等价于m ^ (2m) = 3m,而m + 2m = 3m ，所以只要可以让一个数和他乘2（也就是二进制左移一位）的加法和按位异或等同就行，很明显，必须是1对0，0对1或者0，也就是说，移位以后不能出现1与1对其的情况，所以符合条件的数是不能存在多个个连续的1的。</p>
+
+<p>想到了这点以后，后面的想法跟康托展开有些类似</p>
+
+<p>（PS：这里我说下康托展开，康托展开求的，几个不同的数的全排列中，比当前排列的数小的有多少个，其实运用一下排列组合的思想就很容易得到结果，直接举个例子吧，32514698这个数，从第一位开始，求比他小的数的个数，就是对于第一位，前面没有出现的数中（也就是2—8位的数），比3小的共有2个（1和2），那么第一位比三小的数（自然也就比这个数要小），总共有2<em>7！（7！是后面七个数的全排列）个；第一位是3的数中，只需要按照这个规律来求后面就行了，比如第二位是2，就有1</em>6!,后面也是同理，所以康托展开的公式就是sigma(a[i]*(n-1)!)(这个理解了原理，就一切好说了）</p>
+
+<p>这题其实也就算是二进制里加了些条件的康托展开吧，对，先有一个准备工作，就是求n位的2进制数中，符合条件的总共有多少种(（用数组d[ ]来表示）)。其实是个菲波那契数列，证明如下： 对于任何位数大于3的数，个位有2种情况：1 个位是0；2 个位是1。当个位是0时，只要十位以上的所有位位符合条件，这个数就符合条件，总共有d[n-1]种；当个位是1时，十位必须是0，然后百位以上只要符合，这个数就符合，总共有d[n-2]种。综上，就有d[n]=d[n-1]+d[n-2] (PS:这里把0看成是0位数，不是1位数，因为最高位不能是0)，通过预处理就能把这个数组搞定（最好再求和一次），之后就是康托展开的原理了。对于每位，如果是1，把他看作0，那么无论后面的位是怎样的，都会小于这个数；如果没有连续的1，就一直找到个位；如果出现连续的1，那么找完连续1那一位就可以停止了，因为把1变成0后的所有情况都计算过了。代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+#define MOD 1000000009
+#define N 100
+using namespace std;
+
+int b[N]={1,1,1,2};
+int sum[N]={1,2,3,5};
+int a[N]={0};
+void build()
+{
+    for (int i=4;i&lt;=64;i++)
+    {
+        b[i]=(b[i-1]+b[i-2])%MOD;
+        sum[i]=(sum[i-1]+b[i])%MOD;
+    }
+}
+
+int main()
+{
+    long long n;
+    build();
+    while (scanf("%lld",&amp;n)!=EOF)
+    {
+        long long rec=n;
+        int cnt=0;
+        if  (rec==0)
+        {
+            cnt=1;
+            a[0]=0;
+        }
+        while (rec!=0)
+        {
+            a[cnt++]=rec&amp;1;
+            rec=rec&gt;&gt;1;
+        }
+        int ans=0;
+
+        for (int i=cnt-1;i&gt;=0;i--)
+        {
+
+            if (i!=0&amp;&amp;a[i]==1)
+            {
+                ans=(ans+sum[i])%MOD;
+                if (a[i-1]==1)
+                {
+                    a[i-1]=0;
+                    ans=(ans+sum[i-1])%MOD;
+                    break;
+                }
+            }
+            else if(i==0)//十位是0，个位是1或0,或十位是1,个位是0的情况。
+            {
+                if (a[i]==1)
+                    ans=(ans+2)%MOD;
+                else
+                    ans=(ans+1)%MOD;
+            }
+        }
+        printf("%d\n",ans);
+    }
+}
+</code></pre>
+
+<p>E <a href="http://code.bupt.edu.cn/problem/p/434/">BOJ 434. 焦级长搭积木</a></p>
+
+<p>还是一道dp题，只不过要求输出对应的第k小的策略。 先说dp的思路，dp[n][m][h]代表总共用了n个积木，底层积木数为m，高度为h的情况的方案数。那么对于每一个状状态（层数不为1的），都可以看成是在之前一个状态的底部再加一层。那么就有dp[n][m][h]=dp[m][m][1]<em>dp[n-m][m-1][h-1]+dp[m][m][1]</em>dp[n-m][m+1][h-1]=dp[n-m][m-1][h-1]+dp[n-m][m+1][h-1] (别告诉我你不知道dp[i][i][1]=1); 通过这个状态转移方程，很容易就能在n<em>m</em>h的复杂度内得出结果。接下来的问题是如何进行输出，怎么说呢，其实还是康托展开的思想，对于每一个状态（底层为m个的），它的第二层只可能出现两种情况（m-1和m+1)，m-1的状态肯定小于m+1的状态。那么我们只需要判断k是否大于m-1的所有方案数，如果大于，说明第k小的方案在m+1这种状态中，这是要注意转移到下一个转状态的时候，比较区间也就变了，需要让k减去m-1的所有状态（因为转移到下一个状态以后，m+1已经成了前提条件）；如果不大于，就说名第k小的数在m-1这个状态中。（PS：感谢xxhh的点拨）代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+long long dp[600][20][66];
+long long k;
+
+void print(int n,int m,int h)
+{
+
+    if (h==1)
+    {
+        printf("%d\n",m);
+        return;
+    }
+    printf("%d ",m);
+    if (k&lt;=dp[n-m][m-1][h-1])
+        print(n-m,m-1,h-1);
+    else
+    {
+        k-=dp[n-m][m-1][h-1];
+        print(n-m,m+1,h-1);
+    }
+}
+int main()
+{
+    int n,h,m;
+    while (~scanf("%d%d%d",&amp;n,&amp;h,&amp;m))
+    {
+        memset(dp,0,sizeof(dp));
+        for (int i=1;i&lt;=10;i++)
+            dp[i][i][1]=1;
+        for (int H=2;H&lt;=h;H++)
+            for (int M=1;M&lt;=10;M++)
+                for (int N=M;N&lt;=min(n,H*10);N++)
+                    dp[N][M][H]=dp[N-M][M-1][H-1]+dp[N-M][M+1][H-1];
+        printf("%lld\n",dp[n][m][h]);
+
+        while (scanf("%lld",&amp;k),k!=-1)
+            print(n,m,h);
+
+
+    }
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;-BACK</a></p>
+]]></content>
+  </entry>
+  
+</feed>

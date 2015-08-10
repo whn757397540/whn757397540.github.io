@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 博弈 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/bo-yi/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T11:29:47+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练 2013级个人排位赛]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/07/19/suan-fa-she-ji-yu-fen-xi-qi-mo-fu-xi-zong-jie/"/>
+    <updated>2014-07-19T15:50:30+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/07/19/suan-fa-she-ji-yu-fen-xi-qi-mo-fu-xi-zong-jie</id>
+    <content type="html"><![CDATA[<h2>第二场</h2>
+
+<!--more-->
+
+
+<p>PS：这是我的第一篇octopress博客，是把CSDN上的第二场个人排位赛的题解搬了过来，并加上了第五题的题解，以后还会陆续写其他场次，好了，开始）</p>
+
+<p>这次训练的题目，两道水题（卡数据类型，有好多人不能1A，我也在内），还有3道题，不是很容易。</p>
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/416/">BOJ 416丁神去谷歌</a></p>
+
+<p>一道很水的题，因为我刚开始用了sort，T了一次，后来又忘了是什么原因RE了2次尴尬，最后，就直接读入的时候比较的，很水，想多了。</p>
+
+<p>下面简单分析一下吧，由于是要求b/a的最大值，所以只需要把当前的b/a与之前最大的b/a比较就行，如果相同的话（在这了需要注意，如果你用的是交叉相乘来比较，记得用long long，如果你用的是b/a来比较，在判断是否相等的时候记得浮点型的精度问题，可以用abs(max-(double)b/a)&lt;=1e-9 之类的式子来判断，不要直接用等号），再去比较a的大小，由于本身序号就是从小到大的，所以也不用担心这个了（只要a相等的时候别更新答案就行），说的有点多了，附代码吧(C++)</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;  
+#include &lt;string&gt;  
+#include &lt;cstdio&gt;  
+#include &lt;cstring&gt;  
+#include &lt;cstdlib&gt;  
+#include &lt;cmath&gt;  
+#include &lt;algorithm&gt;  
+
+#define N 100005  
+
+using namespace std;
+
+int main()
+{
+    int t;
+    double MAX=0;
+    cin&gt;&gt;t;
+    while (t--)
+    {
+        int n;
+        int ans,ansa;
+        MAX=0;
+        scanf("%d",&amp;n);
+        for (int i=1;i&lt;=n;i++)
+        {
+            int a,b;
+            scanf("%d%d",&amp;a,&amp;b);
+            double c=(double)b/a;
+            if (MAX&lt;c)
+            {
+                MAX=c;
+                ans=i;
+                ansa=a;
+            }
+            else if(abs(MAX-c)&lt;=1e-10)
+            {
+                if (a&lt;ansa)
+                {
+                ans=i;
+                ansa=a;
+                }
+            }
+        }
+        printf("%d\n",ans);
+    }
+return 0;
+}
+</code></pre>
+
+<p>B题 <a href="http://code.bupt.edu.cn/problem/p/417/">BOJ 0417 丁神又去谷歌</a></p>
+
+<p>赤果果的一道0-1背包，记得要用long long 就行，直接附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;  
+#include &lt;string&gt;  
+#include &lt;cstdio&gt;  
+#include &lt;cstring&gt;  
+#include &lt;cstdlib&gt;  
+#include &lt;cmath&gt;  
+#include &lt;algorithm&gt;  
+
+#define N 1005  
+
+using namespace std;
+
+long long dp[N];
+
+int a[N],b[N];
+
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while (T--)
+    {
+        int n,t;
+        scanf("%d%d",&amp;t,&amp;n);
+        memset(dp,0,sizeof(dp));
+        for (int i=1;i&lt;=n;i++)
+            scanf("%d%d",&amp;a[i],&amp;b[i]);
+
+        for (int i=1;i&lt;=n;i++)
+            for (int j=t;j&gt;=a[i];j--)
+                dp[j]=max(dp[j],dp[j-a[i]]+b[i]);
+        printf("%lld\n",dp[t]);
+    }
+    return 0;
+}
+</code></pre>
+
+<p>C题 <a href="http://code.bupt.edu.cn/problem/p/426/">boj426 goblin</a></p>
+
+<p>这个题呀，昨天比赛时有思路（PS:今天想了一上午，发现我的思路是在是太难实现了），最终还是选择了lyz大神的思路。</p>
+
+<p>题意大概是求n以内（1—n）的数的全排列中，符合交叉排列的情况（即&lt;>&lt;>&lt;>&lt;>&lt;>,大于号小于号交叉出现的情况）总共有多少种，结果对p取余。</p>
+
+<p>我就来说说lyz大神的思路吧，用到了排列组合的思想。首先，为了方便叙述，我先来给交叉排列的两种情况命一下名, 假设：第一个数大于第二个数的情况叫做D情况，第一个数小于第二个数的情况叫做P情况，对于k个数的排列，我们记D情况共有D[k]种，P情况共有P[k]种,(记 P[0]=P[1]=P[2]=1 那么，就有D[k]=P[k]（至于怎么来证明，其实很简单）</p>
+
+<p>所有D情况都可以抽象成W型（第一个数第二个数大的情况），所有的P情况都可以抽象成M型（第一个比第二个数的情况）。对于D情况，可以抽出n个数中的最大数，分别放到各个凸起点，经过一些排列组合的运算，可以得到一个一个结果；同理，对于P情况，可以抽出n个数中的最小数，分别放到各个凹陷点，根据对称的特性，就可以得到跟D情况相同的结果。</p>
+
+<p>所以，我们只需考虑一种情况了，我选取的D情况，经过排列组合的运算，很容易得到如下的关系(sigma代表求和符号）</p>
+
+<p>D[k]=sigma(D[i[D[k-1-i]C[k-1][k-1-i]) （可能看这个式子看不懂，自己推导一下吧，分别把最大的数放到凸起点就可以了，很容易的）</p>
+
+<p>好了，下面附代码（PS:被memset坑了好久，也学到了一点，在程序中，你如果开了数组但是没有用到，提交交时内存是不算的，如果你用了memset（a,0,sizeof(a))来初始化数组，那么这个数组就算是全部被使用了。这题中，如果用memset来初始化组合数的存储数组，就会超出内存限制。算是学到了一点吧！还有就是，如果用动态数组来做的话，是擦边过得，我是第一次交1000ms, T了，第二次993ms过了。最后，注意D数组要用long long，即便不用，运算时也记得转化一下，否则会WA的）。</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;  
+#include &lt;cstdio&gt;  
+#include &lt;cstring&gt;  
+
+#define N 4205  
+int C[N][N]={0};
+long long g[N]={0};
+int n,p;
+
+void init()
+{
+    memset(g,0,sizeof(g));
+    g[3]=2;
+    g[2]=1;
+    g[1]=1;
+    g[0]=1;
+
+    for (int i=1;i&lt;=n;i++)
+    {
+        C[i][0]=C[i][i]=1;
+        for (int j=1;j&lt;i;j++)
+            C[i][j]=(C[i-1][j-1]+C[i-1][j])%p;
+    }
+    for (int i=4;i&lt;=n;i++)
+        for (int j=0;j&lt;=i-1;j+=2)
+            g[i]=(g[i]+(g[j]*g[i-1-j]%p)*C[i-1][i-1-j])%p;
+}
+
+int main()
+{
+    while (~scanf("%d%d",&amp;n,&amp;p))
+    {
+        init();
+        printf("%d\n",2*g[n]%p);//输出不用lld是因为取余以后就在int的范围内了。  
+    }
+}
+</code></pre>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/427/">BOJ 0427 学姐逗学弟</a></p>
+
+<p>一道博弈题目，比赛时看错题了。。。今天下午基本上全花在这个题上了，根源还是memset尴尬，通过个题我了解到：用memset来初始化数组也是要花O(n）的时间的，它比直接赋值快大约4倍，但是计算复杂度时还是要按照O（n）的复杂度考虑进去的。在此感谢zsp同学帮我找到这个错误。</p>
+
+<p>好了，进入正题。这是一个博弈问题，Every-Sg游戏，直接说思路吧，题目可以自己点开链接来看。</p>
+
+<p>首先，我们定义每个节点的高度为所有人都采取最优策略，一直到游戏结束所需要走的步数。思路很简单，对于必败点，走这一步的人必输，那么他肯定想尽快结束这一个游戏，所以他会选择它的所有子节点中高度最小的来走；对于必胜点，走这一步的人，想要胜利，就必须走到必败点上去，而他又想把游戏时间尽量拉长，所以他肯定会选择所有必败子节点中高度最大的那个节点来走。这样分析的话，就很容易递归的定义出一个点的高度了。然后再根据给的石子的位置来判断，比较高度最大的必胜点和高度最大的必败点的大小，就可以判断是不是学姐赢了。</p>
+
+<p>这个代码是有注释了（为了让zsp同学帮忙找下错误而标注的，再次进行感谢），贴代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;  
+#include &lt;string&gt;  
+#include &lt;cstdio&gt;  
+#include &lt;cstring&gt;  
+#include &lt;cstdlib&gt;  
+#include &lt;cmath&gt;  
+#include &lt;algorithm&gt;  
+#include &lt;vector&gt;  
+#define N 100005  
+
+using namespace std;
+#define INF 10000000  
+vector &lt;int&gt; tree[N];
+
+bool judgeSg[N]={false};//判断子节点出现的sg值  
+int father[N]={0};//记录某个节电的父亲节点  
+int depth[N]={0};//记录“高度”（懒得改了）  
+int sg[N]={0};//对于单个游戏来说的每个节点的sg值。  
+int n,m;
+
+void init()//初始化  
+{
+    memset(father,0,sizeof(father));
+    memset(depth,0,sizeof(depth));
+    memset(sg,0,sizeof(sg));
+    for (int i=1;i&lt;=n;i++)
+        tree[i].clear();
+}
+
+void solveSg(int now)//now代表当前节点，dfs     
+{
+    int MAX=0,MIN=INF;
+
+    if (tree[now].size()==0)
+    {
+        sg[now]=0;
+        depth[now]=0;
+        return ;
+    }//搜到叶子节点，叶子节点对应的高度为0,sg值为0;  
+    for (int i=0;i&lt;tree[now].size();i++)
+    {
+        int son=tree[now][i];
+        solveSg(son);//dfs  
+
+        if (MIN&gt;depth[son])
+            MIN=depth[son];//记录所有子节点中的最小高度（如果当前节点是必败节点的话用得到）  
+        if (sg[son]==0)//子节点为必败态  
+            if (MAX&lt;depth[son])
+                MAX=depth[son];//记录所有必败子节点中的最大高度（如果当前节点是必胜节点用得到)  
+    }
+    memset(judgeSg,false,sizeof(tree[now].size()+10));//初始化sg判断数组  
+    for (int i=0;i&lt;tree[now].size();i++)
+    {
+        int son=tree[now][i];
+        judgeSg[sg[son]]=true;//记录出现的sg值  
+    }
+    int res=0;
+
+    while (judgeSg[res]) res++;
+
+    if (res==0)//此点为必败态  
+        depth[now]=MIN+1;
+    else //为必胜态  
+        depth[now]=MAX+1;
+
+    sg[now]=res;//当前节点的sg值  
+}
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while (T--)
+    {
+        int maxWin=0,maxFail=0;//分别记录必胜点和必败点的最大高度  
+
+        scanf("%d%d",&amp;n,&amp;m);
+        init();
+        for (int i=2;i&lt;=n;i++)
+        {
+            scanf("%d",&amp;father[i]);
+            tree[father[i]].push_back(i);
+        }//动态数组建树（单向的）  
+        solveSg(1);//dfs  
+        for (int i=1;i&lt;=m;i++)
+        {
+            int stone;
+            scanf("%d",&amp;stone);
+            if (sg[stone]==0)
+                maxFail=max(maxFail,depth[stone]);
+            else
+                maxWin=max(maxWin,depth[stone]);
+        }
+        if (maxWin&gt;maxFail)//必胜的游戏时间长，学姐赢  
+            printf("MengMengDa!\n");
+        else
+            printf("So sad...\n");
+    }
+    return 0;
+}
+</code></pre>
+
+<p>最后，是今天写的东西。</p>
+
+<p>E题 <a href="http://code.bupt.edu.cn/problem/p/425/">BOJ 0425 木头人足球赛</a></p>
+
+<p>是一道很恶心的几何题目。说简单，不简单；说难倒也不难，主要这题的测试数据不是很变态，有一种很恶心的状态，测试数据里没有，一会解释。（PS：学长说这个题的原型是个非常OP的题。。。）</p>
+
+<p>首先，求出球门的角度范围（我选的是以x轴负方向为0度，范围是-180到180，后同），记作gate；然后，求出每个个球员的拦截角度范围(求起来也很简单，求出圆心连线与x轴负方向的夹角，再求出圆心连线与切线的夹角，然后进行加减就行，求角时记得根据角度范围来决定用什么三角函数，这个逻辑关系要弄清楚），记作player[i];然后根据player[i]的下界进行排序。</p>
+
+<p>前面的准备工作做好了以后，接下来思路就很明确了。首先，判断上下界，就是是否存在球员，他的拦截上界大于球门上界并且他的拦截下界小于球门上界，下界最低的球员是否低于球门下界，其中任意一个条件不符合，就肯定能进球；然后，就是从下界小于球门上界的第一个球员开始，每次找上界大于或等于这个球员下界的，下界最低的球员（这样可以最地拉深区间），如果这个最低的下界大于或等于他所比较的那个球员的下界（事实上，从下界低的开始找，如果出现这种情况，只可能是那个球员本身），那就说明没有可以进球，如果这个下界球门下界低，那么说明防守很严，不能进球。</p>
+
+<p>根据上面的分析，就有了如下的代码：</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;   
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+#define N 12
+using namespace std;
+
+struct  ANGLE_SECTION
+{
+    double left;
+    double right;
+    int num;
+}gate,player[N];
+
+ANGLE_SECTION getGateSection(int x,int y)
+{
+    ANGLE_SECTION result;
+    if (x==0) return {(acos(-1))/2,(acos(-1))/2};
+    result.left=atan((double)(30-y)/x);
+    result.right=atan((double)(38-y)/x);
+    return result;
+}
+
+ANGLE_SECTION getPlayerSection(int x1,int y1,double r,int x0,int y0)
+{
+    ANGLE_SECTION result;
+    double length=sqrt(pow(x1-x0,2)+pow(y1-y0,2));//与圆心连线长度
+    double angle=asin(r/length);//连线与切线的夹角
+    double Angle;//连线与水平射线的夹角
+
+    if (y1&gt;=y0) Angle=acos((double)(x0-x1)/length);
+    else if(x1&lt;x0)
+        Angle=atan((double)(y1-y0)/(x0-x1));
+    else
+        Angle=-acos(-1)-asin((double)(y1-y0)/length);
+    result.left=Angle-angle;
+    result.right=Angle+angle;
+    return result;
+}
+
+bool cmp(ANGLE_SECTION a,ANGLE_SECTION b)
+{
+    return (a.left&lt;b.left);
+}
+
+int main()
+{
+    int T;
+    int x0,y0;
+    cin&gt;&gt;T;
+    while (T--)
+    {
+        bool ans=false;
+        memset(player,0,sizeof(player));
+        scanf("%d%d",&amp;x0,&amp;y0);
+        gate=getGateSection(x0,y0);
+        for (int i=1;i&lt;=11;i++)
+        {
+            int x,y;
+            double r;
+            scanf("%d%d%lf",&amp;x,&amp;y,&amp;r);
+            player[i]=getPlayerSection(x,y,r,x0,y0);
+        }
+        sort(&amp;player[1],&amp;player[1]+11,cmp);
+        int n=11;
+        if (player[1].left&gt;gate.left) ans=true;
+        else
+        {
+            while (player[n].left&gt;gate.right) n--;
+            double MAX=-100;
+            for (int i=1;i&lt;=n;i++)
+                MAX=max(player[i].right,MAX);
+            if (MAX&lt;gate.right)
+                ans=true;
+            else
+            {
+                while (1)
+                {
+                    int i=1;
+                    while (player[i].right&lt;player[n].left)
+                        i++;
+                    if (i==n)
+                    {
+                        ans=true;
+                        break;
+                    }
+                    while (i&gt;=1&amp;&amp;player[i].right&gt;=player[n].left) i--;
+                    i++;
+                    if (i&lt;=1||player[i].left&lt;=gate.left) break;
+                    n=i;
+                }
+            }
+        }
+        if (ans) printf("Shoot!\n");
+        else printf("Poor Mays!\n");
+    }
+}
+</code></pre>
+
+<p>接下来，我来谈谈那种很恶心的情况，题目数据中没有出现，如果出现了我的代码应该是A不了的。 就是那种球员的防守范围跟球场边界有交点的情况（你们可以自己画一下），在这种情况下，可能出现实际防守范围小于你根据上述方法求出来的防守范围的情况(也可能不小于）。这样求防守范围就很麻烦了。我的想法是先根据几何知识求切点，然后看切点是否在球场内，最后根据切点状态来求范围，很麻烦是不是？如果你们谁有好的办法的话记得告诉我一声，谢谢！！ （PS：到此，这篇博客算是写完了，这样粘代码太难受了，下次我也直接附代码的链接了）</p>
+
+<p><a href="/blog/archives/">&lt;&ndash;Back</a></p>
+]]></content>
+  </entry>
+  
+</feed>

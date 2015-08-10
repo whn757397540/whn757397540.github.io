@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 谈心 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/tan-xin/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T11:29:47+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/07/24/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-5/"/>
+    <updated>2014-07-24T09:16:07+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/07/24/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-5</id>
+    <content type="html"><![CDATA[<h2>第五场</h2>
+
+<!--more-->
+
+
+<p>这场比赛，学到了以前没有接触过的矩阵快速幂。不过E题实在是太恶心了，我是没有写下去的耐心了。。。。</p>
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/442/">BOJ 442. 平方的平均值</a></p>
+
+<p>水题一个，注意负数的问题就行了。（不过在XP下等long long 用的还真是蛋疼。。）附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+long long MIN=11111111111;
+long long num;
+
+int main()
+{
+    int n;
+
+    while (scanf("%d",&amp;n)!=EOF)
+    {
+        MIN=11111111111;
+        for (int i=1;i&lt;=n;i++)
+        {
+            scanf("%lld",&amp;num);
+            if (MIN&gt;(num*num))
+                MIN=num*num;
+        }
+        cout&lt;&lt;MIN&lt;&lt;endl;
+    }
+}
+</code></pre>
+
+<p>B题 <a href="http://code.bupt.edu.cn/problem/p/431/">BOJ 431. 立方体</a></p>
+
+<p>又是一道比较水的题，直接暴力就可以了，当然，LJ学长还有一种姿势优美的解法。</p>
+
+<p>先说下我的暴力的方法：需要用到向量的知识，先随便选一个点，以它为基点，算出其他6个点跟它形成的向量，然后按照向量的模长排序，分别记录最短的，中等的，最长的向量都有多少个，如果是完整的正方体，这三种向量应该分别有3,3,1个，看哪个缺，就能知道缺少哪种类型的点。如果缺少最长的，就直接用三个最短的向量坐标相加即可，如果缺少最短的或者中等的(只可能缺一个），分别用最长的向量减去三个中等的或者最短的（按顺序跟前一句对应），判断得到的向量是否已经存在，如果不存在，就得到了结果；如果存在，继续找。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+struct data
+{
+    int x,y,z;
+    double d;
+}dat[10];
+
+int cnt[5]={0};
+
+bool cmp (data a,data b)
+{
+    return a.d&lt;b.d;
+}
+main()
+{
+    int t;
+    data ans;
+    cin&gt;&gt;t;
+    while(t--)
+    {
+        memset(cnt,0,sizeof(cnt));
+        memset(dat,0,sizeof(dat));
+
+        scanf("%d%d%d",&amp;dat[0].x,&amp;dat[0].y,&amp;dat[0].z);
+        dat[0].d=0;
+
+        for (int i=1;i&lt;=6;i++)
+        {
+
+            double d;
+            scanf("%d%d%d",&amp;dat[i].x,&amp;dat[i].y,&amp;dat[i].z);
+            dat[i].x=dat[i].x-dat[0].x;
+            dat[i].y=dat[i].y-dat[0].y;
+            dat[i].z=dat[i].z-dat[0].z;
+            dat[i].d=sqrt(pow(dat[i].x,2)+pow(dat[i].y,2)+pow(dat[i].z,2));
+        }
+        sort(dat,dat+7,cmp);
+
+        int n=1;
+        cnt[n]=1;
+        for (int i=2;i&lt;7;i++)
+            if(abs(dat[i].d-dat[i-1].d)&lt;=1e-5)
+                cnt[n]++;
+            else
+                cnt[++n]++;
+        if (cnt[3]==0)
+        {
+            ans.x=dat[1].x+dat[2].x+dat[3].x;
+            ans.y=dat[1].y+dat[2].y+dat[3].y;
+            ans.z=dat[1].z+dat[2].z+dat[3].z;
+        }
+        else if (cnt[2]==2)
+        {
+            ans.x=ans.y=ans.z=0;
+            int mm=1;
+            while(ans.x==0&amp;&amp;ans.y==0&amp;&amp;ans.z==0)
+            {
+                ans.x=dat[6].x-dat[mm].x;
+                ans.y=dat[6].y-dat[mm].y;
+                ans.z=dat[6].z-dat[mm].z;
+                bool judge=false;
+                for (int i=4;i&lt;=5;i++)
+                    if (dat[i].x==ans.x&amp;&amp;dat[i].y==ans.y&amp;&amp;dat[i].z==ans.z)
+                        judge=true;
+                if (judge)
+                {
+                    ans.x=ans.y=ans.z=0;
+                    mm++;
+                }
+            }
+        }
+        else if (cnt[1]==2)
+        {
+            ans.x=ans.y=ans.z=0;
+            int mm=3;
+            while(ans.x==0&amp;&amp;ans.y==0&amp;&amp;ans.z==0)
+            {
+                ans.x=dat[6].x-dat[mm].x;
+                ans.y=dat[6].y-dat[mm].y;
+                ans.z=dat[6].z-dat[mm].z;
+                bool judge=false;
+                for (int i=1;i&lt;=2;i++)
+                    if (dat[i].x==ans.x&amp;&amp;dat[i].y==ans.y&amp;&amp;dat[i].z==ans.z)
+                        judge=true;
+                if (judge)
+                {
+                    ans.x=ans.y=ans.z=0;
+                    mm++;
+                }
+            }
+        }
+        printf("%d %d %d\n",dat[0].x+ans.x,dat[0].y+ans.y,dat[0].z+ans.z);
+    }
+}
+</code></pre>
+
+<p>接下来说下学习长姿势优美的方法，求出所有点坐标的平均值，得到一个点视为伪重心，根据对称性很容易知道，这个伪重心肯定在一条对角线的3/7处，且这个对角线有一个角是缺少的（如果是完整的，重心应该在对角线中点），找到这个点以后，在找到其他点中距离他最近的那个点(这个点就是那条对角线中的点)，然后就可以得到缺少的那个点的坐标了。附代码</p>
+
+<pre><code class="c++">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+int x[8],y[8],z[8];
+int main()
+{
+    int t,i;
+    scanf("%d",&amp;t);
+    while(t--) {
+        long long sx=0,sy=0,sz=0,ss=0x7fffffffffffffff,ti;
+        for(i=1; i&lt;=7; i++) {
+            scanf("%d%d%d",&amp;x[i],&amp;y[i],&amp;z[i]);
+            sx+=x[i],sy+=y[i],sz+=z[i];
+        }
+        for(i=1; i&lt;=7; i++) {
+            long long tmp=(x[i]*7-sx)*(x[i]*7-sx)+(y[i]*7-sy)*(y[i]*7-sy)+(z[i]*7-sz)*(z[i]*7-sz);
+            if(tmp&lt;ss)  ss=tmp,ti=i;
+        }
+        printf("%lld %lld %lld\n",(sx-4*x[ti])/3,(sy-4*y[ti])/3,(sz-4*z[ti])/3);
+
+    }
+    return 0;
+}
+</code></pre>
+
+<p>C题 <a href="http://code.bupt.edu.cn/problem/p/432/">BOJ 432. 字符串重排</a></p>
+
+<p>一道贪心，比赛时虽然过了，但是过得很迷糊，代码姿势不能看，估计没几个人能看懂，所以我又重新写了一份。</p>
+
+<p>这个题不是特别难，能找到贪心时要注意的地方，并且把逻辑关系思考清楚，就能搞定。废话不多说了，说说方法吧。</p>
+
+<p>首先，开一个数组来记录字符串中每个字母出现的次数，然后判断有没有一个字母出现的次数超过字符串长度的一半的（PS：假如字符串长度为4,一半指的是2;假如字符串长度为5，一半指的是3)，如果有，那么就不可能重排成符合题目要求的字符串，如果没有，就肯定能够重排成符合题目要求的字符串。在前面判断好以后，后面就是重组字符串了，贪心的原则是，能用字典序小的，就用字典序小的。问题是怎么判断能不能用呢？首先，先判断前一个字符是不是跟你要放的字符重复了；然后，找到最小的不与前一个字符重复的字符以后，判断这个字符之后的字符是否存在必须得放的情况（一个字符必须得放当且仅剩下的字符总数目为奇数n且该字符的数目为(n+1)/2,请自行证明）；这两种情况考虑好，结果就出来了。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+#define MOD 1000000007
+using namespace std;
+
+int a[30]={0};
+char s[111111];
+char ans[111111];//记录重排后的数组。
+int main()
+{
+    int t;
+    scanf("%d",&amp;t);
+    while (t--)
+    {
+        memset(a,0,sizeof(a));//对字母进行计数的数组
+        scanf("%s",s);
+        int total=strlen(s);
+        for (int i=0;i&lt;total;i++)
+            a[s[i]-'a']++;
+        int MAX=0;
+        for (int i=0;i&lt;=25;i++)
+            MAX=max(MAX,a[i]);
+        if (MAX&gt;(total+1)/2) printf("-1\n");//在这种情况下不可能存在
+        else
+        {
+            int rec=-1;
+            int now=0;
+            int cnt=0;
+            while (a[now]==0) now++;
+
+            for (int i=now+1;i&lt;=25;i++)
+                if (a[i]==(total+1)/2)
+                {
+                    rec=i;
+                    break;
+                }
+
+             if (rec!=-1&amp;&amp;total%2==1)
+            {
+                ans[cnt++]='a'+rec;
+                a[rec]--;
+            }
+            else
+            {
+                ans[cnt++]='a'+now;
+                a[now]--;
+            }
+
+            total--;
+
+            while (total&gt;0)
+            {
+                now=0;
+                rec=-1;
+                while (a[now]==0) now++;//找还存在的最小的字母
+                if (ans[cnt-1]=='a'+now)
+                {
+                    now++;
+                    while (a[now]==0) now++;
+                }
+
+                for (int i=now+1;i&lt;=25;i++)
+                    if (a[i]==(total+1)/2)
+                    {
+                        rec=i;
+                        break;
+                    }
+
+                if (rec!=-1&amp;&amp;total%2==1)
+                {
+                    ans[cnt++]='a'+rec;
+                    a[rec]--;
+                }
+
+                else
+                {
+                    ans[cnt++]='a'+now;
+                    a[now]--;
+                }
+                total--;
+            }
+            ans[cnt]=0;
+            printf("%s\n",ans);
+        }
+    }
+}
+</code></pre>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/433/">BOJ 433. Fibnacci</a></p>
+
+<p>一个裸的矩阵快速幂，由于以前没有接触过，比赛时完全没有思路，今天算是学了学。说下我构造的矩阵。暂时还不会用linux下的公式编辑器（找都找不到T_T）所以没有办法写出来，口头描述吧。构造的矩阵式4<em>1的，从上往下依次是（f[ n ] f[ n-1 ] n 1) 常数矩阵是 4</em>4的从上往下，每行依次是{ {1 1 1 1} {1 0 0 0} {0 0 1 1} {0 0 0 1} }。结合代码来看吧</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+typedef long long ll;
+typedef vector&lt;ll&gt; vec;
+typedef vector&lt;vec&gt; mat;
+
+#define M 1000000007
+mat mul(mat &amp;A,mat &amp;B)
+{
+    mat C(A.size(),vec(B[0].size()));
+    for (int i=0;i&lt;A.size();i++)
+        for (int k=0;k&lt;B.size();k++)
+            for (int j=0;j&lt;B[0].size();j++)
+                C[i][j]=(C[i][j]+A[i][k]*B[k][j])%M;
+    return C;
+}
+
+mat pow(mat A,ll n)
+{
+    mat B(A.size(),vec(A.size()));
+    for (int i=0;i&lt;A.size();i++)
+        B[i][i]=1;
+    while (n&gt;0)
+    {
+        if (n &amp; 1) B = mul(B,A);
+        A = mul(A,A);
+        n &gt;&gt;= 1;
+    }
+    return B;
+}
+
+int main()
+{
+    ll n;
+    int t;
+    mat A(4,vec(4));
+    mat B(4,vec(1));
+    mat C(4,vec(4));
+    mat ANS(4,vec(1));
+
+
+    B[0][0]=B[1][0]=B[3][0]=B[2][0]=1;
+    A[0][0]=A[0][1]=A[0][2]=A[0][3]=A[1][0]=A[2][2]=A[2][3]=A[3][3]=1;
+    A[1][1]=A[1][2]=A[1][3]=A[2][0]=A[2][1]=A[3][0]=A[3][1]=A[3][2]=0;
+
+    cin&gt;&gt;t;
+    while (t--)
+    {
+        scanf("%lld",&amp;n);
+        C=pow(A,n-1);
+        ANS=mul(C,B);
+        printf("%lld\n",ANS[0][0]);
+    }
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
+]]></content>
+  </entry>
+  
+</feed>

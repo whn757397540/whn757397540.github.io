@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 字符串 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/zi-fu-chuan/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T11:29:47+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛12]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/10/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-12/"/>
+    <updated>2014-08-10T10:48:00+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/10/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-12</id>
+    <content type="html"><![CDATA[<h2>第十二场</h2>
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/494/">BOJ 494. Study sister’s barbarian</a></p>
+
+<p>poj原题，原题链接在这里<a href="http://poj.org/problem?id=2828">POJ2828</a></p>
+
+<p>难在分析，离线处理，倒着分析。分析就会发现，如果是到这来的话，那么所给的位置，应该就代表空格的位置，也就是给你的位置是k的话，就代表第k个空格。（为什么？自己想一想）然后就是找第k个空格的位置插进去了。</p>
+
+<p>直接暴力肯定不行啦，优化一点。空格个数怎么统计？树状数组呗，可以很容易在logn的时间内求出前n项和，查找位置的话，二分即可，分析下复杂度，是nlog<sup>2</sup> n,在POJ上来说，已然绰绰有余了，因为POJ上的时限是4s（感觉优化的暴力也能过），而在BOJ上，时限为2s,上述做法，姿势要好才能过。有没有更快的方法呢？有，线段树。</p>
+
+<p>什么？线段树不是比树状数组要慢吗？确实，不过那是对于同样的时间复杂度来说的，这道题，目前我还没想到nlogn复杂度的树状数组想法，但是用线段树，很容易就能在nlogn的时间内解出来。区间存空格个数就行了，比较的时候比较左边的空格跟你的目标的大小就行。代码</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+const int N = 200005;
+
+struct TREE
+{
+    int l,r;
+    int data;
+}a[4*N];
+
+int b[N],c[N],ans[N];
+bool flag;
+
+void buildTree(int now,int l,int r)
+{
+    int lson = 2*now,rson = 2*now+1;
+
+    a[now].l=l;
+    a[now].r=r;
+
+    if (l == r)
+    {
+        a[now].data = 1;
+        return;
+    }
+    int mid=(l + r) &gt;&gt; 1;
+    buildTree(lson,l,mid);
+    buildTree(rson,mid+1,r);
+    a[now].data=a[lson].data+a[rson].data;
+}
+
+void Insert(int now,int aim,int dat)
+{
+
+    if (a[now].l==a[now].r)
+    {
+        a[now].data = 0;
+        ans[a[now].l] = dat;
+        return;
+    }
+
+    int lson = 2*now,rson = 2*now+1;
+
+    if (aim&lt;=a[lson].data)
+        Insert(lson,aim,dat);
+    else
+        Insert(rson,aim-a[lson].data,dat);
+
+    a[now].data = a[lson].data + a[rson].data;
+}
+
+
+
+int main()
+{
+    int n;
+
+    while (scanf("%d",&amp;n) != EOF)
+    {
+        for (int i = 0; i &lt; n; i++)
+        {
+            scanf("%d%d",&amp;b[i],&amp;c[i]);
+            b[i]+=1;
+        }
+        buildTree(1,1,n);
+        for (int i = n - 1; i &gt;= 0; i--)
+        {
+            flag=false;
+            Insert(1,b[i],c[i]);
+        }
+        for (int i = 1;i &lt; n; i++)
+            printf("%d ",ans[i]);
+        printf("%d\n",ans[n]);
+    }
+}
+</code></pre>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/491/">BOJ 491. Study sister’s wizard</a></p>
+
+<p>呵呵，哈希就好，用预处理后O（1)的那种姿势。这里我用的另外一种姿势，主要是字符串长度给定了，所以求hash的时候，求出第一个串来以后，依次递推，每次去首加尾就好。</p>
+
+<p>求完后吧hash值存到一个数组中，分别比较连续的序列是否相等就行。复杂度为O（n）具体看代码吧</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;cmath&gt;
+
+typedef unsigned long long ull;
+
+using namespace std;
+
+const ull B=1e9+7;
+const int N=1e5+7;
+ull a[N];
+int m,l;
+int cnt;
+
+void getHash(char s[])
+{
+    int len=strlen(s);
+    cnt=0;
+
+    ull Hash=0;
+    ull BB=1;
+    for (int i=0;i&lt;l;i++)
+    {
+        Hash=Hash*B+s[i];
+        if (i&gt;0) BB*=B;
+    }
+    a[0]=Hash;
+    for (int i=1;i&lt;=len-l;i++)
+    {
+        Hash=(Hash-s[i-1]*BB)*B+s[i+l-1];
+        a[i]=Hash;
+    }
+}
+
+int main()
+{
+    char s[N];
+    while (scanf("%d%d",&amp;m,&amp;l)!=EOF)
+    {
+        scanf("%s",s);
+        int len=strlen(s);
+        getHash(s);
+        cnt=1;
+        int ans=0;
+        //for (int i=0;i&lt;=len-l;i++)
+           // printf("%ul ",a[i]);
+        //cout&lt;&lt;endl;
+        for (int k=0;k&lt;l;k++)
+        {
+            for (int i=k+l;i&lt;=len-l;i+=l)
+            {
+                if (a[i]==a[i-l]) cnt++;
+                else
+                {
+                    if (cnt&gt;=m)
+                        ans+=cnt-m+1;
+                    cnt=1;
+                }
+            }
+            if (cnt&gt;=m)
+                ans+=cnt-m+1;
+            cnt=1;
+        }
+        printf("%d\n",ans);
+
+
+    }
+}
+</code></pre>
+
+<p>E题 <a href="http://code.bupt.edu.cn/problem/p/490/">BOJ 490. Study sister’s dragon</a></p>
+
+<p>能想到用dp来求就好做了。用dp[i][j]代表取到第i堆，状态为j(前几堆的异或和为j)的概率，然后就很容易写出dp方程</p>
+
+<p>dp[i][j]+=dp[i-1][j xor k]*1/a[i];</p>
+
+<p>由于只跟之前一个状态有关系，可以用滚动数组来节省空间。代码在这里</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+
+int main()
+{
+    int n;
+    while (scanf("%d",&amp;n) != EOF)
+    {
+        int num;
+        double dp[2][130]={0};
+        scanf("%d",&amp;num);
+        for (int i = 1;i &lt;= num; i ++)
+            dp[0][i] = 1.000/num;
+        int now=0;
+        for (int i = 1;i &lt; n;i ++)
+        {
+            scanf("%d", &amp;num);
+            for (int j = 0; j &lt; 128; j++)
+            {
+                dp[now^1][j]=0;
+                for (int k = 1; k &lt;=num; k ++)
+                    dp[now^1][j]+=dp[now][j^k]*(1.000)/num;
+            }
+            now^=1;
+        }
+        printf("%.6lf\n",dp[now][0]);
+    }
+}
+</code></pre>
+
+<p>G题 <a href="http://code.bupt.edu.cn/problem/p/497/">BOJ 497. Study sister’s clan</a></p>
+
+<p>就是一道裸的图论题，强联通分量缩点，然后跑一遍最短路（Dijkstra或者SPFA都可，自己选择吧）就能出结果啦，照模板抄就行了。代码</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;vector&gt;
+#include &lt;iostream&gt;
+#include &lt;queue&gt;
+
+#define MAX_V 2222
+#define INF 555555
+using namespace std;
+
+int n;
+vector&lt;int&gt; G[MAX_V];
+vector&lt;int&gt; rG[MAX_V];
+vector&lt;int&gt; vs;
+bool used[MAX_V];
+int cmp[MAX_V];
+int d[MAX_V];
+
+void addEdge(int from,int to)
+{
+    G[from].push_back(to);
+    rG[to].push_back(from);
+}
+
+void dfs(int v)
+{
+    used[v] = true;
+    for (int i = 0; i &lt; G[v].size(); i ++)
+        if (!used[G[v][i]]) dfs(G[v][i]);
+    vs.push_back(v);
+}
+
+void rdfs(int v, int k)
+{
+    used[v] = true;
+    cmp[v] = k;
+    for (int i = 0; i &lt; rG[v].size(); i ++)
+    {
+        if (!used[rG[v][i]]) rdfs(rG[v][i],k);
+    }
+}
+
+int scc()
+{
+    memset(cmp,0,sizeof(cmp));
+    memset(used,0,sizeof(used));
+    vs.clear();
+    for (int v = 1; v &lt;= n; v ++)
+        if(!used[v]) dfs(v);
+    memset(used,0,sizeof(used));
+    int k=0;
+    for (int i = vs.size() - 1;i &gt;=0; i--)
+        if (!used[vs[i]]) rdfs(vs[i],k++);
+    return k;
+}
+
+struct HeadNode
+{
+    int d,u;
+    bool operator &lt; (const HeadNode&amp; rhs) const{
+        return d &gt; rhs.d;
+    }
+};
+void dijkstra(int s)
+{
+    priority_queue&lt;HeadNode&gt; q;
+    for (int i = 1; i &lt;= n; i ++) d[i]=INF;
+    d[s] = 0;
+    memset(used,0,sizeof(used));
+    q.push((HeadNode){0,s});
+    while (!q.empty())
+    {
+        HeadNode x = q.top();q.pop();
+        int u = x.u;
+        if (used[u]) continue;
+        used[u]=true;
+        for (int i = 0; i &lt; G[u].size(); i++)
+        {
+            int to = G[u][i];
+            if (d[to] &gt; d[u] + (cmp[u]==cmp[to] ? 0 : 1))
+            {
+                d[to] = d[u] + (cmp[u]==cmp[to]? 0 : 1);
+                q.push((HeadNode){d[to],to});
+            }
+        }
+    }
+}
+int main()
+{
+    int t;
+    cin&gt;&gt;t;
+    while (t--)
+    {
+        int m,k;
+        scanf("%d%d%d",&amp;n,&amp;m,&amp;k);
+        for (int i=1;i&lt;=m;i++)
+        {
+            int u,v;
+            scanf("%d%d",&amp;u,&amp;v);
+            addEdge(u,v);
+        }
+        scc();
+        int a,b;
+        scanf("%d%d",&amp;a,&amp;b);
+        if (cmp[a] == cmp[b])
+            printf("Input Error\n");
+        else
+        {
+            dijkstra(a);
+            if (d[b] &gt; k)
+                printf("Sad\n");
+            else
+                printf("Good Job\n");
+        }
+        for (int i = 1;i &lt;= n;i ++)
+        {
+            G[i].clear();
+            rG[i].clear();
+        }
+    }
+    return 0;
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
+]]></content>
+  </entry>
+  
+</feed>

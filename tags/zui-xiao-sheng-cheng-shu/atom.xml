@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 最小生成树 | hnnwang's Blog]]></title>
   <link href="http://whn757397540.github.io/tags/zui-xiao-sheng-cheng-shu/atom.xml" rel="self"/>
   <link href="http://whn757397540.github.io/"/>
-  <updated>2015-08-09T23:00:29+08:00</updated>
+  <updated>2015-08-10T11:29:47+08:00</updated>
   <id>http://whn757397540.github.io/</id>
   <author>
     <name><![CDATA[hnnwang]]></name>
@@ -646,6 +646,704 @@ int main()
 <p>总结一下，一般情况下，就用Kruskal吧，除非是稠密图（点特别少，边特别多的时候），我确实Kruskal掌握地比PRIM好一些，但是今天敲了下PRIM，确实是PRIM敲起来更加简单，还是要知道怎么用的，必要的时候要能够会用！</p>
 
 <p>好了，今天一天干的事情大概都在上面了，真是，一个这个总结都写了2个多小时，╮(╯▽╰)╭，忧伤！</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/01/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-8/"/>
+    <updated>2014-08-01T09:16:16+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/01/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-8</id>
+    <content type="html"><![CDATA[<h2>第八场</h2>
+
+<!-- more -->
+
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/448/">BOJ 448. 游戏</a></p>
+
+<p>枚举边就行了，我枚举的方法是，记录下第一个边的向量，然后设置一个变量来标记第一个边是否时被计数进去，然后再设置一个标记来标记之前一个边是否被记录进去，用向量判断钝角，注意别重就行。代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+
+using namespace std;
+
+double x1,y1,x2,y2,x3,y3;
+bool judge=false;
+
+int main()
+{
+    int n;
+    while (scanf("%d",&amp;n)!=EOF)
+    {
+        int sum=0;
+        bool judgeFirst=false;
+        judge=false;
+        scanf("%lf%lf",&amp;x1,&amp;y1);
+        scanf("%lf%lf",&amp;x2,&amp;y2);
+        scanf("%lf%lf",&amp;x3,&amp;y3);
+
+        double x0=x2-x1,y0=y2-y1;
+        double recx=x1,recy=y1;
+        if (x0*(x3-x2)+y0*(y3-y2)&gt;0)
+        {
+            sum+=2;
+            judge=true;
+            judgeFirst=true;
+        }
+        x1=x2;y1=y2;x2=x3;y2=y3;
+        for (int i=3;i&lt;=n;i++)
+        {
+            if (i!=n) scanf("%lf%lf",&amp;x3,&amp;y3);
+            else
+            {
+                x3=recx;
+                y3=recy;
+            }
+            if ((x2-x1)*(x3-x2)+(y2-y1)*(y3-y2)&gt;0)
+            {
+                if (judge)
+                    sum+=1;
+                else
+                {
+                    sum+=2;
+                    judge=true;
+                }
+            }
+            else
+                judge=false;
+            x1=x2;y1=y2;x2=x3;y2=y3;
+        }
+        if ((recx-x1)*x0+(recy-y1)*y0&gt;0)
+            if (judge&amp;&amp;judgeFirst);
+            else if (judge||judgeFirst)
+                sum+=1;
+            else
+                sum+=2;
+        printf("%d\n",sum);
+    }
+}
+</code></pre>
+
+<p>B题 <a href="http://code.bupt.edu.cn/problem/p/468/">BOJ 468. 小妹妹送快递</a></p>
+
+<p>个人比较偏向并查集的做法，应该说是kruskal最小生成树的想法，挺简单的。就不具体分析了。代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+#define N 10005
+struct data
+{
+    int x,y,c;
+}a[10*N];
+
+int father[N];
+
+int getfather(int);
+bool PlusJudge(int,int);
+void GetPlus(int,int);
+bool cmp(data,data);
+
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while (T--)
+    {
+        int n,m;
+        int ans=1;
+        cin&gt;&gt;n&gt;&gt;m;
+        for (int i=1;i&lt;=n;i++)
+            father[i]=i;
+        for (int i=0;i&lt;m;i++)
+            scanf("%d%d%d",&amp;a[i].x,&amp;a[i].y,&amp;a[i].c);
+        sort(a,a+m,cmp);
+
+        for (int i=0;i&lt;m;i++)
+        {
+            GetPlus(a[i].x,a[i].y);
+            ans=max(ans,a[i].c);
+            if (PlusJudge(1,n))
+                break;
+        }
+
+        if (PlusJudge(1,n) )
+            printf("%d\n",ans);
+        else
+            printf("shimatta!\n");
+    }
+    return 0;
+}
+
+int getfather(int i)
+{
+
+    if (father[i] != i) father[i] = getfather( father[i] );
+    return father[i];
+}
+
+bool PlusJudge(int i,int j)
+{
+    if ( getfather( i ) == getfather( j ) )
+        return true;
+    else
+        return false;
+}
+
+void GetPlus(int i,int j)
+{
+    int a = getfather( i );
+    int b = getfather( j );
+    father[b] = a;
+}
+
+bool cmp(data a,data b)
+{
+    return a.c&lt;b.c;
+}
+</code></pre>
+
+<p>C题 <a href="http://code.bupt.edu.cn/problem/p/472/">BOJ  472. 学姐点名</a></p>
+
+<p>卡代码量，卡时间，就酱紫。方法有两种。</p>
+
+<p>算出学号之和（用公式就可以，求和也行），然后求出所给的数据之和，然后相减。代码</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+int main()
+{
+    int n;
+    while (scanf("%d",&amp;n)!=EOF)
+    {
+        int i,sum=0;
+        for (i=1;i&lt;n;i++)
+        {
+            int num;
+            scanf("%d",&amp;num);
+            sum+=num;
+        }
+        int a;
+        if (n%2) a=(n+1)/2*n;
+        else a=n/2*(n+1);
+        printf("%d\n",a-sum);
+    }
+}
+</code></pre>
+
+<p>1到n求异或，然后读入的时候再异或回来，剩下的数就是要找的学弟编号，利用了异或的性质，代码就不附了，很简单。</p>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/452/">BOJ 452. 解码锦标赛</a></p>
+
+<p>dp，我感觉难点在找对手身上。 先说dp关系式dp[i][j]，i代表选手编号，j代表当前轮数（我是把最开始的那一轮算作第0轮的。），dp[i][j]=dp[i][j-1]<em>(sigma(dp[k][j-1]</em>w[i][k])其中k代表i在当前轮可能遇到的对手（递推式应该很好理解）。</p>
+
+<p>接下来就是找对手了，我在这里卡了好久。</p>
+
+<p>首先，我们吧所有的选手编号转换为二进制，就会发现是1 vs 10 11 vs 100 101 vs 110 111 vs 1000……，这可能感觉还是不太好，可以尝试再把它减1，就会发现是酱紫：0 vs 1 10 vs 11 100 vs 101 110 vs 111 1000 vs 1001……，这就很好看了，因为一个数对1取异或，就是他的对手，这多好的性质 呀，所以，第一轮的对手很容易找到了就。但是第二轮呢，这就不是一个对手了，怎么办？ 咱们观察下，第二轮（以及更高的轮次）都可以看作是组与组之间的对战，对与第二轮，所有数都除以2（整除），把得到结果相同的归为一组，进行对战，就会发现，依然是 0 vs 1,10 vs 11,100 vs 101……，同理，下一轮，就再除以个2(就是原来的数除以4)，还会是这种对局，酱紫的话，对手的问题就解决了，哈哈，这题就可以做了。结合分析看代码吧！</p>
+
+<p>。</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+
+using namespace std;
+const int N=10;
+
+double dp[1 &lt;&lt; N + 1][1 &lt;&lt; N + 1],w[1 &lt;&lt; N + 1][1 &lt;&lt; N + 1];
+
+double others(int i,int j)
+{
+    int temp= 1 &lt;&lt; j ;
+    double res=0.0;
+
+    i-=1;
+    int cnt=i/temp;
+
+    for (int k = ((cnt^1)*temp+1); k &lt;= (((cnt^1)+1) * temp);k ++)
+        res+=dp[k][j]*w[i+1][k];
+    return res;
+}
+int main()
+{
+    int n;
+    while (scanf("%d",&amp;n),n!=0)
+    {
+        for (int i = 1;i &lt;= ( 1 &lt;&lt; n );i ++)
+        {
+            dp[i][0]=1;
+            for (int j = 1;j &lt;= (1 &lt;&lt; n);j++)
+                scanf("%lf",&amp;w[i][j]);
+        }
+        for (int i = 1;i &lt;= ( 1 &lt;&lt; n);i ++)
+            dp[i][1]=w[i][((i-1)^1)+1];
+
+        for (int j = 2;j &lt;= n;j ++)
+            for (int i = 1;i &lt;= (1&lt;&lt;n);i++)
+                dp[i][j]=dp[i][j-1]*others(i,j-1);
+        int ans;
+        double winner=0;
+        for (int i = 1;i &lt;= (1&lt;&lt;n) ;i ++)
+        {
+            if (dp[i][n] &gt; winner+0.001)
+            {
+                ans=i;
+                winner = dp[i][n];
+            }
+        }
+        printf("%d\n",ans);
+
+    }
+}
+</code></pre>
+
+<p>这次的E题，比赛时间全砸上了，思路没错，不过线段树可能写的有些毛病，而且我认为这次的E题有研究一下的必要，不光是因为他是可以用线段树做的（我最近在搞线段树），他还可以用树状数组（二次差分），用5个树状数组来维护就行。还可以用分块的思想来做。</p>
+
+<p>E题 <a href="http://code.bupt.edu.cn/problem/p/451/">BOJ 451. 田田的算数题</a></p>
+
+<p>有三种方法，线段树，树状数组，桶分（当然，也有可能还有其他方法）。</p>
+
+<p>线段树方法。</p>
+
+<p>原理其实很简单。</p>
+
+<p>等差数列是可以叠加的（就是说，如果你在[ l , r ]区间先后加上一个首项为x1,公差为d1的等差数列和一个首项为x2公差为d2的等差数列，相当于直接加上一个首项为（x1+x2)公差为(d1+d2)的等差数列。）</p>
+
+<p>等差数列，只需要知道首项x，公差d和元素个数n，就能根据公式求出和来，而元素个数n正好是[ l , r ]区间的长度r-l+1。</p>
+
+<p>对于需要从中间截断的时候，我们也可以求出后一半区间的首项来。</p>
+
+<p>有了以上两点保证，就很容易求了，维护一个区间求和的域，再在懒标记中维护一个区间首项的域和一个区间公差的域，就很容易写出来（满足第一条性质，所以不用判断是否有懒标记，直接叠加就可以了）。不过线段树写起来确实有点烦，注不要出错就行。这里附上我的代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#define N 100005
+using namespace std;
+typedef long long ll;
+long long ans;
+
+struct tree
+{
+    int l,r;
+    ll data;
+}a[4*N];
+
+bool haveRec[4*N];
+struct record
+{
+    ll x,d;
+}rec[4*N];
+long long getSum(ll x,ll d,ll n)
+{
+    return (n*x+n*(n-1)/2*d);
+}
+void buildTree(int now,int l,int r)
+{
+    int lson=2*now,rson=2*now+1;
+    a[now].l=l;
+    a[now].r=r;
+    a[now].data=0;
+    rec[now].x=rec[now].d=0;
+    if (l==r) return;
+    int mid= (l+r) &gt;&gt; 1;
+    buildTree(lson,l,mid);
+    buildTree(rson,mid+1,r);
+}
+void Insert(int now,int aim,ll det)
+{
+    int lson=2*now,rson=2*now+1;
+    if (a[now].l==aim&amp;&amp;a[now].r==aim)
+    {
+        a[now].data+=det;
+        return;
+    }
+    int mid=(a[now].l+a[now].r) &gt;&gt; 1 ;
+    if (aim&lt;=mid)
+        Insert(lson,aim,det);
+    else
+        Insert(rson,aim,det);
+    a[now].data=a[lson].data+a[rson].data;
+
+}
+void InsertRec(int now,int l,int r,int x,int d)
+{
+    int lson=2*now,rson=2*now+1;
+    if (a[now].l==l&amp;&amp;a[now].r==r)
+    {
+        rec[now].x+=x;
+        rec[now].d+=d;
+        return;
+    }
+    int mid=(a[now].l+a[now].r) &gt;&gt; 1;
+    rec[lson].x+=rec[now].x;
+    rec[lson].d+=rec[now].d;
+    rec[rson].x+=(rec[now].x+(mid+1-a[now].l)*rec[now].d);
+    rec[rson].d+=rec[now].d;
+    if (r&lt;=mid)
+        InsertRec(lson,l,r,x,d);
+    else if (l&gt;mid)
+        InsertRec(rson,l,r,x,d);
+    else
+    {
+        InsertRec(lson,l,mid,x,d);
+        InsertRec(rson,mid+1,r,x+(mid+1-l)*d,d);
+    }
+    a[now].data=a[lson].data+a[rson].data+getSum(rec[lson].x,rec[lson].d,a[lson].r-a[lson].l+1)+getSum(rec[rson].x,rec[rson].d,a[rson].r-a[rson].l+1);
+    rec[now].x=0;
+    rec[now].d=0;
+}
+void Search(int now,int l,int r)
+{
+    int lson=2*now,rson=2*now+1;
+    if (a[now].l==l&amp;&amp;a[now].r==r)
+    {
+        ans+=a[now].data+getSum(rec[now].x,rec[now].d,r-l+1);
+        return;
+    }
+    int mid=(a[now].l+a[now].r) &gt;&gt; 1;
+
+    rec[lson].x+=rec[now].x;
+    rec[lson].d+=rec[now].d;
+    rec[rson].x+=(rec[now].x+(mid+1-a[now].l)*rec[now].d);
+    rec[rson].d+=rec[now].d;
+    if (r&lt;=mid)
+        Search(lson,l,r);
+    else if (l&gt;mid)
+        Search(rson,l,r);
+    else
+    {
+        Search(lson,l,mid);
+        Search(rson,mid+1,r);
+    }
+    a[now].data=a[lson].data+a[rson].data+getSum(rec[lson].x,rec[lson].d,a[lson].r-a[lson].l+1)+getSum(rec[rson].x,rec[rson].d,a[rson].r-a[rson].l+1);
+    rec[now].x=0;
+    rec[now].d=0;
+}
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while(T--)
+    {
+        ll n,m;
+        scanf("%lld%lld",&amp;n,&amp;m);
+        buildTree(1,1,n);
+        for (int i=1;i&lt;=n;i++)
+        {
+            ll num;
+            scanf("%lld",&amp;num);
+            Insert(1,i,num);
+        }
+        for (int i=1;i&lt;=m;i++)
+        {
+            int order;
+            scanf("%d",&amp;order);
+            if (order==1)
+            {
+                int l,r;
+                ll x,d;
+                scanf("%d%d%lld%lld",&amp;l,&amp;r,&amp;x,&amp;d);
+                InsertRec(1,l,r,x,d);
+            }
+            else if(order==2)
+            {
+                int l,r;
+                scanf("%d%d",&amp;l,&amp;r);
+                ans=0;
+                Search(1,l,r);
+                printf("%lld\n",ans);
+            }
+   }
+}
+</code></pre>
+
+<p>树状数组方法 我这里的树状数组方法，是利用了差分的思想，二次差分，看这个之前，你得先要知道如何用差分的思想用树状数组来来解决区间加减一个数的区间修改和查询的方法，不知道的可以去看我的<a href="">这篇博客</a>熟悉了这种推导方法，接下来的推导才能看得懂。好了，废话少说，来进入题解。 首先，通过以前的推导我们知道，如果设b[i]=a[i]-a[i-1] (设a[0]=0),我们会有</p>
+
+<p>sigma(a[i])=n<em>b[1]+(n-1)</em>b[2]+……b[1]=(n+1)sigma(b[i])-sigma(i*b[i])——（1） (这个式子是接下來推导的基础)</p>
+
+<p>同样我们设c[i]=b[i]-b[i-1] (同样设b[0]=0),酱紫的话，就可以通过维护c[i]的几个特定的值（应该是3个）来维护一段区间的公差d了，这个是怎么作用的请根据前面那片博客的做法来自行推导，不难。</p>
+
+<p>前面用b[i]来维护区间加减一个数的思想是用b[i]来表示a[i]的前n项和，同理，这里也应该是用c[i]来表示a[i]的前n项和那么我们需要把（1）式化成用c[i]来表示的形式。我们看到，（1）式中有sigma(b[i])和sigma(i*b[i])，很容易知道</p>
+
+<p>sigma(b[i])=(n+1)sigma(c[i])-sigma(i*c[i]———————————————(2)</p>
+
+<p>那么关键就在于求sigma(i*b[i]),把它展开,并把b[i]=c[i]+b[i-1]代入会发现是这个样子</p>
+
+<p>sigma(i*b[i])</p>
+
+<p>=b[1]+2<em>b[2]+3</em>b[3]+……+n*b[n]</p>
+
+<p>=c[1]+2<em>(c[2]+b[1])+3</em>(c[3]+b[2])+……+n*(c[n]+b[n-1])</p>
+
+<p>=sigma(i<em>c[i])+sigma(b[i])(i=1..n-1)+sigma(i</em>b[i])(i=1..n-1)————————(3)</p>
+
+<p>到这里，我们看最后一项，这不就是i*c[i]的前n-1项和吗？那么我们就可以一直递推下去了，就得到如下的式子</p>
+
+<p>=sigma(i<em>c[i])+sigma(i</em>c[i])(i=1..n-1)+sigma(i<em>c[i])(i=1..n-1)+……+1</em>c[1]+sigma(b[i])(i=1..n-1)+sigma(b[i])(i=1..n-2)+……+b[1]</p>
+
+<p>我们的目标是c，b什么的最讨厌了，所以我们要想办法把它搞掉，怎么办呢？别急，我们试下把它展开，就得到了下面的式子</p>
+
+<p>=sigma(sigma(i<em>c[i]))+(n-1)</em>b[1]+(n-2)*b[2]+……+b[n-1]</p>
+
+<p>看到后面的b的部分，我就感觉很高兴，我说过，（1)式很重要，熟悉（1)式了的花，会发现，后边的b的部分是可以化成n<em>sigma(b[i])-sigma(i</em>b[i])的，先化成这样不管它再去搞下c的部分，怎么也不能让它有两次求和吧？我们设d[i]=i<em>c[i]，会发现sigma(sigma(i</em>c[i]))=sigma(sigma(d[i]))，这不跟刚才的b是一样的吗？哈哈，看到这里就感觉世界真美好，那么就可以的到接下来的式子了</p>
+
+<p>=(n+1)sigma(i<em>c[i])-sigma(i2</em>c[i])+n<em>sigma(b[i])(i=1..n-1)-sigma(i</em>b[i])——–(4)</p>
+
+<p>到这里可能有人说了，怎么还有b[i]，不是要把b[i]干掉吗？b[i]一直在叫我怎么做？这个不用着急，没法继续往下化了，我们去看看前面，注意到前面有个(3)式，而且(3)式里有个+sigma(i<em>b[i])，而(4)式里有个-sigma(i</em>b[i])，我们把他俩加起来，不就把i*b[i]搞定了？那，还有个b[i]呢，怎么办？带公式直接变成c[i]不解释。经过整合以后，就会得到最终的式子，如下：</p>
+
+<p>sigma(a[i])=(n+1)2<em>sigma(c[i])+(–(3</em>n+4)<em>sigma(i</em>c[i])+sigma(i2<em>c[i])-n</em>(n+1)sigma(c[i])(i=1..n-1)+(n+1)<em>sigma(i</em>c[i])(i=1..n-1))/2</p>
+
+<p>具体的实现请参考那篇博客的思路，这里说一点就是，可以把x和d分开来维护，用b[i]来维护x，用c[i]来维护d,初始设c[i]为0就可以,这样应该是需要5个树状数组；当然，也可以全部都用c[i]来维护，这样可以用4个树状数组（一个原数组的，一个是维护d的3个跟c[i]有关的数组c[i],i<em>c[i]和i2</em>c[i],c[i]初始为0）或者3个树状数组（全部用c[i]来维护，输入原数组的时候更新c[i]的值）不过道理都是一样的，这份代码里有用4个和5个树状数组的代码。仅供参考。</p>
+
+<pre><code class="c++">
+/*维护5个树状数组，时间2500ms*/
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#define N 100005
+using namespace std;
+typedef long long ll;
+ll ans;
+ll A[N],B[N],C[N],D[N],E[N];
+ll n;
+
+ll lowbit(ll x)
+{
+    return x&amp;(-x);
+}
+
+void Update(ll x,ll det,ll a[])
+{
+    for (ll i = x;i&lt;= n; i+=lowbit(i))
+        a[i]+=det;
+}
+
+ll GetSum(ll x,ll a[])
+{
+    ll res=0;
+    for (ll i=x;i&gt;0;i-=lowbit(i))
+        res+=a[i];
+    return res;
+}
+
+ll dGetSum(ll n)
+{
+    ll res=0;
+    res=(n+1)*(n+1)*GetSum(n,C)+((n+1)*GetSum(n-1,D)-(3*n+4)*GetSum(n,D)+GetSum(n,E)-n*(n+1)*GetSum(n-1,C))/2;
+    return res;
+
+}
+
+ll xGetSum(ll n)
+{
+    ll res=0;
+    res=(n+1)*GetSum(n,A)-GetSum(n,B);
+    return res;
+}
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while(T--)
+    {
+        ll m,num1=0;
+        scanf("%lld%lld",&amp;n,&amp;m);
+        memset(A,0,sizeof(long long)*(n+2));
+        memset(B,0,sizeof(long long)*(n+2));
+        memset(C,0,sizeof(long long)*(n+2));
+        memset(D,0,sizeof(long long)*(n+2));
+        memset(E,0,sizeof(long long)*(n+2));
+
+        for (ll i=1;i&lt;=n;i++)
+        {
+            ll num;
+            scanf("%lld",&amp;num);
+            Update(i,num-num1,A);
+            Update(i,i*(num-num1),B);
+            num1=num;
+        }
+
+        for (ll i=1;i&lt;=m;i++)
+        {
+            ll order;
+            scanf("%d",&amp;order);
+            if ( order==1 )
+            {
+                ll l,r,x,d;
+                scanf("%lld%lld%lld%lld",&amp;l,&amp;r,&amp;x,&amp;d);
+                Update(l,x,A);
+                Update(l,l*x,B);
+                Update(r+1,-x,A);
+                Update(r+1,-(r+1)*x,B);
+                if (r&gt;l)
+                {
+                    Update(l+1,d,C);
+                    Update(r+1,-(r-l+1)*d,C);
+                    Update(r+2,(r-l)*d,C);
+                    Update(l+1,(l+1)*d,D);
+                    Update(r+1,-(r-l+1)*(r+1)*d,D);
+                    Update(r+2,(r-l)*(r+2)*d,D);
+                    Update(l+1,(l+1)*(l+1)*d,E);
+                    Update(r+1,-(r+1)*(r+1)*(r-l+1)*d,E);
+                    Update(r+2,(r-l)*(r+2)*(r+2)*d,E);
+                }
+            }
+            else if( order==2 )
+            {
+                ll l,r;
+                scanf("%lld%lld",&amp;l,&amp;r);
+                ans=xGetSum(r)-xGetSum(l-1)+dGetSum(r)-dGetSum(l-1);
+                printf("%lld\n",ans);
+            }
+        }
+    }
+}
+</code></pre>
+
+<pre><code class="c++">/*维护4个树状数组,时间不到200ms*/
+
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#define N 100005
+using namespace std;
+typedef long long ll;
+ll ans;
+ll A[N],B[N],C[N],D[N],E[N];
+ll n;
+
+ll lowbit(ll x)
+{
+    return x&amp;(-x);
+}
+
+void Update(ll x,ll det,ll a[])
+{
+    for (ll i = x;i&lt;= n; i+=lowbit(i))
+        a[i]+=det;
+}
+
+ll GetSum(ll x,ll a[])
+{
+    ll res=0;
+    for (ll i=x;i&gt;0;i-=lowbit(i))
+        res+=a[i];
+    return res;
+}
+
+ll dGetSum(ll n)
+{
+    ll res=0;
+    res=((n*n+3*n+2)*GetSum(n,C)-(2*n+3)*GetSum(n,D)+GetSum(n,E))/2;
+//这个公式是列项找规律找出来的，由于都是前n项和，所以比我推导出来的公式快一点，至于怎么能把那个公式化成这个，我也不清楚。。。
+    return res;
+
+}
+
+ll xGetSum(ll n)
+{
+    return GetSum(n,A);
+}
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while(T--)
+    {
+        ll m,num1=0;
+        scanf("%lld%lld",&amp;n,&amp;m);
+        memset(A,0,sizeof(ll)*(n+2));
+        memset(C,0,sizeof(ll)*(n+2));
+        memset(D,0,sizeof(ll)*(n+2));
+        memset(E,0,sizeof(ll)*(n+2));
+
+        for (ll i=1;i&lt;=n;i++)
+        {
+            ll num;
+            scanf("%lld",&amp;num);
+            Update(i,num,A);
+        }
+
+        for (ll i=1;i&lt;=m;i++)
+        {
+            ll order;
+            scanf("%lld",&amp;order);
+            if ( order==1 )
+            {
+                ll l,r,x,d;
+                scanf("%lld%lld%lld%lld",&amp;l,&amp;r,&amp;x,&amp;d);
+                Update(l,x,C);
+                Update(l,l*x,D);
+                Update(l,l*l*x,E);
+                if (r&gt;l)
+                {
+                    Update(l+1,d-x,C);
+                    Update(l+1,(l+1)*(d-x),D);
+                    Update(l+1,(l+1)*(l+1)*(d-x),E);
+                    Update(r+1,-x-(r-l+1)*d,C);
+                    Update(r+1,(r+1)*(-x-(r-l+1)*d),D);
+                    Update(r+1,(r+1)*(r+1)*(-x-(r-l+1)*d),E);
+                }
+                else
+                {
+                      Update(r+1,-2*x,C);
+                    Update(r+1,(r+1)*(-2*x),D);
+                    Update(r+1,(r+1)*(r+1)*(-2*x),E);
+                }
+                Update(r+2,x+(r-l)*d,C);
+                Update(r+2,(r+2)*(x+(r-l)*d),D);
+                Update(r+2,(r+2)*(r+2)*(x+(r-l)*d),E);
+            }
+            else if( order==2 )
+            {
+                ll l,r;
+                scanf("%lld%lld",&amp;l,&amp;r);
+                ans=xGetSum(r)-xGetSum(l-1)+dGetSum(r)-dGetSum(l-1);
+                printf("%lld\n",ans);
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>至于维护三个树状数组的，应该理解了的话，很容易搞出来的，我没改代码，大概也是2000ms左右的时间复杂度吧。</p>
+
+<p>另外还有另外一种树状数组的做法，不是利用差分的思想。差分的思想是只有要加的元素通过有限次差分能够得到一个常数，才能用。那种思想应该是只要有公式就可以用的，这种做法我还没有去细致研究，等研究过了还会继续写一篇博客来介绍。具体请参考《挑战程序设计竞赛》这本书，或者去玮神<a href="http://blog.csdn.net/qq_16089147/article/details/38333965">这篇博客</a>看看，也是这道题，还有桶分的解法。</p>
+
+<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
 ]]></content>
   </entry>
   

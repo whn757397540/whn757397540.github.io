@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 位运算 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/wei-yun-suan/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T11:29:47+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/07/22/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-4/"/>
+    <updated>2014-07-22T09:16:02+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/07/22/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-4</id>
+    <content type="html"><![CDATA[<h2>第四场</h2>
+
+<!--more-->
+
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/437/">BOJ 437. 大家一起点外卖</a></p>
+
+<p>很简单的一题，由于题目数据给的有点问题，所以交了4次才过，事实上，第二次就应该过了。题面也写的有些蛋疼，需要和好好理解才行。</p>
+
+<p>思路也比较简单，就是设一个数组哪些费用的菜有人点过，每读入一个记录一个，然后判断价格能跟他点的菜凑成m的菜有没有人i点过，点过的话，比较他们的差值和当前最小差值，如果更小，则更新当前最小差值，并记录。需要注意不要让数组溢出，记得判断是否小于0或大于100W。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+#define N 500005
+#define INF 2222222
+using namespace std;
+
+bool judge[2000005]={false};
+int n,m;
+
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while (T--)
+    {
+        int ansless,ansbigger,MIN=INF;
+        scanf("%d%d",&amp;n,&amp;m);
+        memset(judge,false,sizeof(judge));
+        for (int i=1;i&lt;=n;i++)
+        {
+            int v;
+            scanf("%d",&amp;v);
+            int rest=m-v;
+            if (rest&gt;=0&amp;&amp;rest&lt;=1000000)
+                if (judge[rest])
+                {
+                    if (abs(rest-v)&lt;MIN)
+                    {
+                        MIN=abs(rest-v);
+                        ansless=min(rest,v);
+                        ansbigger=max(rest,v);
+                    }
+                }
+            judge[v]=true;
+        }
+        if (MIN==INF) printf("Sad\n");
+        else printf("%d %d\n",ansless,ansbigger);
+    }
+    return 0;
+}
+</code></pre>
+
+<p>B题 <a href="http://code.bupt.edu.cn/problem/p/438/">BOJ 438 田田的公司</a></p>
+
+<p>赤果果的一道并查集，没什么好说的，注意开long long的数组读的时候要用lld。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+#define N 100005
+#define INF 2222222
+using namespace std;
+
+int father[N];
+int n,m;
+long long sum[N];
+
+void init()
+{
+    for (int i=1;i&lt;=n;i++)
+        father[i]=i;
+}
+
+int getfather(int x)
+{
+    if (father[x]!=x) father[x]=getfather(father[x]);
+    return father[x];
+}
+
+bool judge(int x,int y)
+{
+    if (getfather(x)==getfather(y))
+        return true;
+    else
+        return false;
+}
+
+void getPlus(int x,int y)
+{
+    int a=getfather(x);
+    int b=getfather(y);
+    father[a]=b;
+    sum[b]=sum[a]+sum[b];
+}
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while (T--)
+    {
+        scanf("%d%d",&amp;n,&amp;m);
+        init();
+
+        for (int i=1;i&lt;=n;i++)
+        {
+            scanf("%lld",&amp;sum[i]);
+        }
+
+        for (int i=1;i&lt;=m;i++)
+        {
+            int order,x,y;
+            scanf("%d",&amp;order);
+            if (order==1)
+            {
+                scanf("%d%d",&amp;x,&amp;y);
+                if (!judge(x,y))
+                    getPlus(x,y);
+            }
+            else if (order==2)
+            {
+                scanf("%d",&amp;x);
+                int a=getfather(x);
+                printf("%lld\n",sum[a]);
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>C题 BOJ <a href="http://code.bupt.edu.cn/problem/p/439/">439. 崔逗逗的难题</a></p>
+
+<p>纯粹的数学几何题，推导出公式来就能出结果。如果不清楚精度的问题，那么这道题还是很难作对的。在此记录一下，double里存的数，14位是绝对准确的，15位不能保证，会有误差。long double 要用 %Lf 来读入和输出。代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+const double Pi=acos(-1.0000);
+double S3=1.000000-(Pi/6.0000+sqrt(3.000)/4.000);
+double S1=Pi-3.00000+4.0000*S3;
+double S2=4.00000-Pi-8.0000*S3;
+
+int main()
+{
+    double a;
+    while (scanf("%lf",&amp;a)!=EOF)
+    {
+        printf("%.6f %.6f %.6f\n",(acos(-1)-3.0000+4.0000*(1.0000-(acos(-1)/6.0000+sqrt(3.0000)/4.000)))*pow(a,2),
+               (4.0000-acos(-1)-8.0000000*(1.000000-(acos(-1)/6.0000+sqrt(3.000)/4.000)))*pow(a,2.0000),
+               4.000000*(1.0000-(acos(-1)/6.000+sqrt(3.00)/4.000))*pow(a,2.00000000));
+    }
+}
+</code></pre>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/435/">BOJ 435. 崔逗逗给你信心</a></p>
+
+<p>这题我是打表找到规律，符合条件的全都是二进制数中1都不相邻的。也可以证明，m ^ (2m) ^ (3m) = 0等价于m ^ (2m) = 3m,而m + 2m = 3m ，所以只要可以让一个数和他乘2（也就是二进制左移一位）的加法和按位异或等同就行，很明显，必须是1对0，0对1或者0，也就是说，移位以后不能出现1与1对其的情况，所以符合条件的数是不能存在多个个连续的1的。</p>
+
+<p>想到了这点以后，后面的想法跟康托展开有些类似</p>
+
+<p>（PS：这里我说下康托展开，康托展开求的，几个不同的数的全排列中，比当前排列的数小的有多少个，其实运用一下排列组合的思想就很容易得到结果，直接举个例子吧，32514698这个数，从第一位开始，求比他小的数的个数，就是对于第一位，前面没有出现的数中（也就是2—8位的数），比3小的共有2个（1和2），那么第一位比三小的数（自然也就比这个数要小），总共有2<em>7！（7！是后面七个数的全排列）个；第一位是3的数中，只需要按照这个规律来求后面就行了，比如第二位是2，就有1</em>6!,后面也是同理，所以康托展开的公式就是sigma(a[i]*(n-1)!)(这个理解了原理，就一切好说了）</p>
+
+<p>这题其实也就算是二进制里加了些条件的康托展开吧，对，先有一个准备工作，就是求n位的2进制数中，符合条件的总共有多少种(（用数组d[ ]来表示）)。其实是个菲波那契数列，证明如下： 对于任何位数大于3的数，个位有2种情况：1 个位是0；2 个位是1。当个位是0时，只要十位以上的所有位位符合条件，这个数就符合条件，总共有d[n-1]种；当个位是1时，十位必须是0，然后百位以上只要符合，这个数就符合，总共有d[n-2]种。综上，就有d[n]=d[n-1]+d[n-2] (PS:这里把0看成是0位数，不是1位数，因为最高位不能是0)，通过预处理就能把这个数组搞定（最好再求和一次），之后就是康托展开的原理了。对于每位，如果是1，把他看作0，那么无论后面的位是怎样的，都会小于这个数；如果没有连续的1，就一直找到个位；如果出现连续的1，那么找完连续1那一位就可以停止了，因为把1变成0后的所有情况都计算过了。代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+#define MOD 1000000009
+#define N 100
+using namespace std;
+
+int b[N]={1,1,1,2};
+int sum[N]={1,2,3,5};
+int a[N]={0};
+void build()
+{
+    for (int i=4;i&lt;=64;i++)
+    {
+        b[i]=(b[i-1]+b[i-2])%MOD;
+        sum[i]=(sum[i-1]+b[i])%MOD;
+    }
+}
+
+int main()
+{
+    long long n;
+    build();
+    while (scanf("%lld",&amp;n)!=EOF)
+    {
+        long long rec=n;
+        int cnt=0;
+        if  (rec==0)
+        {
+            cnt=1;
+            a[0]=0;
+        }
+        while (rec!=0)
+        {
+            a[cnt++]=rec&amp;1;
+            rec=rec&gt;&gt;1;
+        }
+        int ans=0;
+
+        for (int i=cnt-1;i&gt;=0;i--)
+        {
+
+            if (i!=0&amp;&amp;a[i]==1)
+            {
+                ans=(ans+sum[i])%MOD;
+                if (a[i-1]==1)
+                {
+                    a[i-1]=0;
+                    ans=(ans+sum[i-1])%MOD;
+                    break;
+                }
+            }
+            else if(i==0)//十位是0，个位是1或0,或十位是1,个位是0的情况。
+            {
+                if (a[i]==1)
+                    ans=(ans+2)%MOD;
+                else
+                    ans=(ans+1)%MOD;
+            }
+        }
+        printf("%d\n",ans);
+    }
+}
+</code></pre>
+
+<p>E <a href="http://code.bupt.edu.cn/problem/p/434/">BOJ 434. 焦级长搭积木</a></p>
+
+<p>还是一道dp题，只不过要求输出对应的第k小的策略。 先说dp的思路，dp[n][m][h]代表总共用了n个积木，底层积木数为m，高度为h的情况的方案数。那么对于每一个状状态（层数不为1的），都可以看成是在之前一个状态的底部再加一层。那么就有dp[n][m][h]=dp[m][m][1]<em>dp[n-m][m-1][h-1]+dp[m][m][1]</em>dp[n-m][m+1][h-1]=dp[n-m][m-1][h-1]+dp[n-m][m+1][h-1] (别告诉我你不知道dp[i][i][1]=1); 通过这个状态转移方程，很容易就能在n<em>m</em>h的复杂度内得出结果。接下来的问题是如何进行输出，怎么说呢，其实还是康托展开的思想，对于每一个状态（底层为m个的），它的第二层只可能出现两种情况（m-1和m+1)，m-1的状态肯定小于m+1的状态。那么我们只需要判断k是否大于m-1的所有方案数，如果大于，说明第k小的方案在m+1这种状态中，这是要注意转移到下一个转状态的时候，比较区间也就变了，需要让k减去m-1的所有状态（因为转移到下一个状态以后，m+1已经成了前提条件）；如果不大于，就说名第k小的数在m-1这个状态中。（PS：感谢xxhh的点拨）代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+long long dp[600][20][66];
+long long k;
+
+void print(int n,int m,int h)
+{
+
+    if (h==1)
+    {
+        printf("%d\n",m);
+        return;
+    }
+    printf("%d ",m);
+    if (k&lt;=dp[n-m][m-1][h-1])
+        print(n-m,m-1,h-1);
+    else
+    {
+        k-=dp[n-m][m-1][h-1];
+        print(n-m,m+1,h-1);
+    }
+}
+int main()
+{
+    int n,h,m;
+    while (~scanf("%d%d%d",&amp;n,&amp;h,&amp;m))
+    {
+        memset(dp,0,sizeof(dp));
+        for (int i=1;i&lt;=10;i++)
+            dp[i][i][1]=1;
+        for (int H=2;H&lt;=h;H++)
+            for (int M=1;M&lt;=10;M++)
+                for (int N=M;N&lt;=min(n,H*10);N++)
+                    dp[N][M][H]=dp[N-M][M-1][H-1]+dp[N-M][M+1][H-1];
+        printf("%lld\n",dp[n][m][h]);
+
+        while (scanf("%lld",&amp;k),k!=-1)
+            print(n,m,h);
+
+
+    }
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;-BACK</a></p>
+]]></content>
+  </entry>
+  
+</feed>

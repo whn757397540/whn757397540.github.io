@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 14年暑假训练题解 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/blog/categories/14nian-shu-jia-xun-lian-ti-jie/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T11:29:47+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛12]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/10/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-12/"/>
+    <updated>2014-08-10T10:48:00+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/10/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-12</id>
+    <content type="html"><![CDATA[<h2>第十二场</h2>
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/494/">BOJ 494. Study sister’s barbarian</a></p>
+
+<p>poj原题，原题链接在这里<a href="http://poj.org/problem?id=2828">POJ2828</a></p>
+
+<p>难在分析，离线处理，倒着分析。分析就会发现，如果是到这来的话，那么所给的位置，应该就代表空格的位置，也就是给你的位置是k的话，就代表第k个空格。（为什么？自己想一想）然后就是找第k个空格的位置插进去了。</p>
+
+<p>直接暴力肯定不行啦，优化一点。空格个数怎么统计？树状数组呗，可以很容易在logn的时间内求出前n项和，查找位置的话，二分即可，分析下复杂度，是nlog<sup>2</sup> n,在POJ上来说，已然绰绰有余了，因为POJ上的时限是4s（感觉优化的暴力也能过），而在BOJ上，时限为2s,上述做法，姿势要好才能过。有没有更快的方法呢？有，线段树。</p>
+
+<p>什么？线段树不是比树状数组要慢吗？确实，不过那是对于同样的时间复杂度来说的，这道题，目前我还没想到nlogn复杂度的树状数组想法，但是用线段树，很容易就能在nlogn的时间内解出来。区间存空格个数就行了，比较的时候比较左边的空格跟你的目标的大小就行。代码</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+const int N = 200005;
+
+struct TREE
+{
+    int l,r;
+    int data;
+}a[4*N];
+
+int b[N],c[N],ans[N];
+bool flag;
+
+void buildTree(int now,int l,int r)
+{
+    int lson = 2*now,rson = 2*now+1;
+
+    a[now].l=l;
+    a[now].r=r;
+
+    if (l == r)
+    {
+        a[now].data = 1;
+        return;
+    }
+    int mid=(l + r) &gt;&gt; 1;
+    buildTree(lson,l,mid);
+    buildTree(rson,mid+1,r);
+    a[now].data=a[lson].data+a[rson].data;
+}
+
+void Insert(int now,int aim,int dat)
+{
+
+    if (a[now].l==a[now].r)
+    {
+        a[now].data = 0;
+        ans[a[now].l] = dat;
+        return;
+    }
+
+    int lson = 2*now,rson = 2*now+1;
+
+    if (aim&lt;=a[lson].data)
+        Insert(lson,aim,dat);
+    else
+        Insert(rson,aim-a[lson].data,dat);
+
+    a[now].data = a[lson].data + a[rson].data;
+}
+
+
+
+int main()
+{
+    int n;
+
+    while (scanf("%d",&amp;n) != EOF)
+    {
+        for (int i = 0; i &lt; n; i++)
+        {
+            scanf("%d%d",&amp;b[i],&amp;c[i]);
+            b[i]+=1;
+        }
+        buildTree(1,1,n);
+        for (int i = n - 1; i &gt;= 0; i--)
+        {
+            flag=false;
+            Insert(1,b[i],c[i]);
+        }
+        for (int i = 1;i &lt; n; i++)
+            printf("%d ",ans[i]);
+        printf("%d\n",ans[n]);
+    }
+}
+</code></pre>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/491/">BOJ 491. Study sister’s wizard</a></p>
+
+<p>呵呵，哈希就好，用预处理后O（1)的那种姿势。这里我用的另外一种姿势，主要是字符串长度给定了，所以求hash的时候，求出第一个串来以后，依次递推，每次去首加尾就好。</p>
+
+<p>求完后吧hash值存到一个数组中，分别比较连续的序列是否相等就行。复杂度为O（n）具体看代码吧</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;cmath&gt;
+
+typedef unsigned long long ull;
+
+using namespace std;
+
+const ull B=1e9+7;
+const int N=1e5+7;
+ull a[N];
+int m,l;
+int cnt;
+
+void getHash(char s[])
+{
+    int len=strlen(s);
+    cnt=0;
+
+    ull Hash=0;
+    ull BB=1;
+    for (int i=0;i&lt;l;i++)
+    {
+        Hash=Hash*B+s[i];
+        if (i&gt;0) BB*=B;
+    }
+    a[0]=Hash;
+    for (int i=1;i&lt;=len-l;i++)
+    {
+        Hash=(Hash-s[i-1]*BB)*B+s[i+l-1];
+        a[i]=Hash;
+    }
+}
+
+int main()
+{
+    char s[N];
+    while (scanf("%d%d",&amp;m,&amp;l)!=EOF)
+    {
+        scanf("%s",s);
+        int len=strlen(s);
+        getHash(s);
+        cnt=1;
+        int ans=0;
+        //for (int i=0;i&lt;=len-l;i++)
+           // printf("%ul ",a[i]);
+        //cout&lt;&lt;endl;
+        for (int k=0;k&lt;l;k++)
+        {
+            for (int i=k+l;i&lt;=len-l;i+=l)
+            {
+                if (a[i]==a[i-l]) cnt++;
+                else
+                {
+                    if (cnt&gt;=m)
+                        ans+=cnt-m+1;
+                    cnt=1;
+                }
+            }
+            if (cnt&gt;=m)
+                ans+=cnt-m+1;
+            cnt=1;
+        }
+        printf("%d\n",ans);
+
+
+    }
+}
+</code></pre>
+
+<p>E题 <a href="http://code.bupt.edu.cn/problem/p/490/">BOJ 490. Study sister’s dragon</a></p>
+
+<p>能想到用dp来求就好做了。用dp[i][j]代表取到第i堆，状态为j(前几堆的异或和为j)的概率，然后就很容易写出dp方程</p>
+
+<p>dp[i][j]+=dp[i-1][j xor k]*1/a[i];</p>
+
+<p>由于只跟之前一个状态有关系，可以用滚动数组来节省空间。代码在这里</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+
+int main()
+{
+    int n;
+    while (scanf("%d",&amp;n) != EOF)
+    {
+        int num;
+        double dp[2][130]={0};
+        scanf("%d",&amp;num);
+        for (int i = 1;i &lt;= num; i ++)
+            dp[0][i] = 1.000/num;
+        int now=0;
+        for (int i = 1;i &lt; n;i ++)
+        {
+            scanf("%d", &amp;num);
+            for (int j = 0; j &lt; 128; j++)
+            {
+                dp[now^1][j]=0;
+                for (int k = 1; k &lt;=num; k ++)
+                    dp[now^1][j]+=dp[now][j^k]*(1.000)/num;
+            }
+            now^=1;
+        }
+        printf("%.6lf\n",dp[now][0]);
+    }
+}
+</code></pre>
+
+<p>G题 <a href="http://code.bupt.edu.cn/problem/p/497/">BOJ 497. Study sister’s clan</a></p>
+
+<p>就是一道裸的图论题，强联通分量缩点，然后跑一遍最短路（Dijkstra或者SPFA都可，自己选择吧）就能出结果啦，照模板抄就行了。代码</p>
+
+<pre><code class="c++">#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;vector&gt;
+#include &lt;iostream&gt;
+#include &lt;queue&gt;
+
+#define MAX_V 2222
+#define INF 555555
+using namespace std;
+
+int n;
+vector&lt;int&gt; G[MAX_V];
+vector&lt;int&gt; rG[MAX_V];
+vector&lt;int&gt; vs;
+bool used[MAX_V];
+int cmp[MAX_V];
+int d[MAX_V];
+
+void addEdge(int from,int to)
+{
+    G[from].push_back(to);
+    rG[to].push_back(from);
+}
+
+void dfs(int v)
+{
+    used[v] = true;
+    for (int i = 0; i &lt; G[v].size(); i ++)
+        if (!used[G[v][i]]) dfs(G[v][i]);
+    vs.push_back(v);
+}
+
+void rdfs(int v, int k)
+{
+    used[v] = true;
+    cmp[v] = k;
+    for (int i = 0; i &lt; rG[v].size(); i ++)
+    {
+        if (!used[rG[v][i]]) rdfs(rG[v][i],k);
+    }
+}
+
+int scc()
+{
+    memset(cmp,0,sizeof(cmp));
+    memset(used,0,sizeof(used));
+    vs.clear();
+    for (int v = 1; v &lt;= n; v ++)
+        if(!used[v]) dfs(v);
+    memset(used,0,sizeof(used));
+    int k=0;
+    for (int i = vs.size() - 1;i &gt;=0; i--)
+        if (!used[vs[i]]) rdfs(vs[i],k++);
+    return k;
+}
+
+struct HeadNode
+{
+    int d,u;
+    bool operator &lt; (const HeadNode&amp; rhs) const{
+        return d &gt; rhs.d;
+    }
+};
+void dijkstra(int s)
+{
+    priority_queue&lt;HeadNode&gt; q;
+    for (int i = 1; i &lt;= n; i ++) d[i]=INF;
+    d[s] = 0;
+    memset(used,0,sizeof(used));
+    q.push((HeadNode){0,s});
+    while (!q.empty())
+    {
+        HeadNode x = q.top();q.pop();
+        int u = x.u;
+        if (used[u]) continue;
+        used[u]=true;
+        for (int i = 0; i &lt; G[u].size(); i++)
+        {
+            int to = G[u][i];
+            if (d[to] &gt; d[u] + (cmp[u]==cmp[to] ? 0 : 1))
+            {
+                d[to] = d[u] + (cmp[u]==cmp[to]? 0 : 1);
+                q.push((HeadNode){d[to],to});
+            }
+        }
+    }
+}
+int main()
+{
+    int t;
+    cin&gt;&gt;t;
+    while (t--)
+    {
+        int m,k;
+        scanf("%d%d%d",&amp;n,&amp;m,&amp;k);
+        for (int i=1;i&lt;=m;i++)
+        {
+            int u,v;
+            scanf("%d%d",&amp;u,&amp;v);
+            addEdge(u,v);
+        }
+        scc();
+        int a,b;
+        scanf("%d%d",&amp;a,&amp;b);
+        if (cmp[a] == cmp[b])
+            printf("Input Error\n");
+        else
+        {
+            dijkstra(a);
+            if (d[b] &gt; k)
+                printf("Sad\n");
+            else
+                printf("Good Job\n");
+        }
+        for (int i = 1;i &lt;= n;i ++)
+        {
+            G[i].clear();
+            rG[i].clear();
+        }
+    }
+    return 0;
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/08/07/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-11/"/>
+    <updated>2014-08-07T10:47:56+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/08/07/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-11</id>
+    <content type="html"><![CDATA[<h2>第十一场</h2>
+
+<!--more-->
+
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/488/">BOJ 488. 小妹妹个数</a></p>
+
+<p>我感到了满满的恶意，这道题让我的世界观都颠覆了。。。说下收获：</p>
+
+<p>一种乱搞的方法———-打表。
+bool数组竟然可以开到10亿，惊呆了。。。</p>
+
+<p>B题 <a href="http://code.bupt.edu.cn/problem/p/480/">BOJ 480. 田田背课文递</a></p>
+
+<p>没什么说的，跟第九场地3题一样，不过数据范围大了点，不过时限也给的很宽。后缀数组加高度数组。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+const int N=100005;
+int n,k;
+int Rank[N];
+int lcp[N];
+int tmp[N];
+int sa[N];
+bool compare_sa(int i,int j)
+{
+    if (Rank[i]!=Rank[j])
+        return Rank[i]&lt;Rank[j];
+    else
+    {
+        int ri = i+k&lt;=n?Rank[i+k]:-1;
+        int rj = j+k&lt;=n?Rank[j+k]:-1;
+        return ri &lt; rj;
+    }
+}
+
+void construct_sa(string s,int sa[])
+{
+    n=s.length();
+
+    for (int i=0;i&lt;=n;i++)
+    {
+        sa[i]=i;
+        Rank[i]=i&lt;n ? s[i]:-1;
+    }
+    for (k=1;k&lt;=n;k*=2)
+    {
+        sort(sa,sa+n+1,compare_sa);
+
+        tmp[sa[0]]=0;
+        for (int i=1;i&lt;=n;i++)
+            tmp[sa[i]] = tmp[sa[i-1]] + (compare_sa(sa[i-1],sa[i])?1:0);
+        for (int i=0;i&lt;=n;i++)
+            Rank[i]=tmp[i];
+    }
+
+}
+
+void construct_lcp(string s,int sa[],int lcp[])
+{
+    n=s.length();
+    for (int i=0;i&lt;=n;i++)
+        Rank[sa[i]]=i;
+
+    int h=0;
+    lcp[0]=0;
+    for (int i=0;i&lt;n;i++)
+    {
+        int j=sa[Rank[i]-1];
+        if (h&gt;0) h--;
+        for (;j+h&lt;n&amp;&amp;i+h&lt;n;h++)
+            if (s[j+h]!=s[i+h]) break;
+        lcp[Rank[i]-1]=h;
+    }
+}
+
+int main()
+{
+    string s;
+    cin&gt;&gt;s;
+    memset(lcp,0,sizeof(lcp));
+    memset(sa,0,sizeof(sa));
+    construct_sa(s,sa);
+    construct_lcp(s,sa,lcp);
+    int ans=0;
+    for (int i=1 ;i&lt;=s.length(); i++)
+        ans=max(ans,lcp[i]);
+    printf("%d\n",ans+1);
+
+}
+</code></pre>
+
+<p>C题 <a href="http://code.bupt.edu.cn/problem/p/478/">BOJ 478. 小妹妹采蘑菇</a></p>
+
+<p>迄今为止做过的最简单的概率dp。。。思路如下。</p>
+
+<p>设dp[i]代表还有i种蘑菇没采时的步数的期望。那么显然，dp[n]=0,dp[0]就是我们要求的状态。</p>
+
+<p>在dp[i]这个状态时，可以通过再采一个蘑菇转移到下面两种状态:</p>
+
+<p>. dp[i],就是采的蘑菇是已经采到过的，概率是(n-i)/n;
+. dp[i+1],就是采的蘑菇是一种新的蘑菇，概率为i/n;
+这样的话，根据E(X+Y)=p(X)<em>E(X)+p(Y)</em>E(Y),就有dp[i]+1=(n-i)/n *dp[i] + i/n * dp[i-1];最终化简得到如下式子，dp[i-1]=dp[i]+n/i;（PS：因为采了一个蘑菇，所以前面应该是dp[i]+1，否则就与两个子状态的母状态不等价了。） 代码在这里。</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+const int N=105;
+
+double dp[N];
+
+int main()
+{
+    int n;
+    while (scanf("%d",&amp;n)!=EOF)
+    {
+        dp[n]=0;
+        for (int i=n-1;i&gt;=0;i--)
+            dp[i]=dp[i+1]+(double)n/(i+1);
+        printf("%.6lf\n",dp[0]);
+    }
+}
+</code></pre>
+
+<p>这种题有很多种思考方法，不过其核心是不变的，就是构造一个递推关系，一般这个递推关系都会用到当前状态本身，把它放到同一边就行。有关这方面，我建议去<a href="http://blog.csdn.net/morgan_xww/article/details/6775853">这个博客</a>看看。</p>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/482/">BOJ 482. 焦级长的激光炮</a></p>
+
+<p>这题暂时先算了吧，我打算搞一到两个星期的图论（图论这块太渣了T_T），打算搞完以后写个专题总结，到时候再来看这道题。是个匹配问题。</p>
+
+<p>E题 <a href="http://code.bupt.edu.cn/problem/p/489/">BOJ 489. 小妹妹去划船</a></p>
+
+<p>这题其实挺水的，估计没有人不会，思路就不写了。学到了一点，也是以前没有注意的一点，用指针必须申请内存，即便你是用指针来表示字符串。挂下代码吧！</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+const int MAXN=100005;
+const double esp=1e-9;
+int S[MAXN],N[MAXN],W[MAXN],E[MAXN];
+int t,cnts,cntn,cntw,cnte,sx,sy,ex,ey;
+int main()
+{
+    char s[MAXN];
+    while (~scanf("%d%d%d%d%d",&amp;t,&amp;sx,&amp;sy,&amp;ex,&amp;ey))
+    {
+        scanf("%s",s);
+        cnts=cntn=cntw=cnte=0;
+        int len=strlen(s);
+        for (int i=0;i&lt;len;i++)
+        {
+            switch (s[i])
+            {
+                case 'S': S[++cnts]=i+1; break;
+                case 'N': N[++cntn]=i+1; break;
+                case 'W': W[++cntw]=i+1; break;
+                case 'E': E[++cnte]=i+1; break;
+            }
+        }
+        int dx=ex-sx,dy=ey-sy;
+        int ans=0;
+        if (ex&gt;sx)
+        {
+            if (cnte&gt;=dx)
+                ans=max(ans,E[dx]);
+            else
+            {
+                printf("-1\n");
+                continue;
+            }
+        }
+        else if (ex&lt;sx)
+        {
+            if (cntw&gt;=(-dx))
+                ans=max(ans,W[-dx]);
+            else
+            {
+                printf("-1\n");
+                continue;
+            }
+        }
+
+        if (ey&gt;sy)
+        {
+            if (cntn&gt;=dy)
+                ans=max(ans,N[dy]);
+            else
+            {
+                printf("-1\n");
+                continue;
+            }
+        }
+        else if (ey&lt;sy)
+        {
+            if (cnts&gt;=(-dy))
+                ans=max(ans,S[-dy]);
+            else
+            {
+                printf("-1\n");
+                continue;
+            }
+        }
+        printf("%d\n",ans);
+    }
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/07/16/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-1/"/>
+    <updated>2014-07-16T10:48:03+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/07/16/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai-1</id>
+    <content type="html"><![CDATA[<p><a href="http://blog.csdn.net/whn757397540/article/details/37841599">第一场，请点击链接</a></p>
+]]></content>
+  </entry>
+  
+</feed>

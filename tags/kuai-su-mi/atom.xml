@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 快速幂 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/kuai-su-mi/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2015-08-10T11:29:47+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BUPT暑假训练2013级个人排位赛]]></title>
+    <link href="http://whn757397540.github.io/blog/2014/07/20/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai/"/>
+    <updated>2014-07-20T09:15:30+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2014/07/20/buptshu-jia-xun-lian-2013ji-ge-ren-pai-wei-sai</id>
+    <content type="html"><![CDATA[<h2>第三场</h2>
+
+<!--more-->
+
+
+<p>A题 <a href="http://code.bupt.edu.cn/problem/p/429/">BOJ 429 学姐的数码管</a></p>
+
+<p>纯模拟题，看清楚要求就行，不要因为要求看错而WA好几次，附我交了6次才A的代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+
+#define N 1005
+
+using namespace std;
+
+int n;
+int start,End;
+char s[5];
+char board[150][150];
+
+void buildNum(char s[],int n)
+{
+    for (int i=0;i&lt;=2*n;i++)
+        for (int j=0;j&lt;=4*(n+1);j++)
+            board[i][j]=' ';
+    start=0;End=-2;
+    for (int i=0;i&lt;4;i++)
+    {
+        switch (s[i]-'0')
+        {
+            case 0:
+            {
+                start=End+2;
+                End=start+n-1;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if (x==start||x==End||y==0||y==2*n)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+
+            }break;
+             case 1:
+            {
+                start=End+2;
+                End=start+n-1;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if (x==End)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+            }break;
+            case 2:
+            {
+                start=End+2;
+                End=start+n-1;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if ((x==End&amp;&amp;y&gt;=0&amp;&amp;y&lt;=n)||(x==start&amp;&amp;y&gt;=n&amp;&amp;y&lt;=2*n)||y==0||y==n||y==2*n)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+            }break;
+            case 3:
+            {
+                start=End+2;
+                End=start+n-1;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if (x==End||y==0||y==n||y==2*n)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+            }break;
+            case 4:
+            {
+                start=End+2;
+                End=start+n-1;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if (x==End||y==n||x==start&amp;&amp;y&lt;=n)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+            }break;
+           case 5:
+            {
+                start=End+2;
+                End=start+n-1;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if ((x==start&amp;&amp;y&gt;=0&amp;&amp;y&lt;=n)||(x==End&amp;&amp;y&gt;=n&amp;&amp;y&lt;=2*n)||y==0||y==n||y==2*n)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+            }break;
+            case 6:
+            {
+                start=End+2;
+                End=start+n-1;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if (x==start||(x==End&amp;&amp;y&gt;=n&amp;&amp;y&lt;=2*n)||y==0||y==n||y==2*n)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+            }break;
+            case 7:
+            {
+                start=End+2;
+                End=start+n-1;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if (x==End||y==0)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+            }break;
+            case 8:
+            {
+                start=End+2;
+                End=start+n-1;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if (x==start||x==End||y==0||y==n||y==2*n)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+            }break;
+             case 9:
+            {
+                start=End+2;
+                End=start+n-1;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if (x==End||(x==start&amp;&amp;y&gt;=0&amp;&amp;y&lt;=n)||y==0||y==n||y==2*n)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+            }break;
+             default:
+            {
+                start=End+2;
+                End=start;
+                for (int y=0;y&lt;=2*n;y++)
+                    for (int x=start;x&lt;=End;x++)
+                    {
+                        if (y==2*n)
+                            board[y][x]='#';
+                        else
+                            board[y][x]=' ';
+                    }
+            }break;
+
+        }
+    }
+}
+int main()
+{
+    while(~scanf("%d%s",&amp;n,s))
+    {
+        buildNum(s,n);
+        for (int i=0;i&lt;=2*n;i++)
+        {
+            for (int j=0;j&lt;=End;j++)
+                printf("%c",board[i][j]);
+            printf("\n");
+        }
+        printf("\n");
+
+    }
+}
+</code></pre>
+
+<p>B题 <a href="http://code.bupt.edu.cn/problem/p/430/">BOJ 430 学姐的旋转图像</a></p>
+
+<p>这题很简单，就是倒腾一下公式，然后做一下旋转就行。注意题目中的坑，写的是逆时针，但是他是让你从旋转后的图形再旋转回来，所以应该是顺时针。还有就是注意当行数和列数不同时，进行翻转的时候记得交换行数和列数。貌似还有一点，这个度数不一定在360度的范围内。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+
+#define N 505
+
+using namespace std;
+
+int h,w;
+int endi,endj,d;
+int board[4][N][N];
+
+void Solve()
+{
+    for (int k=1;k&lt;=3;k++)
+    {
+        if (k==1||k==3)
+        {
+            endi=h;
+            endj=w;
+        }
+        else
+        {
+            endi=w;
+            endj=h;
+        }
+        for (int i=1;i&lt;=endi;i++)
+            for (int j=1;j&lt;=endj;j++)
+                board[k][j][endi-i+1]=board[k-1][i][j];
+    }
+}
+
+int main()
+{
+    while (~scanf("%d%d%d",&amp;h,&amp;w,&amp;d))
+    {
+        for (int i=1;i&lt;=h;i++)
+        for (int j=1;j&lt;=w;j++)
+            scanf("%d",&amp;board[0][i][j]);
+        Solve();
+        int ans=(d/90)%4;
+        if (ans==0||ans==2)
+        {
+            endi=h;
+            endj=w;
+        }
+        else
+        {
+            endi=w;
+            endj=h;
+        }
+        for (int i=1;i&lt;=endi;i++)
+        {
+            for (int j=1;j&lt;endj;j++)
+                printf("%d ",board[ans][i][j]);
+            printf("%d\n",board[ans][i][endj]);
+        }
+    }
+}
+</code></pre>
+
+<p>C题 <a href="http://code.bupt.edu.cn/problem/p/408/">BOJ 408 字符串</a></p>
+
+<p>字符串匹配的问题，用hash来做就行，选择一个质数，算出每个数对应的hash值（我是直接用unsigned long long 来表示的，毕竟自动取余嘛，而且范围很大，不容易重），然后选择一个适当大小的质数（质数取余，重复的几率小），将hash值取余后存到一个vertor 数组中，数组下标代表余数，然后查找对应余数下面的项就好。还有一点需要注意的，如果有多组数据，最好记录一下用到了哪些下标，在初始化vector数组的时候,只对这些用过的下标就行初始化</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+#define N 10007
+using namespace std;
+
+typedef unsigned long long ull;
+
+const ull B = 1000000007;
+
+vector &lt;ull&gt; a[N];
+
+ull searchHs(char b[])//求字符串的hash值；
+{
+    ull t=1;
+    int len=strlen(b);
+    ull bh=0;
+    for (int i=0;i&lt;len;i++)
+        bh=bh*B+b[i];
+    return bh;
+}
+
+int main()
+{
+    char str[105];
+    int cnt=0;
+    while (scanf("%s",str)!=EOF)
+    {
+        int sum=0;
+        ull hs=searchHs(str);
+
+        int mod=hs%N;
+        a[mod].push_back(hs);
+        for (int i=0;i&lt;a[mod].size();i++)
+            if (a[mod][i]==hs)
+                sum++;
+        printf("%d\n",sum);
+    }
+}
+</code></pre>
+
+<p>D题 <a href="http://code.bupt.edu.cn/problem/p/428/">BOJ 428 田田的帐号</a></p>
+
+<p>这题，有人打表找规律，我由于刚开始少考虑一些东西，打表打错了，后来推出了公式，在此我推一下。</p>
+
+<p>还是一个排列组合问题,不考虑a,b的数量问题，那么对于n个数，总共有 4n 种可能；在所有的排列中，有奇数个b的总共有 4n/2 种，有偶数个a的总共有 4n/2,有奇数个b和偶数个a的总共有 4n/4种可能，那么就很容易知道，最终符合条件的应该有 4n-4n/2-4n/2+4n/4=4n-1 种可能。</p>
+
+<p>好了，结果算出来了，可是还是有点问题，数据范围是n&lt; 109,直接求解的话，无论是从时间上来说，还是从空间上来说，都是不现实的。对此，大部分人的解法是快速幂，我由于没有用过快速幂，所以也就没有用。我想到了当初看背包九讲时对多重背包的二进制优化，其实跟快速幂的原理差不多，只不过这个是递推的而已。附代码</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+#define N 10000
+#define MOD 1000000007
+using namespace std;
+int dp[5]={0};
+int main()
+{
+    int n;
+    int T;
+    int ans;
+    cin&gt;&gt;T;
+    while (T--)
+    {
+        scanf("%d",&amp;n);
+        ans=1;
+        long long fang=4;
+        int k=1,cnt=1;
+        while (cnt!=n)
+        {
+            ans=(long long)ans*fang%MOD;
+            cnt+=k;
+            fang=(long long)fang*fang%MOD;
+            k*=2;
+            if (k&gt;n-cnt)
+            {
+                k=1;
+                fang=4;
+            }
+        }
+        printf("%d\n",ans);
+
+    }
+}
+</code></pre>
+
+<p>E <a href="http://code.bupt.edu.cn/problem/p/419/">BOJ 419 学姐的数列</a></p>
+
+<p>一道dp，其实可以看成是很多小的平衡二叉树组成的大的平衡二叉树。dp[i][j][k]来代表总和为 $$ 2k $$ 的，从i到j区间的平衡二叉树最多可能的元素数。因为每个dp[i][j][k]所代表的状态都是平衡二叉树，也就是符合题意的。所以既有dp[i][j][k]=max{ i=&lt;mid&lt;j | dp[i][mid][k-1]+dp[mid+1][j][k-1] } 初始化的时候，每个区间存在的所有k的值赋值为1(不知道怎么才能说清楚，看不懂这句话的就看代码吧)</p>
+
+<pre><code class="c++">#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+#define N 150
+using namespace std;
+
+int dp[N][N][17];
+int a[N];
+int n;
+
+void init()
+{
+    memset(dp,0,sizeof(dp));
+
+}
+
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    while (T--)
+    {
+        int n,ans=1;
+        scanf("%d",&amp;n);
+        for (int i=1;i&lt;=n;i++)
+            scanf("%d",&amp;a[i]);
+        init();
+        for (int i=1;i&lt;=n;i++)
+            for (int j=i;j&lt;=n;j++)
+                for (int k=i;k&lt;=j;k++)
+                    dp[i][j][a[k]]=1;
+        for (int k=1;k&lt;=15;k++)
+            for (int i=1;i&lt;n;i++)
+                for (int j=i+1;j&lt;=n;j++)
+                    for (int mid=i;mid&lt;j;mid++)
+                        {
+                            if (dp[i][mid][k-1]==0||dp[mid+1][j][k-1]==0) continue;
+                            dp[i][j][k]=max(dp[i][j][k],dp[i][mid][k-1]+dp[mid+1][j][k-1]);
+                            if (ans&lt;dp[i][j][k]) ans=dp[i][j][k];
+                        }
+        printf("%d\n",ans);
+    }
+}
+</code></pre>
+
+<p><a href="/blog/archives/">&lt;&ndash;BACK</a></p>
+]]></content>
+  </entry>
+  
+</feed>
