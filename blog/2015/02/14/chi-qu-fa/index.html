@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>尺取法 - hnnwang&#8217;s Blog</title>
+  <meta name="author" content="hnnwang">
+
+  
+  <meta name="description" content="尺取法
+尺取法，不止一次听说过，也大概知道是怎么回事儿，不过没怎么用过（好像旋转卡壳有用到过），今天就着书本系统地总结一下！ 反复推进区间的开头和末尾，来求取满足条件的最小区间的方法成为尺取法 很简单，不复杂，就着两个例子简单说一下就好。 首先，最基础的一道题。 POJ3061 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://whn757397540.github.io/blog/2015/02/14/chi-qu-fa/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="hnnwang's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">hnnwang&#8217;s Blog</a></h1>
+  
+    <h2>Just for ACM-ICPC.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:whn757397540.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">首页</a></li>
+  <li><a href="/blog/archives">文章</a></li>
+  <li><a href="/tag-cloud/">标签云</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">尺取法</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-14T18:56:11+08:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>尺取法
+尺取法，不止一次听说过，也大概知道是怎么回事儿，不过没怎么用过（好像旋转卡壳有用到过），今天就着书本系统地总结一下！</p>
+
+<!--more-->
+
+
+<p>反复推进区间的开头和末尾，来求取满足条件的最小区间的方法成为尺取法</p>
+
+<p>很简单，不复杂，就着两个例子简单说一下就好。</p>
+
+<p>首先，最基础的一道题。</p>
+
+<p><a href="http://poj.org/problem?id=3061">POJ3061 Subsequence</a></p>
+
+<p>这道题本身就是一道水体，用一些比较暴力的方法也能过，这里只把尺取法说一下！</p>
+
+<p>算法过程如下：（这里依旧取左闭右开的区间[s,t)）</p>
+
+<p>以s=t=sum=0初始化；
+只要依然有sum&lt;S,就不断讲sum增加a[t]，并且t++;
+如果2中无法满足sum>=0则终止，否则，更新res = min(res,t-s);
+将sum减去a[s],s++然后返回到2。
+上面的过程是书上的过程，跟我自己写的略有不同，但是也算是大同小异，我也懒得改了，我之前没写过，自然谈不上什么姿势，姿势最好还是按照上面说的步骤来吧！我的挫挫的代码也挂出来</p>
+
+<p><a href="http://poj.org/problem?id=3320">POJ3320 Jessica’s Reading Problem</a></p>
+
+<p>这题就稍微需要拐一个弯儿了。我是在知道要用尺取法的情况下，刻意去想而想出来的解法，如果没有知道用尺取法，我也不清楚多久会想出来。</p>
+
+<p>说说我的思路，这道题所有知识点都被覆盖的话，那么你所选择的区间里，所有的知识点都应该要被看到至少一次！所以，我就想如果能够把每个知识点被看到的次数标记出来就好了！但是，知识点的范围是int以内，这就决定了不能直接用数组存储，所以我想到了一个常用的手段，离散化！因为最多106页，所以离散化后，知识点的标号不会超过106。所以呢，离散化后就能够标记次数了。而且，离散化处理的复杂度也就是nlogn，可以接受！</p>
+
+<p>那么有了上面的处理之后，就只需要按照尺取法的步骤来写就好，不同的只不过是判断条件以及标识变量（比如之前一道题的sum）的改变方式而已，仔细想一想，应该很容易解决！这里也挂出我自己的<a href="/acm/poj/poj3320/">参考代码</a></p>
+
+<p>这道题，除了我使用的离散化的处理方法之外，还可以用map来处理，这里给出来参考代码：（PS：这是书上的代码）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="cp">#include &lt;iostream&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;cstdio&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;cstring&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;set&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;algorithm&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;map&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;queue&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;vector&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;cmath&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span><span class='line'><span class="k">const</span> <span class="kt">int</span> <span class="n">INF</span> <span class="o">=</span> <span class="mh">0x3f3f3f3f</span><span class="p">;</span>
+</span><span class='line'><span class="k">const</span> <span class="kt">int</span> <span class="n">maxn</span> <span class="o">=</span> <span class="mi">111111</span><span class="p">;</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">ll</span><span class="p">;</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">maxn</span><span class="p">];</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">P</span><span class="p">;</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">p</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">P</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">set</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">all</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">P</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span><span class='line'>        <span class="n">all</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">all</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</span><span class='line'>    <span class="c1">//利用尺取法求解</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">count</span><span class="p">;</span><span class="c1">//map映射，知识点-&gt;出现次数的映射</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="n">P</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(;;)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">while</span><span class="p">(</span><span class="n">t</span><span class="o">&lt;</span><span class="n">P</span> <span class="o">&amp;&amp;</span> <span class="n">num</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="n">count</span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="n">t</span><span class="o">++</span><span class="p">]]</span><span class="o">++</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>                <span class="n">num</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">num</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">res</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">t</span><span class="o">-</span><span class="n">s</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">--</span><span class="n">count</span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="n">s</span><span class="o">++</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">num</span><span class="o">--</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="/blog/archives">&lt;–Back</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">hnnwang</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-14T18:56:11+08:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ji-qiao-fang-fa/'>技巧方法</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://whn757397540.github.io/blog/2015/02/14/chi-qu-fa/" data-via="" data-counturl="http://whn757397540.github.io/blog/2015/02/14/chi-qu-fa/" >Tweet</a>
+  
+  
+  
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_share_slide jiathis_share_24x24" id="jiathis_share_slide">
+<div class="jiathis_share_slide_top" id="jiathis_share_title"></div>
+<div class="jiathis_share_slide_inner">
+<div class="jiathis_style_24x24">
+<a class="jiathis_button_qzone"></a>
+<a class="jiathis_button_tsina"></a>
+<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+<script type="text/javascript">
+var jiathis_config = {
+	slide:{
+		divid:'jiathis_main',
+		pos:'right'
+	}
+};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>	
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_slide.js" charset="utf-8"></script>
+</div></div></div>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2008932"></script>
+<!-- UY END -->
+
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/12/19/pei-zhi-octopressguo-cheng-zhong-yu-dao-de-wen-ti/" title="Previous Post: 配置Octopress过程中遇到的问题">&laquo; 配置Octopress过程中遇到的问题</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/02/17/ji-he-de-zheng-shu-biao-shi/" title="Next Post: 集合的整数表示">集合的整数表示 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/08/24/html5chang-yong-yuan-su-yu-shu-xing-1/">html5常用元素与属性1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/21/test-new/"></a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/01/suan-fa-she-ji-yu-fen-xi-qi-mo-fu-xi-zong-jie/">算法设计与分析期末复习总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/04/12/test/">Test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/shu-zhuang-shu-zu-yi-ji-xian-duan-shu-zong-jie/">树状数组以及线段树总结</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tags</h1>
+  <ul class="tag-cloud">
+    <a style="font-size: NaN%" href="/tags/er-fen-ji-qiao-fang-fa/">二分 技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/er-jin-zhi-ji-qiao-fang-fa/">二进制 技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/dan-diao-dui-lie/">单调队列</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/bo-yi-lun/">博弈论</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/fan-zhuan-wen-ti-ji-qiao-fang-fa/">反转问题 技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-2-sat/">图论 2-sat</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-qiang-lian-tong-fen-liang/">图论 强连通分量</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-zui-da-liu/">图论 最大流</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-zui-xiao-ge-zui-da-liu-wang-luo-liu/">图论 最小割 最大流 网络流</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-zui-xiao-fei-yong-liu-wang-luo-liu/">图论 最小费用流 网络流</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-zui-duan-lu-zui-xiao-sheng-cheng-shu/">图论 最短路 最小生成树</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-wang-luo-liu-er-fen-tu-pi-pei-zui-da-liu/">图论 网络流 二分图匹配 最大流</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-lian-tong-du/">图论 连通度</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/chi-qu-fa-ji-qiao-fang-fa/">尺取法 技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/dan-xing-peng-zhuang/">弹性碰撞</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/ji-qiao-fang-fa/">技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/ji-qiao-fang-fa-chi-san-hua/">技巧方法 离散化</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/zhe-ban-mei-ju-ji-qiao-fang-fa/">折半枚举 技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/shu-zhuang-shu-zu-xian-duan-shu-shu-ju-jie-gou/">树状数组 线段树 数据结构</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/wang-luo-liu/">网络流</a>
+
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+<p>
+  Copyright &copy; 2016 - hnnwang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Design by <a href="http://octopressthemes.com">Octopress Themes</a>. Background image by <a href="http://www.flickr.com/photos/rhysasplundh/">Rhys Asplundh</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

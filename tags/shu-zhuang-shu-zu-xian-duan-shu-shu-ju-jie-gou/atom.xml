@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 树状数组 线段树 数据结构 | hnnwang's Blog]]></title>
+  <link href="http://whn757397540.github.io/tags/shu-zhuang-shu-zu-xian-duan-shu-shu-ju-jie-gou/atom.xml" rel="self"/>
+  <link href="http://whn757397540.github.io/"/>
+  <updated>2016-08-24T12:49:27+08:00</updated>
+  <id>http://whn757397540.github.io/</id>
+  <author>
+    <name><![CDATA[hnnwang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[树状数组以及线段树总结]]></title>
+    <link href="http://whn757397540.github.io/blog/2015/03/14/shu-zhuang-shu-zu-yi-ji-xian-duan-shu-zong-jie/"/>
+    <updated>2015-03-14T18:57:26+08:00</updated>
+    <id>http://whn757397540.github.io/blog/2015/03/14/shu-zhuang-shu-zu-yi-ji-xian-duan-shu-zong-jie</id>
+    <content type="html"><![CDATA[<p>大年初一初二两天，除了玩儿，也就看了看这些，zkw线段树看了看，想了想还是放弃了；二维线段树看了看，马马虎虎敲了几道题，规范了下二维线段树的代码；二维树状数组重新回顾了一下，其实跟一维树状数组是完全一样的；然后重新看了看书上的树状数组，也是有一些收获的，接下来就谈一谈！</p>
+
+<!--more-->
+
+
+<p>这次先把该说的说了，最后集中看题。</p>
+
+<p>首先，线段树我就不多做介绍了,只是来介绍下二维线段树的写法：二维线段树，简单来说，就是树套树，一个线段树的域是值，另一个线段树的域是那个线段树。具体的写法一会儿看我做的最后一道二维线段树的题目的代码，那时我整理过姿势后的板子！这里说下思路，就是通过第一个树来建树（域是线段树的树），这棵树维护的是第一维的区间，然后对应再每一个节点上建立一个线段树（域是值的树，假如称它为子树），这个维护的是第二位的区间；也就是说，子树是嵌套再外围的线段树里面的；其实不管是建树，更新还是查找，都是一棵树套一棵树，这些具体需要看着代码来理解会比较好，这里要说的一点，就是更新的时候，以单点更新为例，因为你要找到(x,y)这个点，我们想一下1维线段树，只需要找到目标节点更新值，然后递归更新回去就好；类比下二维，一样也应该是找到目标节点然后更新值，然后递归更新回去，但是关键就是，这个点除了要再第二维坐标上更新，还得在第一维坐标上更新，而且你找目标节点的时候，也不是只是l == r == y就好，还需要注意第一维坐标必须是在x处，但是又不能值更新第一维坐标是x的线段树，那么怎么办呢？其实看看代码就知道了，就是再更新的第一维的区间不是[x,x]，而是包含[x,x]区间的时候，记得在找到y这个位置的时候，更新下第一维的值就好！说的有点乱，还是等一会儿看代码好一些！</p>
+
+<p>另外，zkw线段树放弃了，但是也不见得以后也不会看，只不过现在没有那个时间取研究而已！</p>
+
+<p>接着，关于树状数组，我在之前的博客里面有讲过,<a href="http://hnnwang.github.io/blog/2014/07/23/shu-zhuang-shu-zu-zong-jie/">链接在这里</a>,里面提到了利用树状数组进行单点修改，区间查询、区间修改，单点查询、区间修改，区间查询的方法，但是那里面的区间修改，区间查询的方法，利用的是差分的思想，这里再来说一个再《挑战程序设计竞赛》中提到的多项式的方法，还是以<a href="http://poj.org/problem?id=3468">poj3468</a>为例，这个题在之前那个博客里面也有，那里面有利用差分方法的代码，这道题就是简单的一道区间修改区间查询的问题，我们进行如下推导：</p>
+
+<p>如果给区间[l,r]同时加上x的话，那么每个节点的值将如何变化呢？我们设</p>
+
+<p>s(i) = 加上x之前的sigma(a[1……i])；</p>
+
+<p>ss(i) = 加上x之后的sigma(a[1……i])；</p>
+
+<p>那么我们就有</p>
+
+<p>i &lt; l → ss(i) = s(i);//区间里面的东西没有被改变</p>
+
+<p>l &lt;= i &lt;= r → ss(i) = s(i) + (i-l+1) = s(i) + xi - x(l-1);</p>
+
+<p>i > r → ss(i) = s(i) + x*(r-l+1)</p>
+
+<p>那么下面我们如果及sum(bit, i)为树状数组bit的前i项和。我们构建两个树状数组bit0和bit1，并且设</p>
+
+<p>sigma(a[1..i]) = sum(bit1,i)*i + sum(bit0,i);</p>
+
+<p>那么再[l,r]区间上同时加上x就可以看成是</p>
+
+<p>在bit0的l位置加上-x(l-1);//对应上面第二条的-x*(l-1)</p>
+
+<p>在bit1的l位置加上x ;//在l之后(包括l)，每个都多加一个x</p>
+
+<p>在bit0的r+1位置加上xr；//在i>r之后的式子中，跟在bit0的中加上的那个式子相比，少一个xr，所以加上xr，以保证再这之后的计算都是算的x*(r-l+1);</p>
+
+<p>在bit1的r+1位置加上-x；在r+1之后(包括r+1)，每一个都减一个x，跟之前加的那个x抵消，从而达到指示[l,r]区间加的目的</p>
+
+<p>这4个操作。因此，查询和更新的操作都可以在O（logn）的时间里完成。</p>
+
+<p>更一般的，如果操作得到的结果可以用i的n次多项式来表示的话，那么就可以使用n+1个树状数组来进行维护了！至于代码就不贴了，这个只要推出公式来就简单了！</p>
+
+<p>至于二维树状数组，非常简单，根本不用说。只要一会看一下一道题的代码就知道了，其实就是再一维树状数组的基础上加上了一维。</p>
+
+<p>好了，接下来进入题目环节，简单的讲解几道题就好！</p>
+
+<p>首先，一维线段树的，也是书上的例题</p>
+
+<p><a href="http://poj.org/problem?id=2991">POJ 2991 Crane</a></p>
+
+<p>这道题稍微用到了一些计算几何的知识，也就是个旋转而已；来说下怎么建树和维护，建树维护下面两个域: 一是第一条线段起点指向最后一条线段终点的向量； 二是（如果该节点有儿子节点），右儿子节点绕左儿子节点逆时针旋转的角度！</p>
+
+<p>有了以上那两个域，就可以利用计算几何中的旋转公式来维护线段树了，这里说下计算几何上的旋转公式以及其推导方法！</p>
+
+<p>假如向量p = (x,y) 绕原点旋转角度 β 到向量q = (x’, y’)，我们把直角坐标转换为极坐标，那么就应该是p=(lcosα， lsinα） 转动 β 到 q=(lcos(α+β), lsin(α+β)）， 运用三角函数和差公式可以得到 q = (lcosαcosβ - lsinαsinβ， lsinαcosβ + lcosαsinβ) = (xcosβ - ysinβ， xsinβ + ycosβ), 这可得旋转公式！</p>
+
+<p>具体的维护细节就不说了，自己思考思考把，我的参考代码挂出来</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cstring&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+using namespace std;
+
+typedef long long ll;
+const int maxn = 10050;
+const double PI = acos(-1);
+struct Point{
+    double x,y;
+    Point(){};
+    Point(double x, double y): x(x),y(y){};
+    bool operator &lt; (const Point p)const{return x &lt; p.x || (x==p.x &amp;&amp; y &lt; p.y);}
+    Point operator - (Point p){return Point(x - p.x, y - p.y);}
+    Point operator + (Point p){return Point(x + p.x, y + p.y);}
+    Point rotate(double rad){return Point(x*cos(rad) - y*sin(rad), x*sin(rad) + y*cos(rad));}
+};
+
+typedef Point Vector;
+struct Tree{
+    int l,r;
+    Vector v;
+    double ang;
+}a[4*maxn];
+double rec[maxn];
+void buildTree(int now,int l, int r)
+{
+    int lson = 2*now, rson = 2*now+1;
+    a[now].v = Point(0,0);
+    a[now].ang = 0;
+    a[now].l = l;
+    a[now].r = r;
+    if (l == r) return;
+    int mid = (l+r)/2;
+    buildTree(lson, l, mid);
+    buildTree(rson, mid+1, r);
+}
+
+void Insert(int now, int aim, Vector v)
+{
+    if (a[now].l == a[now].r &amp;&amp; a[now].l == aim)
+        a[now].v = v;
+    else
+    {
+        int lson = 2*now, rson = 2*now+1;
+        int mid = (a[now].l + a[now].r)/2;
+        if (aim &gt; mid)
+            Insert(2*now+1, aim, v);
+        else
+            Insert(2*now, aim, v);
+        a[now].v = a[lson].v + a[rson].v;
+    }
+}
+
+void Change(int now, int aim, double ang)
+{
+    int lson = 2*now, rson = 2*now+1;
+    if (a[lson].r == aim)
+    {
+        a[now].ang += ang - rec[aim];
+        a[now].v = a[lson].v + a[rson].v.rotate(a[now].ang);
+        return;
+    }
+    int mid = (a[now].l + a[now].r) / 2;
+    if (aim &lt;= mid)
+    {
+        Change(lson, aim, ang);
+        a[now].ang += ang - rec[aim];
+    }
+    else
+        Change(rson, aim, ang);
+    a[now].v = a[lson].v + a[rson].v.rotate(a[now].ang);
+}
+
+int main()
+{
+    int n,c;
+    while (~scanf("%d%d", &amp;n, &amp;c))
+    {
+        buildTree(1, 1, n);
+        for (int i = 1; i &lt;= n; i++)
+        {
+            int w;
+            scanf("%d", &amp;w);
+            Insert(1, i, Point(0,w));
+            rec[i] = PI;
+        }
+        for (int i = 0; i &lt; c; i++)
+        {
+            int s;
+            double ang;
+            scanf("%d%lf", &amp;s, &amp;ang);
+            double rad = ang/180*PI;
+            //cout&lt;&lt;rad&lt;&lt;endl;
+            Change(1, s, rad);
+            rec[s] = rad;
+            printf("%.2f %.2f\n", a[1].v.x, a[1].v.y);
+        }
+        printf("\n");
+    }
+}
+</code></pre>
+
+<p>然后，二维线段树：</p>
+
+<p><a href="http://poj.org/problem?id=2155">poj2155 Matrix</a></p>
+
+<p>这道题，解法十分简单，是道基础题，用到了一个思想，就是对于区间的更新，可以不用懒标记，只是重新维护一个域，然后不下传，最后求结果的时候从最底层回溯上去，或者在从上向下找结果的时候，顺便根据维护的那个域进行更新。这道题就是，因为操作一次就改变一次0或者1，所以只需要找到操作的区间，然后记录次数，最后算结果的时候看找结果总共操作了多少次，从而求出答案，（当然，不用记录次数，直接跟1取异或即可），这是我的第一个代码,有点丑，必经是自己写的,还是第一次，不要以这个为参考。</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+
+#define mid  ((l+r)&gt;&gt;1)
+#define lson (now&lt;&lt;1)
+#define rson (lson|1)
+using namespace std;
+const int maxn = 1010;
+const int maxe = 20200;
+const int INF = 0x3f3f3f3f;
+
+struct Tree2{
+    int l,r,data;
+};
+
+struct Tree1{
+    int l,r;
+    Tree2 T2[maxn&lt;&lt;2];
+}T1[maxn&lt;&lt;2];
+
+int a[maxn][maxn];
+int n,Q,X;
+int x1, y1, x2, y2;
+int ans;
+void buildTree2(Tree1 &amp;T, int now, int l, int r)
+{
+    T.T2[now].l = l;
+    T.T2[now].r = r;
+    T.T2[now].data = 0;
+    if (l == r)
+        return;
+    buildTree2(T, lson, l, mid);
+    buildTree2(T, rson, mid+1, r);
+}
+
+void buildTree1(int now, int l, int r)
+{
+    T1[now].l = l;
+    T1[now].r = r;
+    buildTree2(T1[now], 1, 1, n);
+    if (l == r)
+        return;
+    buildTree1(lson, l, mid);
+    buildTree1(rson, mid+1, r);
+}
+
+void update2(Tree1 &amp;T, int now, int l, int r)
+{
+    if (l == T.T2[now].l &amp;&amp; r == T.T2[now].r)
+    {
+        T.T2[now].data ^=1;
+        return;
+    }
+    if (r &lt;= T.T2[lson].r)
+        update2(T, lson, l, r);
+    else if(l &gt;= T.T2[rson].l)
+        update2(T, rson, l, r);
+    else
+    {
+        update2(T, lson, l, T.T2[lson].r);
+        update2(T, rson, T.T2[rson].l, r);
+    }
+}
+
+void update1(int now, int l, int r)
+{
+    if (l == T1[now].l &amp;&amp; r == T1[now].r)
+    {
+        update2(T1[now], 1, y1, y2);
+        return;
+    }
+    if (r &lt;= T1[lson].r)
+        update1(lson, l, r);
+    else if(l &gt;= T1[rson].l)
+        update1(rson, l, r);
+    else
+    {
+        update1(lson, l, T1[lson].r);
+        update1(rson, T1[rson].l, r);
+    }
+}
+
+void Search2(Tree1 &amp;T, int now, int y)
+{
+    ans ^= T.T2[now].data;
+    if (y == T.T2[now].l &amp;&amp; y == T.T2[now].r)
+        return;
+    if (y &lt;= T.T2[lson].r)
+        Search2(T, lson, y);
+    else
+        Search2(T, rson, y);
+}
+
+void Search1(int now, int x, int y)
+{
+    Search2(T1[now], 1, y);
+    if (T1[now].l == x &amp;&amp; T1[now].r == x)
+        return;
+    if (x &lt;= T1[lson].r)
+        Search1(lson, x, y);
+    else
+        Search1(rson, x, y);
+}
+
+int main()
+{
+    scanf("%d", &amp;X);
+    while(X--)
+    {
+        //cout&lt;&lt;X&lt;&lt;endl;
+        scanf("%d%d", &amp;n, &amp;Q);
+        buildTree1(1,1,n);
+        char order;
+        ans = 0;
+        //cout&lt;&lt;Q&lt;&lt;endl;
+        while(Q--)
+        {
+            scanf("%s", &amp;order);
+            //cout&lt;&lt;Q&lt;&lt;endl;
+            if (order == 'C')
+            {
+                scanf("%d%d%d%d", &amp;x1, &amp;y1, &amp;x2, &amp;y2);
+                update1(1, x1, x2);
+            }
+            else if (order == 'Q')
+            {
+                int x, y;
+                ans = 0;
+                scanf("%d%d", &amp;x, &amp;y);
+                Search1(1, x, y);
+                printf("%d\n", ans);
+            }
+        }
+        printf("\n");
+       // cout&lt;&lt;X&lt;&lt;endl;
+    }
+    //system("pause");
+    return 0;
+
+}
+</code></pre>
+
+<p><a href="http://poj.org/problem?id=4819">hdu4819 Mosaic</a></p>
+
+<p>这是一道简单的二维线段树RMQ问题，就是利用二维线段树更新的思想进行更新，参考一维线段树的RMQ的方法就好，注意在前面说的那几点。这道题的代码是经过我的整理的，虽然很麻烦，但也应该很清楚。</p>
+
+<pre><code class="c++">#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+
+#define mid  ((l+r)&gt;&gt;1)
+#define lson (now&lt;&lt;1)
+#define rson (lson|1)
+using namespace std;
+const int maxn = 1010;
+const int INF = 0X3F3F3F3F;
+struct Sub_tree{
+    int l,r;
+    int mindat,maxdat;
+};
+
+struct Tree{
+    int l,r;
+    Sub_tree st[maxn&lt;&lt;2];
+}t[maxn&lt;&lt;2];
+
+int a[maxn][maxn];
+int ans, ansmax, ansmin;
+int n;
+void build_sub_tree(int u, int now, int l, int r)
+{
+    Sub_tree *st = t[u].st;
+    st[now].l = l; st[now].r = r; st[now].mindat = INF; st[now].maxdat = 0;
+    if (l == r)
+    {
+       // st[now].mindat = st[now].maxdat = a[u][l];
+        return;
+    }
+    build_sub_tree(u, lson, l, mid);
+    build_sub_tree(u, rson, mid+1, r);
+    st[now].mindat = min(st[lson].mindat, st[rson].mindat);
+    st[now].maxdat = max(st[lson].maxdat, st[rson].maxdat);
+}
+
+void build_tree(int now, int l, int r)
+{
+    t[now].l = l; t[now].r = r;
+    build_sub_tree(now, 1, 1, n);
+    if (l == r)
+        return;
+    build_tree(lson, l, mid);
+    build_tree(rson, mid+1, r);
+}
+
+void search_sub_tree(int u, int now, int l, int r)
+{
+    Sub_tree *st = t[u].st;
+    if (st[now].l == l &amp;&amp; st[now].r == r)
+    {
+        ansmax = max(st[now].maxdat, ansmax);
+        ansmin = min(st[now].mindat, ansmin);
+        return;
+    }
+    int MID = st[lson].r;
+    if(r &lt;= MID)
+        search_sub_tree(u, lson, l, r);
+    else if (l &gt; MID)
+        search_sub_tree(u, rson, l, r);
+    else
+    {
+        search_sub_tree(u, lson, l, MID);
+        search_sub_tree(u, rson, MID+1, r);
+    }
+}
+
+void search_tree(int now, int l, int r, int l2, int r2)
+{
+    if (t[now].l == l &amp;&amp; t[now].r == r)
+    {
+        search_sub_tree(now, 1, l2, r2);
+        return;
+    }
+    int MID = t[lson].r;
+    if (r &lt;= MID)
+        search_tree(lson, l, r, l2, r2);
+    else if (l &gt; MID)
+        search_tree(rson, l, r, l2, r2);
+    else
+    {
+        search_tree(lson, l, MID, l2, r2);
+        search_tree(rson, MID+1, r, l2, r2);
+    }
+}
+
+void update_sub_tree(int u, int now, int aim, int dat)
+{
+    Sub_tree *st = t[u].st;
+    if (st[now].r == st[now].l)
+    {
+        if (t[u].l == t[u].r)
+            st[now].mindat = st[now].maxdat = dat;
+        else
+        {
+            st[now].mindat = min(t[u&lt;&lt;1].st[now].mindat, t[u&lt;&lt;1|1].st[now].mindat);
+            st[now].maxdat = max(t[u&lt;&lt;1].st[now].maxdat, t[u&lt;&lt;1|1].st[now].maxdat);
+        }
+        return;
+    }
+    int MID = st[lson].r;
+    if (aim &lt;= MID)
+        update_sub_tree(u, lson, aim, dat);
+    else
+        update_sub_tree(u, rson, aim, dat);
+    st[now].mindat = min(st[lson].mindat, st[rson].mindat);
+    st[now].maxdat = max(st[lson].maxdat, st[rson].maxdat);
+}
+
+void update_tree(int now, int aim1, int aim2, int dat)
+{
+    if (t[now].l == t[now].r)
+    {
+        update_sub_tree(now, 1, aim2, dat);
+        return;
+    }
+    int MID = t[lson].r;
+    if (aim1 &lt;= MID)
+        update_tree(lson, aim1, aim2, dat);
+    else
+        update_tree(rson, aim1, aim2, dat);
+    update_sub_tree(now, 1, aim2, dat);
+
+}
+
+int main()
+{
+    int T;
+    cin&gt;&gt;T;
+    int ks = 0;
+    while(T--)
+    {
+        scanf("%d", &amp;n);
+        printf("Case #%d:\n", ++ks);
+        build_tree(1,1,n);
+        for (int i = 1; i &lt;= n; i++)
+            for (int j = 1; j &lt;= n; j++)
+            {
+                int d;
+                scanf("%d", &amp;d);
+                update_tree(1, i, j, d);
+            }
+        int m;
+        scanf("%d", &amp;m);
+        for (int i = 0; i &lt; m; i++)
+        {
+            int x,y,l;
+            scanf("%d%d%d", &amp;x, &amp;y, &amp;l);
+            int x1 = max(x-l/2, 1), x2 = min(x+l/2, n), y1 = max(y-l/2, 1), y2 = min(y+l/2, n);
+            ansmax = 0; ansmin = INF; ans = 0;
+            //cout&lt;&lt;1&lt;&lt;endl;
+            search_tree(1, x1, x2, y1, y2);
+            ans = (ansmax+ansmin)&gt;&gt;1;
+           // cout&lt;&lt;ans&lt;&lt;endl;
+            update_tree(1, x, y, ans);
+            //cout&lt;&lt;3&lt;&lt;endl;
+            printf("%d\n", ans);
+        }
+    }
+}
+</code></pre>
+
+<p>还有一道题，也是RMQ的，不打算写出来了，白白浪费了我好久的时间，总感觉自己没错，但是总也过不了，后来拿网上题解的代码去交，百度前2页的都过不了，我就郁闷了，怀疑是那道题的数据或者什么的出现了问题，后来放弃了，上面那个hdu4819就是我放弃这个之后重新找的一道题，由于都是RMQ，所以也差不多啦！</p>
+
+<p>然后，二维树状数组，一道基础题：</p>
+
+<p><a href="http://poj.org/problem?id=1195">POJ1195 Mobile phones</a></p>
+
+<p>题意简单，代码也简单，不讲了，就挂个代码,纯属为了给一个二维树状数组的例子</p>
+
+<pre><code class="c++">//poj1195 二维树状数组
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#define N 1025
+
+int S,C[N][N];
+
+
+int Lowbit(int n)
+{
+  return n&amp;(n^(n-1));
+}
+
+void Update(int x,int y,int delta)
+{
+    for(int i = x; i &lt;= S; i += Lowbit(i))
+        for(int j = y; j &lt;= S; j += Lowbit(j))
+          C[i][j] += delta;
+}
+
+int getSum(int x,int y)
+{
+  int result = 0;
+    for(int i = x; i &gt; 0; i -= Lowbit(i))
+        for(int j = y; j &gt; 0; j -= Lowbit(j))
+            result+=C[i][j];
+    return result;
+}
+
+main()
+{
+  int Ins;
+  while(scanf("%d", &amp;Ins),Ins != 3)
+  {
+      if (Ins == 0)
+      {
+          scanf("%d", &amp;S);
+          memset(C, 0, sizeof(C));
+      }
+      if (Ins == 1)
+      {
+          int X, Y, a;
+          scanf("%d%d%d", &amp;X, &amp;Y, &amp;a);
+          Update(X+1, Y+1, a);
+      }
+      if (Ins == 2)
+      {
+          int L, B, R, T;
+          scanf("%d%d%d%d", &amp;L, &amp;B, &amp;R, &amp;T);
+          int sum=getSum(R+1, T+1) + getSum(L, B) - getSum(L, T+1) - getSum(R+1, B);
+          printf("%d\n",sum);
+      }
+
+  }
+}
+</code></pre>
+
+<p>最后，K-th Number问题：</p>
+
+<p>poj2104 K-th Number</p>
+
+<p>这也是桶分法，平方分割那一节的例题，这里说两种方法。</p>
+
+<p>第一是平方分割（桶分）法.首先，我们需要转换一下问题，直接去求某个区间的第k大数是很难的，但是，它只有100000个数，我们可以先假定一个数，然后看它是第几大数，用二分答案法来找到答案。（当然，这个得要求是有序的），这样，我们就变成了求k是要求区间的第几大数这个问题，接下来我们要想怎么解决这个问题。</p>
+
+<p>先把所有的数分到几个桶里，每个桶的容量都是一样的，然后对每个桶里数进行排序；之后查询的时候，假如区间为[l,r]，没有完全被包含再[l,r]内的区间（最多2个）直接暴力判断，包含在内的，在排好序的桶里面用二分法比x小的总共有多少个。</p>
+
+<p>具体复杂度看桶的大小而定，设桶的大小为B,则复杂度为O（(n/B)logB + B）;</p>
+
+<p>总体算法的复杂度为O(nlogn + mlogn*((n/B)logB + B)));</p>
+
+<p>第二种方法，线段树，或者说，归并树。这次的线段树不是动态的，而是静态的，直接说说方法吧！</p>
+
+<p>线段树存储一个域，这个域存的是对应区间排好序的数组（是数组），要计算再某个区间中不超过x的数的个数，只需要递归的进行下面的操作就行：</p>
+
+<p>如果所给区间与当前节点区间没交集，返回0；</p>
+
+<p>如果所给区间完全包含当前节点对应的区间，那么就使用二分法对该点上保存的数组进行查找；</p>
+
+<p>否则对两个儿子递归的进行计算求得结果；</p>
+
+<p>时间复杂度是O(nlogn + mlog3n).</p>
+
+<p>两种方法的参考代码都在<a href="/acm/poj/poj2104/">这里</a></p>
+
+<p>这里提一下，再第二种方法里面用到的一个STL函数，merge.</p>
+
+<p>merge(a, a+n, b, b+n, c) 进行的操作是把数组a和数组b的前n项合并，存在数组c中！</p>
+
+<p>还有，《统计的力量》中也有提到这个，不过我没太看懂怎么去敲！</p>
+
+<p>好了，这次就到这里吧！</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,559 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>html5常用元素与属性1 - hnnwang&#8217;s Blog</title>
+  <meta name="author" content="hnnwang">
+
+  
+  <meta name="description" content="HTML5保留的元素 常用元素
+文本格式化元素
+语义相关元素
+超链接和锚点
+列表相关元素
+图像相关元素
+表格相关元素
+框架相关元素 常用元素 点我返回目录 &lt;!--...--&gt;: 定义HTML注释。位于&lt;!--与--&gt;之间的内容会被当成注释处理
+&lt;html&gt &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://whn757397540.github.io/blog/2016/08/24/html5chang-yong-yuan-su-yu-shu-xing-1/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="hnnwang's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">hnnwang&#8217;s Blog</a></h1>
+  
+    <h2>Just for ACM-ICPC.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:whn757397540.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">首页</a></li>
+  <li><a href="/blog/archives">文章</a></li>
+  <li><a href="/tag-cloud/">标签云</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Html5常用元素与属性1</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-08-24T12:04:22+08:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><a name="catalog"></a></p>
+
+<h2>HTML5保留的元素</h2>
+
+<ul>
+<li><a href="#title1">常用元素</a></li>
+<li><a href="#title2">文本格式化元素</a></li>
+<li><a href="#title3">语义相关元素</a></li>
+<li><a href="#title4">超链接和锚点</a></li>
+<li><a href="#title5">列表相关元素</a></li>
+<li><a href="#title6">图像相关元素</a></li>
+<li><a href="#title7">表格相关元素</a></li>
+<li><a href="#title8">框架相关元素</a></li>
+</ul>
+
+
+<!-- more -->
+
+
+<p><a name="title1"></a></p>
+
+<h3>常用元素</h3>
+
+<p><a href="#catalog">点我返回目录</a></p>
+
+<p><code>&lt;!--...--&gt;</code>: 定义HTML注释。位于<code>&lt;!--</code>与<code>--&gt;</code>之间的内容会被当成注释处理
+<code>&lt;html&gt;</code>: 它是HTML5文档的根元素。但是 HTML5 允许完全省略这个元素。
+<code>&lt;head&gt;</code>: 它用于定义HTML5文档的页面头部分。但是HTML5允许完全省略这个元素。
+<code>&lt;title&gt;</code>: 它用于定义HTML5文档的页面标题。
+<code>&lt;body&gt;</code>: 它用于定义HTML5文档的页面主体部分，该标签可以指定id,class,style等核心属性，还可以指定onload,onunload,onclick,ondblclick,onmousedown,onmouseup,onmousemove,onmouseout,onkeypress,onkeydown,onkeyup等事件属性，这些属性用于指定JavaScript脚本
+<code>&lt;style&gt;</code>: 该元素用引入样式定义。
+<code>&lt;h1&gt;</code>到<code>&lt;h6&gt;</code>：定义六级标题(参考markdown的#指定六级标题)
+<code>&lt;p&gt;</code>: 定义段落
+<code>&lt;br&gt;</code>: 插入一个换行，该标签可以指定id, class, style等核心属性
+<code>&lt;hr&gt;</code>: 定义水平线，该标签可以指定id, class, style等核心属性,还可以指定onclick等各种事件属性。HTML5中<code>&lt;hr.../&gt;</code>还代表了主题结束的语义
+<code>&lt;div&gt;</code>: 定义文档中的节。该标签可以指定id, class, style 等核心属性，还可以指定onclick等各种事件属性。
+<code>&lt;span&gt;</code>: 与div基本类似，区别是该定义的节默认不会换行。可以指定跟<code>&lt;div&gt;</code>相同的属性</p>
+
+<blockquote><p>注意<code>&lt;span../&gt;</code> <code>&lt;div../&gt;</code>和<code>&lt;p../&gt;</code>之间的区别，分别是，不换行，换行和成段(有段间距)
+<code>&lt;span../&gt;</code>和<code>&lt;p../&gt;</code>元素只能包含文本、图像、超链接，文本格式化元素和表单控制元素等内容，
+<code>&lt;p../&gt;</code>可以包含&lt;span../>元素
+<code>&lt;div../&gt;</code>除了可以包含上面这些内容之外(包括<code>&lt;span../&gt;</code>和<code>&lt;p../&gt;</code>),还可以包含<code>&lt;h1../&gt;</code>到<code>&lt;h6../&gt;</code>、<code>&lt;from../&gt;</code>、<code>&lt;table../&gt;</code>、列表项元素和<code>&lt;div../&gt;</code>元素。</p></blockquote>
+
+<p><a name="title2"></a></p>
+
+<h3>文本格式化元素</h3>
+
+<p><a href="#catalog">点我返回目录</a></p>
+
+<p><code>&lt;b&gt;</code>: 定义粗体文本，该标签可以指定id、class、style等核心属性,还可以指定onclick等事件属性；
+<code>&lt;i&gt;</code>: 定义斜体文本，属性同上；
+<strong>tips:这些可以参考office里面常用的加粗和倾斜标识(B和I)。</strong>
+<code>&lt;em&gt;</code>: 定义强调文本，实际效果与斜体文本差不多，属性同上。
+<code>&lt;strong&gt;</code>: 定义粗体文本。与<code>&lt;b&gt;</code>标签的作用和用法基本相同
+<strong>tips:HTML5为<code>&lt;strong../&gt;</code>元素增加了语义，使用<code>&lt;strong../&gt;</code>包起来对的文本代表重要的文本</strong>
+<code>&lt;small&gt;</code>: 定义小号字体文本，属性同上
+<strong>tips:HTML5删除了<code>&lt;big../&gt;</code>但是保留了<code>&lt;small../&gt;</code>元素，专门用于标示所谓的“小字印刷体”，通常用来标注注入免责声明，注意事项，法律规定和版权相关的声明性文字</strong>
+<code>&lt;sup&gt;</code>: 定义上标文本，属性同上
+<code>&lt;sub&gt;</code>: 定义下标文本，属性同上
+<code>&lt;bdo&gt;</code>: 定义文本显示的方向，属性除了上面所说的以外，还可以指定dir属性，该属性值只能是ltr或者rtl（left to right or right to left）</p>
+
+<blockquote><p>上面这些文本格式化元素能包含文本，图像，超链接，文本格式化元素和表单控件元素等，除此之外，这些元素还可以和<code>&lt;span..&gt;</code>元素相互包含。</p></blockquote>
+
+<p><a name="title3"></a></p>
+
+<h3>语义相关元素</h3>
+
+<p><a href="#catalog">点我返回目录</a></p>
+
+<p><code>&lt;abbr&gt;</code>: 用于表示一个缩写。使用该元素时可以指定如下属性。
+* title， 该属性用于指定该缩写所代表的全称</p>
+
+<p><code>&lt;address&gt;</code>:用于表示一个地址。浏览器通常会用斜体字显示<code>&lt;address../&gt;</code>所包含的文本。
+<code>&lt;blockquote&gt;</code>: 用于定义一段长的引用文本。浏览器会使用缩进的方式显示这段被引用文本。使用<code>&lt;blockquote../&gt;</code>元素时可指定如下属性
+* cite: 改属性指定该引用文本所引用的网址的url。</p>
+
+<p><code>&lt;q&gt;</code>: 用于定义一段短的引用文本。浏览器会为这段被引用文本添加引号。
+<code>&lt;cite&gt;</code>: 用于表示作品(一本书、一部电影、一首歌曲)的标题，常常浏览器会用斜体字显示<code>&lt;cite../&gt;</code>所包含的文本。
+<code>&lt;code&gt;</code>： 用于表示一段计算机代码。
+<code>&lt;dfn&gt;</code>: 用于定义一个专业术语。浏览器通常会用粗体或者斜体字显示<code>&lt;dfn../&gt;</code>所包含的文本
+<code>&lt;del&gt;</code>: 定义文档中被删除的文本。浏览器通常会以中画线形式显示。
+<code>&lt;ins&gt;</code>: 定义文档中被插入的文本。浏览器通常以下划线的形式显示。
+<strong>tips：<code>&lt;del&gt;</code> <code>&lt;ins&gt;</code>通常结合使用，表示修订（把某一段内容更新为另外一段内容）可以指定如下属性</strong>
+* cite: 该属性值为一个url，对应的文本解释文本被删除或者插入的原因。
+* datetime: 定义文本被删除或者插入的日期、时间</p>
+
+<p><code>&lt;pre&gt;</code>: 用于表示该元素所包含的文本已经进行了“预格式化”。即所包含的文本中的空格、回车、tab键和其他格式字符都会被保留下来，但是浏览器会处理其内大部分的HTML元素
+<code>&lt;samp&gt;</code>: 用于定义示范文本内容
+<code>&lt;kbd&gt;</code>: 用于定义键盘文本。该元素用于表示文本是通过键盘输入的。通常在计算机使用文档、使用说明中会经常使用该元素。
+<code>&lt;var&gt;</code>: 用于表示一个变量，浏览器通常会用斜体字显示<code>&lt;var../&gt;</code>所包含的文本。</p>
+
+<p><a name="title4"></a></p>
+
+<h3>超链接和锚点</h3>
+
+<p><a href="#catalog">点我返回目录</a></p>
+
+<p>html5保留了定义超链接的<code>&lt;a../&gt;</code>元素，该元素可以指定id,class,style等核心属性，也可以指定onclick等各种事件属性，它还可以指定如下三个重要属性：
+* href:指定超链接所关联的另一个资源
+* target: 指定使用 框架集 中的哪个框架来装载另一个资源。该属性的属性值可以使<em>self,</em>blank,<em>top,</em>parent四个值，分别代表使用自身、新窗口、顶层框架、父框架来装载新资源。
+* media: 指定目标URL所引用的媒体类型，默认值为all，只有当制定了href属性时才有效。</p>
+
+<p><code>&lt;a../&gt;</code>元素主要可以包含文本，图像，各种文本格式元素和表单元素等内容
+href属性值既可以是绝对路径，也可以是相对路径。当指定绝对路径时，href属性值为URL，URL用于对互联网上的文档(或者其他资源)进行寻址。一个完整的网址遵循如下语法规则：
+<code>scheme://host.domain:port/path/filename</code>
+scheme:指定因特网服务的类型，最流行的为http
+domain:指定因特网域名
+host:指定此域中的主机。如果被省略，http的默认主机为www
+port:指定主机的端口号，端口号通常可以被省略，http服务的默认端口是80
+path:指定远程服务器上的路径，该路径也可以被省略，省略该路径则默认定位到该网站的根目录
+filename:指定远程文档的名称。如果省略该文件名，通常会定位到index.html、index.htm等文件，或者定位到Web服务器设置的其他文件
+下表显示了URL最流行的scheme以及对应资源</p>
+
+<table>
+<thead>
+<tr>
+<th>scheme</th>
+<th>对应资源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>file  </td>
+<td>访问本地磁盘上的文件</td>
+</tr>
+<tr>
+<td>ftp   </td>
+<td>访问远程FTP服务器上的文件 http  |访问www服务器上的文件</td>
+</tr>
+<tr>
+<td>news  </td>
+<td>访问新闻组上的文件</td>
+</tr>
+<tr>
+<td>telnet</td>
+<td>访问Telnet链接</td>
+</tr>
+<tr>
+<td>gopher</td>
+<td>访问远程Gopher服务器上的文件</td>
+</tr>
+<tr>
+<td>mailto</td>
+<td>邮件链接，单击链接会发送邮件</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>除此之外，<code>&lt;a../&gt;</code>元素还可以生成一个命名锚点，命名锚点用于在HTML页面中生成一个定位点，这样允许超链接链接到指定页面的该定位点，具体应用格式如下</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a name="testname"&gt;&lt;\a&gt;
+</span><span class='line'>&lt;a href="anchor.html#testname"&gt;&lt;\a&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>即在对应url资源后指定锚点名，锚点名和url资源之间以#隔开。</p>
+
+<p><a name="title5"></a></p>
+
+<h3>列表相关元素</h3>
+
+<p><a href="#catalog">点我返回目录</a></p>
+
+<p>假设：基本属性=id，style，class等属性，onclick等时间属性</p>
+
+<p><code>&lt;ul&gt;</code>: 定义无序列表。可以指定基本属性。该元素只能包含<code>&lt;li../&gt;</code>子元素
+<code>&lt;ol&gt;</code>: 定义有序列表。可以指定基本属性；只能包含<code>&lt;li../&gt;</code>子元素，在HTML 5 规范中，还可以指定如下三个属性
+* start: 指定列表的起始数字。默认是第一个，如1、A等
+* type: 指定使用哪种类型的编号，例如1代表使用数字，A和a代表使用字母，I和i代表使用罗马数字。改属性在HTML 5 里面已经不推荐使用了，推荐使用CSS定义
+* reversed: 该属性指定是否将排序反转。目前没有浏览器支持该属性</p>
+
+<p><code>&lt;li&gt;</code>: 定义列表项目。可以指定基本属性。该元素可以包含与<code>&lt;div../&gt;</code>完全类似的内容，可以包含多种类型的子元素。
+<code>&lt;dl&gt;</code>: 也用于定义列表，只能包含<code>&lt;dt../&gt;</code>和<code>&lt;dd../&gt;</code>两种子元素。可以指定基本属性
+<code>&lt;dt&gt;</code>: 定义标题列表项。可以指定基本属性。只能包含文本，图像，超链接，文本格式化元素和表单控制元素等。
+<code>&lt;dd&gt;</code>: 定义普通列表项。可以指定基本属性。可包含与<code>&lt;div../&gt;</code>完全类似的内容</p>
+
+<p><a name="title6"></a></p>
+
+<h3>图像相关元素</h3>
+
+<p><a href="#catalog">点我返回目录</a></p>
+
+<p>假设：基本属性=id，style，class等属性，onclick等时间属性</p>
+
+<p><code>&lt;img../&gt;</code>元素在页面中定义图像，这个元素只能是一个空元素，它不可以包含任何内容。可以指定基本属性，还必须指定以下两个属性。
+* src:该属性指定图片文件所在的位置，该属性值既可以是相对路径，也可以是绝对路径。
+* alt:该属性指定一段文本，该文本将作为该图片的提示信息。</p>
+
+<p>除此之外，还可以指定如下两个可选属性：
+* height: 指定图片的高度，可以是百分比，也可以是像素值。
+* width: 指定图片的宽度，可以是百分比，也可以是像素值。</p>
+
+<p>除此之外，与图片相关的还有如下两个标签。
+* <code>&lt;map&gt;</code>: 用于定义图片映射。该元素主要可以包含一个或者多个<code>&lt;area../&gt;</code>子元素，每个<code>&lt;area../&gt;</code>子元素可以定义一个区域，不同区域可以连接到不同的url，
+* <code>&lt;area&gt;</code>: 用于定义图片映射映射的内部区域，该元素只能是一个空元素，可以指定基本属性，还可以指定onfocus,onblur等焦点相关属性。除此之外，还可以指定如下属性:
+ + shape:指定该区域内部是哪种区域，该属性的默认值是&#8221;rect&#8221;,除此之外还可以是&#8221;circle&#8221;和&#8221;ploy“，后者代表多边形区域
+ + coords: 指定多个坐标值，用于确定区域的位置。
+ + href：用于确定该区域所链接的资源
+ + alt: 该属性指定一段文本，该文本将作为改图片的提示信息
+ + target: 指定使用框架集中的哪个框架来装载另一个资源。该属性的属性值可以使<em>self,</em>black,<em>top，</em>parent四个值
+ + media: 指定目标url所引用的媒体类型，默认值为all。只有当指定了href属性时该属性才有效。</p>
+
+<p>具体如何使用下面的两个标签，参考如下代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;pic/example.jpg&quot;</span> <span class="na">width=</span><span class="s">&quot;300&quot;</span> <span class="na">height=</span><span class="s">&quot;120&quot;</span> <span class="na">border=</span><span class="s">&quot;0&quot;</span> <span class="na">usemape=</span><span class="s">&quot;#testmap&quot;</span> <span class="na">alt=</span><span class="s">&quot;justtest&quot;</span> <span class="nt">/&gt;&lt;br</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;map</span> <span class="na">name=</span><span class="s">&quot;testmap&quot;</span> <span class="na">id=</span><span class="s">&quot;test&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;area</span> <span class="na">shape=</span><span class="s">&quot;circle&quot;</span> <span class="na">coords=</span><span class="s">&quot;55,55,20&quot;</span> <span class="na">href=</span><span class="s">&quot;url_or_path_for_pic&quot;</span> <span class="na">alt=</span><span class="s">&quot;testmappic1&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;area</span> <span class="na">shap=</span><span class="s">&quot;proly&quot;</span> <span class="na">coords=</span><span class="s">&quot;0,0,0,10,10,20,20,10,20,0&quot;</span> <span class="na">href=</span><span class="s">&quot;url_or_path_for_pic&quot;</span> <span class="na">alt=</span><span class="s">&quot;teatmappic2&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/map&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a name="title7"></a></p>
+
+<h3>表格相关元素</h3>
+
+<p><a href="#catalog">点我返回目录</a></p>
+
+<p>假设：基本属性=id，style，class等普通(核心)属性，onclick等时间属性</p>
+
+<p><code>&lt;table&gt;</code>: 用于定义表格，只能包含0个或者1个<code>&lt;caption../&gt;</code>子元素(定义表格标题)，0个或1个<code>&lt;thead../&gt;</code>子元素(定义表格头)，0个或1个<code>&lt;tfoot../&gt;</code>子元素(定义表格脚)，多个<code>&lt;tr.../&gt;</code>子元素(定义表格行)，多个<code>&lt;tbody../&gt;</code>子元素(定义表格体)。可以指定<strong><em>基本属性</em></strong>，除此之外还可以指定如下几个属性：
+* cellpadding:指定单元格内容和单元格边框之间的间距。该属性值既可以是像素值也可以是百分比
+* cellspacing:指定单元格之间的间距。该属性值既可以是像素值，也可以是百分比。
+* width: 指定表格的宽度，该属性既可以是像素值，也可以是百分比。</p>
+
+<p><code>&lt;caption&gt;</code>: 用于定义表格标题，该元素只能包含文本，图片，超链接，文本格式化元素和表单控制元素等。
+<code>&lt;tr&gt;</code>: 定义表格行，只能包含<code>&lt;td../&gt;</code>或者<code>&lt;th../&gt;</code>两种元素，可以指定基本属性，
+<code>&lt;td&gt;</code>: 定义单元格，该元素可包含的元素跟<code>&lt;div../&gt;</code>一样，可以包含各种类型的子元素，包括可以包含<code>&lt;table../&gt;</code>再插入一个表格。除了可以指定基本属性外，还可以指定如下几个属性。
+* colspan: 指定该单元格跨多少列，属性值就是一个简单数字
+* rowspan: 指定此单元格可横跨的行数(参考合并单元格)
+* height/width: 高度/宽度，可以使像素值或者百分比。</p>
+
+<p><code>&lt;th&gt;</code>:定义表格页眉的单元格，与<code>&lt;td&gt;</code>标签用法几乎完全一样，只不过浏览器在呈现的时候有一些差别。
+<code>&lt;tbody&gt;</code>: 定义表格主体，该元素只能包含<code>&lt;tr../&gt;</code>子元素，可以指定基本属性。</p>
+
+<p>**tips:使用<code>&lt;tbody&gt;</code>标签，可以将一个表格分成几个独立的部分，把一行或者几行合并为一组，方便动态修改某几行。在<code>&lt;tbody../&gt;</code>元素中，必须使用<code>&lt;tr../&gt;</code>子元素来定义表格行，<code>&lt;tbody../&gt;</code>元素本身不会生成任何输出内容。一旦使用了<code>&lt;tbody../&gt;</code>将多行定义为一组，一个<code>&lt;tbody../&gt;</code>元素就是表格中一个独立的部分，即不能从一个<code>&lt;tbody../&gt;</code>跨越到另外一个<code>&lt;tbody../&gt;</code>中。</p>
+
+<p><code>&lt;thead&gt;</code>: 定义表格头，用法与<code>&lt;tbody../&gt;</code>基本相似，指定功能稍有差别，
+<code>&lt;tfoot&gt;</code>: 定义表格脚，用法与<code>&lt;tbody../&gt;</code>基本相似，指定功能稍有差别
+<strong>tips:以上三个都是对表格中的行进行分组的元素。如果决定使用<code>&lt;thead../&gt;</code>和<code>&lt;tfood../&gt;</code>元素，建议使用顺序为<code>&lt;thead../&gt;</code> <code>&lt;tfood../&gt;</code> <code>&lt;tbody../&gt;</code>,浏览器会自动将<code>&lt;tfood../&gt;</code>元素的内容呈现在表格最下边。只能在<code>&lt;table../&gt;</code>元素内使用这些标签。</strong></p>
+
+<p>除此之外，如果需要在页面中为某列整列指定属性，html5保留以下2个标签。
+<code>&lt;col&gt;</code>: 该元素用于为表格中的一个或多个列指定属性值。该元素只能出现在<code>&lt;table../&gt;</code>元素或者<code>&lt;colgroup../&gt;</code>元素内，该元素可以指定基本属性。除此之外，还可以指定如下属性：
+* span:指定可以横跨多少列</p>
+
+<p><strong>tips:<code>&lt;col../&gt;</code>元素是一个空元素，他自己本身并不产生表格列。如果需要创建表格列，必须在<code>&lt;tr../&gt;</code>元素内定义<code>&lt;td../&gt;</code>元素。<code>&lt;col../&gt;</code>元素只是为表格中指定列整体指定属性值，因此一旦在<code>&lt;table../&gt;</code>中使用<code>&lt;col../&gt;</code>为表格列指定属性，<code>&lt;col../&gt;</code>所定义的表格列数就应该与表格内实际包含的列数相等</strong></p>
+
+<p><code>&lt;colgroup&gt;</code>: 该元素用于为表格中的一个或多个列指定属性值。该元素只能出现在<code>&lt;table../&gt;</code>元素或者<code>&lt;colgroup../&gt;</code>元素内.可指定基本属性。</p>
+
+<p><strong>tips:<code>&lt;colgroup../&gt;</code>的作用只是用于组织多个<code>&lt;col../&gt;</code>元素，当使用<code>&lt;colgroup../&gt;</code>组织多个<code>&lt;col../&gt;</code>元素时，<code>&lt;colgroup../&gt;</code>上指定的属性将对它所包含的所有<code>&lt;col../&gt;</code>元素有效。</strong></p>
+
+<p><a name="title8"></a></p>
+
+<h3>框架相关元素</h3>
+
+<p><a href="#catalog">点我返回目录</a></p>
+
+<p>HTML5不再推荐在页面中使用框架集，不过还保留了一个与框架相关的元素：<code>&lt;iframe../&gt;</code>元素，该元素可以再普通HTML页面中使用，该元素用于在普通HTML页面中使用，该元素用于在普通HTML页面中生成一个内联框架，可以直接放在HTML页面的任意位置。该元素除了可以指定id,style,class等核心属性之外，还可以指定如下属性：
+* src:该属性指定一个url，指定该iframe将装在的那个页面。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">hnnwang</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-08-24T12:04:22+08:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/html/'>html</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://whn757397540.github.io/blog/2016/08/24/html5chang-yong-yuan-su-yu-shu-xing-1/" data-via="" data-counturl="http://whn757397540.github.io/blog/2016/08/24/html5chang-yong-yuan-su-yu-shu-xing-1/" >Tweet</a>
+  
+  
+  
+  
+     <!-- JiaThis Button BEGIN -->
+<div class="jiathis_share_slide jiathis_share_24x24" id="jiathis_share_slide">
+<div class="jiathis_share_slide_top" id="jiathis_share_title"></div>
+<div class="jiathis_share_slide_inner">
+<div class="jiathis_style_24x24">
+<a class="jiathis_button_qzone"></a>
+<a class="jiathis_button_tsina"></a>
+<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+<script type="text/javascript">
+var jiathis_config = {
+	slide:{
+		divid:'jiathis_main',
+		pos:'right'
+	}
+};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>	
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_slide.js" charset="utf-8"></script>
+</div></div></div>
+<!-- JiaThis Button END -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2008932"></script>
+<!-- UY END -->
+
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/07/21/test-new/" title="Previous Post: ">&laquo; </a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/08/24/html5chang-yong-yuan-su-yu-shu-xing-1/">html5常用元素与属性1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/21/test-new/"></a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/07/01/suan-fa-she-ji-yu-fen-xi-qi-mo-fu-xi-zong-jie/">算法设计与分析期末复习总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/04/12/test/">Test</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/14/shu-zhuang-shu-zu-yi-ji-xian-duan-shu-zong-jie/">树状数组以及线段树总结</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Tags</h1>
+  <ul class="tag-cloud">
+    <a style="font-size: NaN%" href="/tags/er-fen-ji-qiao-fang-fa/">二分 技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/er-jin-zhi-ji-qiao-fang-fa/">二进制 技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/dan-diao-dui-lie/">单调队列</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/bo-yi-lun/">博弈论</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/fan-zhuan-wen-ti-ji-qiao-fang-fa/">反转问题 技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-2-sat/">图论 2-sat</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-qiang-lian-tong-fen-liang/">图论 强连通分量</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-zui-da-liu/">图论 最大流</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-zui-xiao-ge-zui-da-liu-wang-luo-liu/">图论 最小割 最大流 网络流</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-zui-xiao-fei-yong-liu-wang-luo-liu/">图论 最小费用流 网络流</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-zui-duan-lu-zui-xiao-sheng-cheng-shu/">图论 最短路 最小生成树</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-wang-luo-liu-er-fen-tu-pi-pei-zui-da-liu/">图论 网络流 二分图匹配 最大流</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/tu-lun-lian-tong-du/">图论 连通度</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/chi-qu-fa-ji-qiao-fang-fa/">尺取法 技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/dan-xing-peng-zhuang/">弹性碰撞</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/ji-qiao-fang-fa/">技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/ji-qiao-fang-fa-chi-san-hua/">技巧方法 离散化</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/zhe-ban-mei-ju-ji-qiao-fang-fa/">折半枚举 技巧方法</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/shu-zhuang-shu-zu-xian-duan-shu-shu-ju-jie-gou/">树状数组 线段树 数据结构</a> &nbsp 
+<a style="font-size: NaN%" href="/tags/wang-luo-liu/">网络流</a>
+
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo">
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+<p>
+  Copyright &copy; 2016 - hnnwang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Design by <a href="http://octopressthemes.com">Octopress Themes</a>. Background image by <a href="http://www.flickr.com/photos/rhysasplundh/">Rhys Asplundh</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
